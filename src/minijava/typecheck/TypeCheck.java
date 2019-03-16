@@ -14,12 +14,12 @@ public abstract class TypeCheck {
         }
         
         // Parse and build the syntaxtree
-        if (!MRoot.parse(file)) {
+        if (!SymbolTable.parse(file)) {
         	return false;
         }
         
         // Build class tree
-        MRoot.buildClass();
+        SymbolTable.buildClass();
         
         return true;
 

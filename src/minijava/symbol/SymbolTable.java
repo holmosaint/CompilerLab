@@ -9,7 +9,7 @@ import minijava.typecheck.*;
 import minijava.*;
 
 // MRoot maintains the global information about the syntaxtree
-public class MRoot {
+public class SymbolTable {
 	// attributes
 	private static Goal root_;
 	private static String file_name_;
@@ -54,6 +54,7 @@ public class MRoot {
 	
 	public static void buildClass() {
 		root_.accept(new ClassTreeBuilder(file_name_));
+		
 	}
 	public static void buildScope() {
 		
