@@ -77,7 +77,17 @@ public class MClass {
 	}
 
 	public void registerVar() {
-		
+		for(HashMap.Entry<String, MVar> v : vars_.entrySet()) {
+			MClass father = getFather();
+			while(father != null) {
+				if(father.getMethod().containsKey(v.getKey())){
+					System.out.printf("Dupicative definition of variable: [%s] in class [%s] and class [%s]\n", 
+									v.getKey(), father.getName(), getName());
+					System.exit(1);
+				}
+				father = father.getFather();
+			}
+		}
 	}
 
 	public void register() {
