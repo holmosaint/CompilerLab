@@ -4,10 +4,14 @@ import java.util.*;
 import minijava.syntaxtree.*;
 import minijava.typecheck.*;
 
-public class MMethod extends MType {
+public class MMethod {
 	
-	private Identifier name;
-	private MType ret;
+	private MType ret_type_;
+	private Identifier name_;
+	private ArrayList<MVar> paras_;
+	
+	private MBlock body_;
+	private MClass owner_;
 	
 	public MMethod() {
 		

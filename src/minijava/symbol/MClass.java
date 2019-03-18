@@ -4,10 +4,10 @@ import java.util.*;
 import minijava.syntaxtree.*;
 import minijava.visitor.*;
 
-public class MClass extends MType {
+public class MClass {
 
 	// attributes
-	private Identifier name_;
+	private String name_;
 	private int size_ = 0;
 	private MClass father_;
 	
@@ -61,7 +61,7 @@ public class MClass extends MType {
 	}
 	
 	public String getName() {
-		return name_.f0.toString();
+		return name_;
 	}
 
 	public int getSize() {
