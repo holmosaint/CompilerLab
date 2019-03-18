@@ -47,17 +47,14 @@ public class MClass extends MType {
 	}
 	
 	public String getName_() {
-		
-		return null;
+		return name_.f0.toString();
 	}
 
 	public int getSize_() {
-		
 		return 0;
 	}
 
 	public boolean isAssignable(MType target, Node n) {
-		
 		return false;
 	}
 

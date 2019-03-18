@@ -5,6 +5,10 @@ import minijava.syntaxtree.*;
 import minijava.typecheck.*;
 
 public class MMethod extends MType {
+	
+	private Identifier name;
+	private MType ret;
+	
 	public MMethod() {
 		
 	}
