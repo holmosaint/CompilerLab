@@ -3,9 +3,6 @@ package minijava.symbol;
 import java.io.*;
 import java.util.*;
 
-import com.sun.codemodel.internal.JClass;
-import com.sun.tools.javah.Util.Exit;
-
 import minijava.MiniJavaParser;
 import minijava.syntaxtree.*;
 import minijava.typecheck.*;
@@ -22,8 +19,8 @@ public class SymbolTable {
 	private static ArrayList<MClass> class_list_; // class list
 		
 	// unique MType
-	
 	private static boolean first_time_ = true;
+
 	public static boolean parse(final File file) {
 		// 0.Initialize the MRoot
 		file_name_ = file.getName();
@@ -60,6 +57,11 @@ public class SymbolTable {
 	public static void addMainClass(MClass c) {
 		if(main_class_ != null) {
 			main_class_ = c;
+			if(c.getName() + ".java" != file_name_) {
+				System.out.printf("The main class name is not identical to the file name! ");
+				System.out.printf("Get main class: %s while the file name is %s\n", c.getName(), file_name_);
+				System.exit(1);
+			}
 		}
 		else {
 			System.out.printf("Too many main classes! Expect one but get two: %s and %s.\n", 
@@ -69,6 +71,12 @@ public class SymbolTable {
 	}
 
 	public static void addClass(MClass c) {
+		for(MClass e : class_list_) {
+			if(e.getName() == c.getName()) {
+				System.out.printf("Get duplicate definition of class: %s\n", e.getName());
+				System.exit(1);
+			}
+		}
 		class_list_.add(c);
 	}
 	
@@ -77,23 +85,15 @@ public class SymbolTable {
 
 		// register the class into the class list
 		for(MClass c : class_list_) {
-			c.Register();
-		}
-
-		// check the extension loop
-		for(MClass c : class_list_) {
-			MClass father = c.getFather();
-			while(father != null) {
-				if(father.getName() == c.getName()) {
-					System.out.printf("Extension loop found in class: %s and %s\n",
-										father.getName(), c.getName());
-					System.exit(1);
-				}
-			}
+			c.register();
 		}
 	}
 
 	public static void buildScope() {
 		
+	}
+
+	public static ArrayList<MClass> getClassList() {
+		return class_list_;
 	}
 }

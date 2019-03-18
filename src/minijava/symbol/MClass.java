@@ -38,15 +38,34 @@ public class MClass {
 	}
 	
 	public void registerFather() {
-
+		// check the extension loop
+		MClass father = getFather();
+		while(father != null) {
+			if(father.getName() == getName()) {
+				System.out.printf("Extension loop found in class: [%s] and [%s]\n",
+									father.getName(), getName());
+				System.exit(1);
+			}
+			father = father.getFather();
+		}
 	}
 
 	public void registerMethod() {
-
+		for(HashMap.Entry<String, MMethod> m : methods_.entrySet()) {
+			MClass father = getFather();
+			while(father != null) {
+				if(father.getMethod().containsKey(m.getKey())){
+					System.out.printf("Dupicative definition of function: [%s] in class [%s] and class [%s]\n", 
+									m.getKey(), father.getName(), getName());
+					System.exit(1);
+				}
+				father = father.getFather();
+			}
+		}
 	}
 
 	public void registerVar() {
-
+		
 	}
 
 	public void register() {
@@ -79,4 +98,8 @@ public class MClass {
 		return false;
 	}
 
+
+	public HashMap<String, MMethod> getMethod() {
+		return methods_;
+	}
 }
