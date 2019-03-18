@@ -13,7 +13,7 @@ public class MInt extends MType {
 		return 4;
 	}
 
-	public boolean isAssignable(MType target, Node n) {
+	public boolean isAssignable(MType target) {
 		if (target instanceof MInt)
 			return true;
 		else

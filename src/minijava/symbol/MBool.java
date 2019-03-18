@@ -12,7 +12,7 @@ public class MBool extends MType {
 		return 4;
 	}
 
-	public boolean isAssignable(MType target, Node n) {
+	public boolean isAssignable(MType target) {
 		if (target instanceof MBool)
 			return true;
 		else

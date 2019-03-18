@@ -8,7 +8,7 @@ public abstract class MType {
 	abstract public String getName();
 	abstract public int getSize();
 	// TODO: Assignable check in case of unknown variable
-	abstract public boolean isAssignable(MType target, Node n);
+	abstract public boolean isAssignable(MType target);
 	
 	public boolean Query(String query_type) {
 		for (String type : type_list) {

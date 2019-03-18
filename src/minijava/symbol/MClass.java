@@ -5,58 +5,61 @@ import minijava.syntaxtree.*;
 import minijava.visitor.*;
 
 public class MClass {
-
 	// attributes
 	private String name_;
-	private int size_ = 0;
 	private MClass father_;
+	private int size_ = 0;
 	
 	// symbol tables
 	private HashMap<String, MMethod> methods_ = new HashMap<String, MMethod>();
 	private HashMap<String, MVar> vars_ = new HashMap<String, MVar>();
 	
-	public MClass(Node n) {
-		if (n instanceof MainClass) {
-			System.out.println(((MainClass) n).f1.f0.toString());
-		} else if (n instanceof ClassDeclaration) {
-			System.out.println(((ClassDeclaration) n).f1.f0.toString());
-		} else if (n instanceof ClassExtendsDeclaration) {
+	public MClass(Node node) {
+		if (node instanceof ClassDeclaration) {
+			ClassDeclaration class_node = (ClassDeclaration) node;
+			System.out.println("Declare: " + (class_node.f1.f0.toString()));
+			
+		} else if (node instanceof ClassExtendsDeclaration) {
 			System.out.println(((ClassExtendsDeclaration) n).f1.f0.toString());
+		} else if (node instanceof MainClass) {
+			System.out.println(((MainClass) node).f1.f0.toString());
+			System.out.println("Are you kidding?");
 		}
 		
 	}
 	
-	private void AddMethod(MMethod method) {
+	
+	private void addMethod(MMethod method) {
 		
 	}
 	
-	private void AddVar(MVar var) {
+	private void addVar(MVar var) {
 		
 	}
 	
-	public void RegisterFather() {
+	public void registerFather() {
 
 	}
 
-	public void RegisterMethod() {
+	public void registerMethod() {
 
 	}
 
-	public void RegisterVar() {
+	public void registerVar() {
 
 	}
 
-	public void Register() {
-		RegisterFather();
-		RegisterMethod();
-		RegisterVar();
+	public void register() {
+		registerFather();
+		registerMethod();
+		registerVar();
 	}
 	
-	public void CheckMethods() {
+	public void checkMethods() {
 		
 	}
 	
-	public void BuildScope() {
+	public void cuildScope() {
 		
 	}
 	

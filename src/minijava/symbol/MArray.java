@@ -18,8 +18,9 @@ public class MArray extends MType {
 		return element_type_;
 	}
 	
-	public boolean isAssignable(MType target, Node n) {
-		return false;
+	public boolean isAssignable(MType target) {
+		if (!(target instanceof MArray))
+			return false;
+		return this.element_type_.isAssignable(((MArray) target).elementType());
 	}
-	
 }
