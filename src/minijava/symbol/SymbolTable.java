@@ -56,6 +56,21 @@ public class SymbolTable {
 		}
 		return true;
 	}
+
+	public static void addMainClass(MClass c) {
+		if(main_class_ != null) {
+			main_class_ = c;
+		}
+		else {
+			System.out.printf("Too many main classes! Expect one but get two: %s and %s.\n", 
+								main_class_.getName(), c.getName());
+			System.exit(1);
+		}
+	}
+
+	public static void addClass(MClass c) {
+		class_list_.add(c);
+	}
 	
 	public static void buildClass() {
 		root_.accept(new ClassTreeBuilder(file_name_));
@@ -67,17 +82,17 @@ public class SymbolTable {
 
 		// check the extension loop
 		for(MClass c : class_list_) {
-			MClass father = c.getFather_();
+			MClass father = c.getFather();
 			while(father != null) {
-				if(father.getName_() == c.getName_()) {
+				if(father.getName() == c.getName()) {
 					System.out.printf("Extension loop found in class: %s and %s\n",
-										father.getName_(), c.getName_());
+										father.getName(), c.getName());
 					System.exit(1);
 				}
 			}
 		}
-		
 	}
+
 	public static void buildScope() {
 		
 	}

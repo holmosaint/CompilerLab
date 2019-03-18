@@ -60,15 +60,15 @@ public class MClass extends MType {
 		
 	}
 	
-	public String getName_() {
+	public String getName() {
 		return name_.f0.toString();
 	}
 
-	public int getSize_() {
+	public int getSize() {
 		return 0;
 	}
 
-	public MClass getFather_() {
+	public MClass getFather() {
 		return this.father_;
 	}
 

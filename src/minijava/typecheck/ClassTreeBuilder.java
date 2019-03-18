@@ -14,11 +14,13 @@ public class ClassTreeBuilder extends DepthFirstVisitor {
 	public void visit(MainClass n) {
 		System.out.println("MainClass");
 		System.out.println(n.f1.f0.toString());
+		if(SymbolTable)
 	}
 	
 	public void visit(ClassDeclaration n) {
 		System.out.println("ClassDeclaration");
 		System.out.println(n.f1.f0.toString());
+		
 	}
 	
 	public void visit(ClassExtendsDeclaration n) {
