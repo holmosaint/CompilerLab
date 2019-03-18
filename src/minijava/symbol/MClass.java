@@ -34,8 +34,22 @@ public class MClass extends MType {
 		
 	}
 	
+	public void RegisterFather() {
+
+	}
+
+	public void RegisterMethod() {
+
+	}
+
+	public void RegisterVar() {
+
+	}
+
 	public void Register() {
-		
+		RegisterFather();
+		RegisterMethod();
+		RegisterVar();
 	}
 	
 	public void CheckMethods() {
@@ -54,9 +68,12 @@ public class MClass extends MType {
 		return 0;
 	}
 
+	public MClass getFather_() {
+		return this.father_;
+	}
+
 	public boolean isAssignable(MType target, Node n) {
 		return false;
 	}
 
-	
 }
