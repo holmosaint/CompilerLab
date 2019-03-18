@@ -5,6 +5,7 @@ import minijava.syntaxtree.*;
 
 public abstract class MType {
 	public static ArrayList<String> type_list;
+	
 	abstract public String getName();
 	abstract public int getSize();
 	// TODO: Assignable check in case of unknown variable

@@ -18,7 +18,10 @@ public class MClass {
 		if (node instanceof ClassDeclaration) {
 			ClassDeclaration class_node = (ClassDeclaration) node;
 			System.out.println("Declare: " + (class_node.f1.f0.toString()));
-			
+			name_ = class_node.f1.f0.toString();
+			father_ = null;
+			class_node.f3
+			class_node.f4
 		} else if (node instanceof ClassExtendsDeclaration) {
 			System.out.println(((ClassExtendsDeclaration) n).f1.f0.toString());
 		} else if (node instanceof MainClass) {
@@ -28,6 +31,15 @@ public class MClass {
 		
 	}
 	
+	private void parseVar(NodeListOptional var_list) {
+		for (Node node : var_list.nodes) {
+			
+		}
+	}
+	
+	private void parseMethod(NodeListOptional method_list) {
+		
+	}
 	
 	private void addMethod(MMethod method) {
 		

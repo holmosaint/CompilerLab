@@ -6,6 +6,10 @@ public class MArray extends MType {
 
 	private MType element_type_;
 	
+	public MArray(MType element_type) {
+		element_type_ = element_type;
+	}
+	
 	public String getName() {
 		return element_type_.getName() + "[]";
 	}
