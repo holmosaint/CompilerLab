@@ -4,14 +4,14 @@ import java.util.*;
 import minijava.syntaxtree.*;
 import minijava.typecheck.*;
 
-public class MMethod {
+public class MMethod extends MScope {
 	
 	private MType ret_type_;
 	private String name_;
 	private HashMap<String, MVar> params_ = new HashMap<String, MVar>();
 	private HashMap<String, MVar> vars_ = new HashMap<String, MVar>();
 	
-	private ArrayList<MBlock> blocks_;
+	private ArrayList<MBlock> blocks_ = new ArrayList<MBlock>();
 	private MClass owner_;
 	
 	public MMethod(MClass owner, Node node) {
@@ -21,20 +21,15 @@ public class MMethod {
 		name_ = declare.f2.f0.toString();
 		System.out.println("You declare method " + name_);
 		parseParam(declare.f4);
-		
-		
+		if (!SymbolTable.parseVar(declare.f7, vars_)) {
+			System.out.println("in method " + name_);
+			System.exit(1);
+		}
+		parseStatement(declare.f8, this);
 	}
 
-	public String getName_() {
-		return null;
-	}
-
-	public int getSize_() {
-		return 0;
-	}
-
-	public boolean isAssignable(MType target, Node n) {
-		return false;
+	public String getName() {
+		return name_;
 	}
 	
 	private void parseParam(NodeOptional param_list) {
@@ -60,4 +55,5 @@ public class MMethod {
 			}
 		}
 	}
+
 }

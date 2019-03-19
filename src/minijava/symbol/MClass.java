@@ -21,7 +21,7 @@ public class MClass {
 			name_ = class_node.f1.f0.toString();
 			father_ = null;
 			if (!SymbolTable.parseVar(class_node.f3, vars_)) {
-				System.out.println("In class " + name_);
+				System.out.println("in class " + name_);
 				System.exit(1);
 			}
 			parseMethod(class_node.f4);

@@ -3,22 +3,17 @@ package minijava.symbol;
 import java.util.*;
 import minijava.syntaxtree.*;
 
-public class MBlock {
+public class MBlock extends MScope {
 	// attributes
-	private MBlock block_father_ = null;
-	private MMethod method_father_ = null;
+	private MScope father_ = null;
 	private ArrayList<MBlock> children_ = new ArrayList<MBlock>();
-	private HashMap<String, MVar> vars_ = new HashMap<String, MVar>();
+	private int choice_ = 0;  // 0->block, 1->If statement, 2->While statement
+	private MExpr expression_ = null;  // Expression in If or While statement
 	
 	// Constructor
-	public MBlock(MBlock block_father, Node node) {
+	public MBlock(MScope father, Node node) {
 		this(node);
-		block_father_ = block_father;
-	}
-	
-	public MBlock(MMethod method_father, Node node) {
-		this(node);
-		method_father_ = method_father;
+		father_ = father;
 	}
 	
 	private MBlock(Node node) {
@@ -40,18 +35,5 @@ public class MBlock {
 	
 	public void AddBlock(MBlock block) {
 		children_.add(block);
-	}
-	
-	public void AddVar(MVar var) {
-		if (CheckVar(var)) {
-			System.out.println("Duplicate declaration of variable " + var.getName() + " in block");
-			System.exit(1);
-		} else {
-			vars_.put(var.getName(), var);
-		}
-	}
-	
-	private boolean CheckVar(MVar var) {
-		return vars_.containsKey(var.getName());
 	}
 }

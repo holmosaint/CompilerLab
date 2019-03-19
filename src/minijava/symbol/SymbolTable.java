@@ -98,7 +98,7 @@ public class SymbolTable {
 	}
 	
 	public static MType getType(int which) {
-		MType type;
+		MType type = null;
 		switch (which) {
 		case 0:
 			// ArrayType
@@ -115,20 +115,24 @@ public class SymbolTable {
 			System.out.println("You declare Int");
 			type = new MInt();
 			break;
+		case 3:
+			// Identifier (User-defined class)
+			System.out.println("Your declare class");
+			// TODO change the class_array to class_hash_map
+			// type = new MClass();
 		default:
 			System.out.println("Uknown variable type");
-			type = null;
 			System.exit(1);
 		}
 		
 		return type;
 	}
-
+	
 	public static boolean parseVar(NodeListOptional var_list, HashMap<String, MVar> vars_) {
 		for (Node node : var_list.nodes) {
 			MVar var = new MVar(node);
 			if (vars_.containsKey(var.getName())) {
-				System.out.println("Duplicate definition of variable " + var.getName());
+				System.out.print("Duplicate definition of variable " + var.getName() + " ");
 				return false;
 			} else {
 				vars_.put(var.getName(), var);
@@ -136,4 +140,6 @@ public class SymbolTable {
 		}
 		return true;
 	}
+	
+
 }
