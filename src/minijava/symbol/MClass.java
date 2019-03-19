@@ -20,33 +20,34 @@ public class MClass {
 			System.out.println("Declare: " + (class_node.f1.f0.toString()));
 			name_ = class_node.f1.f0.toString();
 			father_ = null;
-			class_node.f3
-			class_node.f4
+			if (!SymbolTable.parseVar(class_node.f3, vars_)) {
+				System.out.println("In class " + name_);
+				System.exit(1);
+			}
+			parseMethod(class_node.f4);
 		} else if (node instanceof ClassExtendsDeclaration) {
-			System.out.println(((ClassExtendsDeclaration) n).f1.f0.toString());
+			ClassExtendsDeclaration class_node = (ClassExtendsDeclaration) node;
+			System.out.println("Declare: " + ((ClassExtendsDeclaration) node).f1.f0.toString());
+			
 		} else if (node instanceof MainClass) {
-			System.out.println(((MainClass) node).f1.f0.toString());
+			System.out.println("Declare: " + ((MainClass) node).f1.f0.toString());
 			System.out.println("Are you kidding?");
+			MainClass class_node = (MainClass) node;
+			name_ = class_node.f1.f0.toString();
 		}
 		
-	}
-	
-	private void parseVar(NodeListOptional var_list) {
-		for (Node node : var_list.nodes) {
-			
-		}
 	}
 	
 	private void parseMethod(NodeListOptional method_list) {
-		
-	}
-	
-	private void addMethod(MMethod method) {
-		
-	}
-	
-	private void addVar(MVar var) {
-		
+		for (Node node : method_list.nodes) {
+			String method_name = ((MethodDeclaration) node).f2.f0.toString();
+			if (methods_.containsKey(method_name)) {
+				System.out.println("Duplicate declaration of method " + method_name);
+				System.exit(1);
+			} else {
+				methods_.put(method_name, new MMethod(this, node));
+			}
+		}
 	}
 	
 	public void registerFather() {

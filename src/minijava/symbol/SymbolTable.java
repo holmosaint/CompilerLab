@@ -15,8 +15,8 @@ public class SymbolTable {
 	private static String file_name_;
 	private static File file_;
 	// list of MClass
-	private static MClass main_class_; // main class
-	private static ArrayList<MClass> class_list_; // class list
+	private static MClass main_class_ = null; // main class
+	private static ArrayList<MClass> class_list_ = new ArrayList<MClass>(); // class list
 		
 	// unique MType
 	private static boolean first_time_ = true;
@@ -55,9 +55,9 @@ public class SymbolTable {
 	}
 
 	public static void addMainClass(MClass c) {
-		if(main_class_ != null) {
+		if(main_class_ == null) {
 			main_class_ = c;
-			if(c.getName() + ".java" != file_name_) {
+			if(!file_name_.equals(c.getName() + ".java")) {
 				System.out.printf("The main class name is not identical to the file name! ");
 				System.out.printf("Get main class: %s while the file name is %s\n", c.getName(), file_name_);
 				System.exit(1);
@@ -95,5 +95,45 @@ public class SymbolTable {
 
 	public static ArrayList<MClass> getClassList() {
 		return class_list_;
+	}
+	
+	public static MType getType(int which) {
+		MType type;
+		switch (which) {
+		case 0:
+			// ArrayType
+			System.out.println("You decare Array");
+			type = new MArray();
+			break;
+		case 1:
+			// BooleanType
+			System.out.println("You declare Bool");
+			type = new MBool();
+			break;
+		case 2:
+			// IntegerType
+			System.out.println("You declare Int");
+			type = new MInt();
+			break;
+		default:
+			System.out.println("Uknown variable type");
+			type = null;
+			System.exit(1);
+		}
+		
+		return type;
+	}
+
+	public static boolean parseVar(NodeListOptional var_list, HashMap<String, MVar> vars_) {
+		for (Node node : var_list.nodes) {
+			MVar var = new MVar(node);
+			if (vars_.containsKey(var.getName())) {
+				System.out.println("Duplicate definition of variable " + var.getName());
+				return false;
+			} else {
+				vars_.put(var.getName(), var);
+			}
+		}
+		return true;
 	}
 }

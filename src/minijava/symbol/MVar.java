@@ -9,14 +9,23 @@ public class MVar {
 	public MVar(Node node) {
 		if (node instanceof VarDeclaration) {
 			VarDeclaration declare = (VarDeclaration) node;
-			if (declare.f0 instanceof 
+			name_ = declare.f1.f0.toString();
+			type_ = SymbolTable.getType(declare.f0.f0.which);
+		} else if (node instanceof FormalParameter){
+			FormalParameter declare = (FormalParameter) node;
+			name_ = declare.f1.f0.toString();
+			type_ = SymbolTable.getType(declare.f0.f0.which);
 		} else {
 			System.out.println("Error in MVar(): Not an VarDeclaration.");
 			System.exit(1);
 		}
 	}
-	
+
 	public String getName() {
 		return name_;
+	}
+	
+	public MType getType() {
+		return type_;
 	}
 }

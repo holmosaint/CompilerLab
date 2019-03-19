@@ -12,20 +12,17 @@ public class ClassTreeBuilder extends DepthFirstVisitor {
 	}
 	
 	public void visit(MainClass n) {
-		System.out.println("MainClass");
-		System.out.println(n.f1.f0.toString());
+		System.out.println("MainClass with name: " + n.f1.f0.toString());
 		SymbolTable.addMainClass(new MClass(n));
 	}
 	
 	public void visit(ClassDeclaration n) {
-		System.out.println("ClassDeclaration");
-		System.out.println(n.f1.f0.toString());
+		System.out.println("ClassDeclaration with name: " + n.f1.f0.toString());
 		SymbolTable.addClass(new MClass(n));
 	}
 	
 	public void visit(ClassExtendsDeclaration n) {
-		System.out.println("ClassExtendsDeclaration");
-		System.out.println(n.f1.f0.toString());
+		System.out.println("ClassExtendsDeclaration with name: " + n.f1.f0.toString());
 		SymbolTable.addClass(new MClass(n));
 	}
 }
