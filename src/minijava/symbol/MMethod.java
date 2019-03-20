@@ -13,6 +13,7 @@ public class MMethod extends MScope {
 	
 	private ArrayList<MBlock> blocks_ = new ArrayList<MBlock>();
 	private MClass owner_;
+	private MExpr return_;
 	
 	public MMethod(MClass owner, Node node) {
 		owner_ = owner;
@@ -26,10 +27,16 @@ public class MMethod extends MScope {
 			System.exit(1);
 		}
 		parseStatement(declare.f8, this);
+		return_ = new MExpr(declare.f10);
 	}
 
 	public String getName() {
 		return name_;
+	}
+	
+	public void addBlock(MScope block) {
+		System.out.println("MMethod " + name_ + " add an MBlock");
+		blocks_.add((MBlock) block);
 	}
 	
 	private void parseParam(NodeOptional param_list) {
