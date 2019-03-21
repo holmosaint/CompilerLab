@@ -11,7 +11,8 @@ public class MBlock extends MScope {
 	// 4->while-statement, 5->print-statement
 	private int which_ = 0;
 	private MExpr expression_ = null, index_expression_ = null;  // Expression in If or While statement
-	private MVar var_ = null;
+	private String var_name_ = null;
+    private MVar var_ = null;
 	
 	// Constructor
 	public MBlock(MScope father, NodeChoice node_choice) {
@@ -26,13 +27,13 @@ public class MBlock extends MScope {
 		case 1:
 			// AssignmentSatement
 			System.out.println(">>Assignment");
-			var_ = getVar(((AssignmentStatement) node_choice.choice).f0.f0.toString());
+			var_name_ = ((AssignmentStatement) node_choice.choice).f0.f0.toString();
 			expression_ = new MExpr(((AssignmentStatement) node_choice.choice).f2);
 			break;
 		case 2:
 			// ArrayAssignment
 			System.out.println(">>ArrayAssignment");
-			var_ = getVar(((ArrayAssignmentStatement) node_choice.choice).f0.f0.toString());
+			var_name_ = ((ArrayAssignmentStatement) node_choice.choice).f0.f0.toString();
 			index_expression_ = new MExpr(((ArrayAssignmentStatement) node_choice.choice).f2);
 			expression_ = new MExpr(((ArrayAssignmentStatement) node_choice.choice).f5);
 			break;
