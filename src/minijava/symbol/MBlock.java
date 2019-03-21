@@ -61,7 +61,7 @@ public class MBlock extends MScope {
 	}
 	
 	public void register() {
-		// emm??
+		
 	}
 	
 	public void addBlock(MScope block) {

@@ -57,6 +57,7 @@ public class SymbolTable {
 	public static void addMainClass(MClass c) {
 		if(main_class_ == null) {
 			main_class_ = c;
+			class_list_.add(c);
 			if(!file_name_.equals(c.getName() + ".java")) {
 				System.out.printf("The main class name is not identical to the file name! ");
 				System.out.printf("Get main class: %s while the file name is %s\n", c.getName(), file_name_);
@@ -118,7 +119,7 @@ public class SymbolTable {
 		case 3:
 			// Identifier (User-defined class)
 			System.out.println("Your declare class");
-			// TODO change the class_array to class_hash_map
+			// TODO: change the class_array to class_hash_map
 			// type = new MClass();
 		default:
 			System.out.println("Uknown variable type");

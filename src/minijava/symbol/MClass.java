@@ -7,6 +7,7 @@ import minijava.visitor.*;
 public class MClass {
 	// attributes
 	private String name_;
+	private String father_name_;
 	private MClass father_;
 	private int size_ = 0;
 	
@@ -49,10 +50,28 @@ public class MClass {
 			}
 		}
 	}
+
+	private MClass findFather(){
+		ArrayList<MClass> class_list = SymbolTable.getClassList();
+		for(MClass c : class_list) {
+			if(c.getFatherName() == this.father_name_) 
+				return c;
+		}
+		return null;
+	}
 	
 	public void registerFather() {
 		// check the extension loop
-		MClass father = getFather();
+		String father_name = getFatherName();
+		if(father_name == null) {
+			return;
+		}
+		this.father_ = findFather();
+		if(this.father_ == null) {
+			System.out.printf("The father [%s] of class [%s] is not defined!\n",
+								father_name, getName());
+			System.exit(1);
+		}
 		while(father != null) {
 			if(father.getName() == getName()) {
 				System.out.printf("Extension loop found in class: [%s] and [%s]\n",
@@ -101,7 +120,7 @@ public class MClass {
 		
 	}
 	
-	public void cuildScope() {
+	public void buildScope() {
 		
 	}
 	
@@ -111,6 +130,18 @@ public class MClass {
 
 	public int getSize() {
 		return 0;
+	}
+
+	public String getFatherName() {
+		return this.father_name_;
+	}
+
+	public void setFatherName(String father_name) {
+		this.father_name_ = father_name;
+	}
+
+	public void setFather(MClass father) {
+		this.father_ = father;
 	}
 
 	public MClass getFather() {
