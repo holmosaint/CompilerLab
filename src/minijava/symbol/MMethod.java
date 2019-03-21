@@ -99,4 +99,18 @@ public class MMethod extends MScope {
 		}
 	}
 
+	public MVar queryVar(String var_name) {
+		MVar v = vars_.containsKey(var_name);
+		return v;
+	}
+
+	public void register() {
+		for(MBlock b : this.blocks_) {
+			b.register();
+		}
+	}
+
+	public MClass getOwner() {
+		return this.owner_;
+	}
 }

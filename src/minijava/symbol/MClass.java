@@ -90,6 +90,7 @@ public class MClass {
 	}
 
 	public void registerMethod() {
+		// check for multiple definitions
 		for(HashMap.Entry<String, MMethod> m : methods_.entrySet()) {
 			MClass father = getFather();
 			while(father != null) {
@@ -121,6 +122,11 @@ public class MClass {
 		registerFather();
 		registerMethod();
 		registerVar();
+	}
+
+	public MVar queryVar(String var_name) {
+		MVar v = vars_.containsKey(var_name);
+		return v;
 	}
 	
 	public void checkMethods() {

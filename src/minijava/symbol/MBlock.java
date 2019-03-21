@@ -61,7 +61,37 @@ public class MBlock extends MScope {
 	}
 	
 	public void register() {
-		
+		if(var_ == null) 
+			return;
+
+		// check whether the variable in the block has been defined
+		MScope father = father_;
+		while(!(father instanceof MMethod)) {
+			father = father.getFather();
+		}
+		// get the method who contains the block
+		if(father == null) {
+			System.out.printf("The var [%s] is not defined!\n", var_.getName());
+			System.exit(1);
+		}
+		if(!father.queryVar(var_.getName())) {
+			MClass owner_class = father.getOwner();
+			while(owner_class != null) {
+				if(owner_class.queryVar(var_.getName()))
+					break;
+				owner_class = owner_class.getFather();
+			}
+			
+			if(owner_class == null) {
+				System.out.printf("The var [%s] is not defined!\n", var_.getName());
+				System.exit(1);
+			}
+		}
+
+
+		for(MBlock b : children_) {
+			b.register();
+		}
 	}
 	
 	public void addBlock(MScope block) {
@@ -74,5 +104,9 @@ public class MBlock extends MScope {
 	
 	private MVar getVar(String name) {
 		return null;
+	}
+
+	public MScope getFather() {
+		return father_;
 	}
 }
