@@ -1,9 +1,8 @@
 package minijava.symbol;
 
-import minijava.syntaxtree.Node;
+import minijava.syntaxtree.*;
 
 public class MArray extends MType {
-	
 	
 	public String getName() {
 		return "int[]";

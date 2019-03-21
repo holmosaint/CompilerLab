@@ -9,6 +9,7 @@ public class MMethod extends MScope {
 	private MType ret_type_;
 	private String name_;
 	private HashMap<String, MVar> params_ = new HashMap<String, MVar>();
+	private HashMap<Integer, String> index2name_ = new HashMap<Integer, String>();
 	private HashMap<String, MVar> vars_ = new HashMap<String, MVar>();
 	
 	private ArrayList<MBlock> blocks_ = new ArrayList<MBlock>();
@@ -29,6 +30,23 @@ public class MMethod extends MScope {
 		parseStatement(declare.f8, this);
 		return_ = new MExpr(declare.f10);
 	}
+	
+	// Typical constructor for MainClass
+	public MMethod(MClass owner, MainClass class_node) {
+		owner_ = owner;
+		name_ = "main";
+		
+		String param_name = class_node.f11.f0.toString();
+		index2name_.put(0, param_name);
+		params_.put(param_name, new MVar(param_name));
+		vars_.put(param_name, new MVar(param_name));
+		SymbolTable.parseVar(class_node.f14, vars_);
+		
+		parseStatement(class_node.f15, this);
+		
+		ret_type_ = null;
+		return_ = null;
+	}
 
 	public String getName() {
 		return name_;
@@ -46,20 +64,38 @@ public class MMethod extends MScope {
 		String param_name = param.f1.f0.toString();
 		if (params_.containsKey(param_name)) {
 			System.out.println("Duplicate declaration of parameter " + param_name);
+			System.exit(1);
 		} else {
 			params_.put(param_name, new MVar(param));
 		}
+		// WARNING! Something could go wrong here
+		if (vars_.containsKey(param_name)) {
+			System.exit(1);
+		} else {
+			vars_.put(param_name, new MVar(param));
+		}
+		index2name_.put(0, param_name);
+		
 		NodeListOptional rest_params_list = ((FormalParameterList) param_list.node).f1;
 		
 		// Parse the rest parameters
+		int i = 1;
 		for (Node node : rest_params_list.nodes) {
 			FormalParameterRest declare = (FormalParameterRest) node;
 			param_name = declare.f1.f1.f0.toString();
 			if (params_.containsKey(param_name)) {
 				System.out.println("Duplicate declaration of parameter " + param_name);
+				System.exit(1);
 			} else {
 				params_.put(param_name, new MVar(declare.f1));
 			}
+			if (vars_.containsKey(param_name)) {
+				System.exit(1);
+			} else {
+				vars_.put(param_name, new MVar(declare.f1));
+			}
+			index2name_.put(i, param_name);
+			i++;
 		}
 	}
 

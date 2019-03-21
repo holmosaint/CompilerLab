@@ -29,12 +29,19 @@ public class MClass {
 		} else if (node instanceof ClassExtendsDeclaration) {
 			ClassExtendsDeclaration class_node = (ClassExtendsDeclaration) node;
 			System.out.println("Declare: " + ((ClassExtendsDeclaration) node).f1.f0.toString());
-			
+			name_ = class_node.f1.f0.toString();
+			father_name_ = class_node.f3.f0.toString();
+			if (!SymbolTable.parseVar(class_node.f5, vars_)) {
+				System.out.println("in class " + name_);
+				System.exit(1);
+			}
+			parseMethod(class_node.f6);
 		} else if (node instanceof MainClass) {
 			System.out.println("Declare: " + ((MainClass) node).f1.f0.toString());
-			System.out.println("Are you kidding?");
 			MainClass class_node = (MainClass) node;
 			name_ = class_node.f1.f0.toString();
+			father_ = null;
+			methods_.put("main", new MMethod(this, (MainClass) node));
 		}
 		
 	}
@@ -72,13 +79,13 @@ public class MClass {
 								father_name, getName());
 			System.exit(1);
 		}
-		while(father != null) {
-			if(father.getName() == getName()) {
+		while(father_ != null) {
+			if(father_.getName() == getName()) {
 				System.out.printf("Extension loop found in class: [%s] and [%s]\n",
-									father.getName(), getName());
+									father_.getName(), getName());
 				System.exit(1);
 			}
-			father = father.getFather();
+			father_ = father_.getFather();
 		}
 	}
 
@@ -145,9 +152,9 @@ public class MClass {
 	}
 
 	public MClass getFather() {
-		return this.father_;
+		return father_;
 	}
-
+	
 	public boolean isAssignable(MType target, Node n) {
 		return false;
 	}

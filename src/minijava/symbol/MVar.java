@@ -20,6 +20,12 @@ public class MVar {
 			System.exit(1);
 		}
 	}
+	
+	// Typical constructor for MainClass's parameter
+	public MVar(String param_name_) {
+		type_ = null;
+		name_ = param_name_;
+	}
 
 	public String getName() {
 		return name_;
