@@ -76,7 +76,7 @@ public class MBlock extends MScope {
 		}
 		
 		if(father.queryVar(var_.getName()) == null) {
-			MClass owner_class = (MMethod)father.getOwner();
+			MClass owner_class = ((MMethod)father).getOwner();
 			while(owner_class != null) {
 				if(owner_class.queryVar(var_.getName()) != null)
 					break;
