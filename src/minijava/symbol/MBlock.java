@@ -62,7 +62,7 @@ public class MBlock extends MScope {
 	}
 	
 	public void register() {
-		if(var_ == null) 
+		if(var_name_ == null) 
 			return;
 
 		// check whether the variable in the block has been defined
@@ -72,20 +72,11 @@ public class MBlock extends MScope {
 			assert father!=null: "The father of a block is null!\n";
 		}
 		
-		if(father.queryVar(var_.getName()) == null) {
-			MClass owner_class = ((MMethod)father).getOwner();
-			while(owner_class != null) {
-				if(owner_class.queryVar(var_.getName()) != null)
-					break;
-				owner_class = owner_class.getFather();
-			}
-			
-			if(owner_class == null) {
-				System.out.printf("The var [%s] is not defined!\n", var_.getName());
-				System.exit(1);
-			}
+		var_ = queryVar(var_name_);
+		if(var_ == null) {
+			System.out.printf("The var [%s] is not defined!\n", var_.getName());
+			System.exit(1);
 		}
-
 
 		for(MBlock b : children_) {
 			b.register();
@@ -109,6 +100,9 @@ public class MBlock extends MScope {
 	}
 
 	public MVar queryVar(String var_name) {
-		return null;
+		MVar v = var_;
+		if(v == null && father_ != null)
+			v = father_.queryVar(var_name);
+		return v;
 	}
 }

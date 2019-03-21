@@ -101,7 +101,7 @@ public class MMethod extends MScope {
 
 	public MVar queryVar(String var_name) {
 		MVar v = vars_.get(var_name);
-		if(v == null)
+		if(v == null && owner_ != null)
 			v = owner_.queryVar(var_name);
 		return v;
 	}
