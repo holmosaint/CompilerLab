@@ -126,6 +126,8 @@ public class MClass {
 
 	public MVar queryVar(String var_name) {
 		MVar v = vars_.get(var_name);
+		if(v == null && father_ != null)
+			v = father_.queryVar(var_name);
 		return v;
 	}
 	

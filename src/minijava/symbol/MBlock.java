@@ -68,9 +68,7 @@ public class MBlock extends MScope {
 		MScope father = father_;
 		while(!(father instanceof MMethod)) {
 			father = father.getFather();
-			if(father == null) {
-				assert("The father of the scope is null!\n");
-			}
+			assert father!=null: "The father of a block is null!\n";
 		}
 		
 		if(father.queryVar(var_.getName()) == null) {

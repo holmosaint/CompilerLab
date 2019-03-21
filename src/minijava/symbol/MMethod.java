@@ -101,6 +101,8 @@ public class MMethod extends MScope {
 
 	public MVar queryVar(String var_name) {
 		MVar v = vars_.get(var_name);
+		if(v == null)
+			v = owner_.queryVar(var_name);
 		return v;
 	}
 
@@ -115,6 +117,6 @@ public class MMethod extends MScope {
 	}
 
 	public MScope getFather() {
-		return owner_;
+		return null;
 	}
 }
