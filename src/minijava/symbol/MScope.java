@@ -4,6 +4,8 @@ import minijava.syntaxtree.*;
 
 public abstract class MScope {
 	public abstract void addBlock(MScope scope);
+	public abstract MScope getFather();
+	public abstract MVar queryVar(String var_name);
 	public static MBlock getBlock(NodeChoice choice, MScope father) {
 		MBlock block = null;
 

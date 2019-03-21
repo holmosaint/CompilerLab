@@ -125,7 +125,7 @@ public class MClass {
 	}
 
 	public MVar queryVar(String var_name) {
-		MVar v = vars_.containsKey(var_name);
+		MVar v = vars_.get(var_name);
 		return v;
 	}
 	

@@ -100,7 +100,7 @@ public class MMethod extends MScope {
 	}
 
 	public MVar queryVar(String var_name) {
-		MVar v = vars_.containsKey(var_name);
+		MVar v = vars_.get(var_name);
 		return v;
 	}
 
@@ -112,5 +112,9 @@ public class MMethod extends MScope {
 
 	public MClass getOwner() {
 		return this.owner_;
+	}
+
+	public MScope getFather() {
+		return null;
 	}
 }
