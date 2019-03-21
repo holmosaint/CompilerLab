@@ -115,6 +115,6 @@ public class MMethod extends MScope {
 	}
 
 	public MScope getFather() {
-		return null;
+		return owner_;
 	}
 }

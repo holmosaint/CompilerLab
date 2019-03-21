@@ -74,8 +74,9 @@ public class MBlock extends MScope {
 			System.out.printf("The var [%s] is not defined!\n", var_.getName());
 			System.exit(1);
 		}
+		
 		if(father.queryVar(var_.getName()) == null) {
-			MClass owner_class = father.getOwner();
+			MClass owner_class = (MMethod)father.getOwner();
 			while(owner_class != null) {
 				if(owner_class.queryVar(var_.getName()) != null)
 					break;
@@ -110,7 +111,7 @@ public class MBlock extends MScope {
 		return father_;
 	}
 
-	public MVar queryVar() {
+	public MVar queryVar(String var_name) {
 		return null;
 	}
 }
