@@ -68,11 +68,9 @@ public class MBlock extends MScope {
 		MScope father = father_;
 		while(!(father instanceof MMethod)) {
 			father = father.getFather();
-		}
-		// get the method who contains the block
-		if(father == null) {
-			System.out.printf("The var [%s] is not defined!\n", var_.getName());
-			System.exit(1);
+			if(father == null) {
+				assert("The father of the scope is null!\n");
+			}
 		}
 		
 		if(father.queryVar(var_.getName()) == null) {
