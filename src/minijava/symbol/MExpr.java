@@ -16,14 +16,80 @@ public class MExpr {
 	// 8->PrimaryExpression
 	private int which_;
 	private String op_ = null;
-	private MPrimExpr prim_expr = null, prim_expr2 = null;
+	private MPrimExpr prim_expr_ = null, prim_expr2_ = null;
 	private ArrayList<MExpr> exprs_ = null;
 	private String var_name_ = null;
-	private MVar var_;
-	public MExpr() {
-		
-	}
+	private MVar var_ = null;
+	// TODO: type_ should be assigned when checking
+	private MType type_ = null;
+	
 	public MExpr(Expression expr) {
+		which_ = expr.f0.which;
 		
+		switch (which_) {
+		case 0:
+			// AndExpression
+			op_ = "&&";
+			prim_expr_ = new MPrimExpr(((AndExpression) expr.f0.choice).f0);
+			prim_expr2_ = new MPrimExpr(((AndExpression) expr.f0.choice).f2);
+			break;
+		case 1:
+			// CompareExpression
+			op_ = "<";
+			prim_expr_ = new MPrimExpr(((CompareExpression) expr.f0.choice).f0);
+			prim_expr2_ = new MPrimExpr(((CompareExpression) expr.f0.choice).f2);
+			break;
+		case 2:
+			// PlusExpression
+			op_ = "+";
+			prim_expr_ = new MPrimExpr(((PlusExpression) expr.f0.choice).f0);
+			prim_expr2_ = new MPrimExpr((((PlusExpression) expr.f0.choice)).f2);
+			break;
+		case 3:
+			// MinusExpression
+			op_ = "-";
+			prim_expr_ = new MPrimExpr(((MinusExpression) expr.f0.choice).f0);
+			prim_expr2_ = new MPrimExpr(((MinusExpression) expr.f0.choice).f2);
+			break;
+		case 4:
+			// TimesExpression
+			op_ = "*";
+			prim_expr_ = new MPrimExpr(((TimesExpression) expr.f0.choice).f0);
+			prim_expr2_ = new MPrimExpr(((TimesExpression) expr.f0.choice).f2);
+			break;
+		case 5:
+			// ArrayLookup
+			op_ = "[]";
+			prim_expr_ = new MPrimExpr(((ArrayLookup) expr.f0.choice).f0);
+			prim_expr_ = new MPrimExpr(((ArrayLookup) expr.f0.choice).f2);
+			break;
+		case 6:
+			// ArrayLength
+			op_ = ".length";
+			prim_expr_ = new MPrimExpr(((ArrayLength) expr.f0.choice).f0);
+			break;
+		case 7:
+			// MessageSend
+			op_ = "message_send";
+			prim_expr_ = new MPrimExpr(((MessageSend) expr.f0.choice).f0);
+			var_name_ = ((MessageSend) expr.f0.choice).f2.f0.toString();
+			if (((MessageSend) expr.f0.choice).f4.present()) {
+				ExpressionList expr_list = ((ExpressionList) ((MessageSend) expr.f0.choice).f4.node);
+				exprs_ = new ArrayList<MExpr>();
+				exprs_.add(new MExpr(expr_list.f0));
+				for (Node node : expr_list.f1.nodes) {
+					ExpressionRest declare = (ExpressionRest) node;
+					exprs_.add(new MExpr(declare.f1));
+				}
+			}
+			break;
+		case 8:
+			// PrimaryExpression
+			op_ = "";
+			prim_expr_ = new MPrimExpr((PrimaryExpression) expr.f0.choice);
+			break;
+		default:
+			break;
+		}
 	}
 }
