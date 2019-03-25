@@ -21,6 +21,10 @@ public class MMethod extends MScope {
 		MethodDeclaration declare = (MethodDeclaration) node;
 		ret_type_ = SymbolTable.getType(declare.f1.f0.which);
 		name_ = declare.f2.f0.toString();
+		if (SymbolTable.isReserved(name_)) {
+			System.exit(1);
+		}
+		
 		System.out.println("You declare method " + name_);
 		parseParam(declare.f4);
 		if (!SymbolTable.parseVar(declare.f7, vars_)) {
@@ -28,7 +32,7 @@ public class MMethod extends MScope {
 			System.exit(1);
 		}
 		parseStatement(declare.f8, this);
-		return_ = new MExpr(declare.f10);
+		return_ = new MExpr(declare.f10, this);
 	}
 	
 	// Typical constructor for MainClass

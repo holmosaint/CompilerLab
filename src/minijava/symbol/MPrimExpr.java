@@ -12,6 +12,7 @@ public class MPrimExpr {
 	// 6->AllocationExpression
 	// 7->NotExpression
 	// 8->BracketExpression
+	private MScope father_;
 	private int which_;
 	private String literal_ = null;
 	private String var_name_ = null;
@@ -19,8 +20,10 @@ public class MPrimExpr {
 	private MExpr expr_ = null;
 	private MType type_ = null;
 	
-	public MPrimExpr(PrimaryExpression prim_expr) {
+	public MPrimExpr(PrimaryExpression prim_expr, MScope father) {
+		father_ = father;
 		which_ = prim_expr.f0.which;
+		
 		switch (which_) {
 		case 0:
 			// IntegerLiteral
@@ -44,7 +47,7 @@ public class MPrimExpr {
 			break;
 		case 5:
 			// ArrayAllocationExpression
-			expr_ = new MExpr(((ArrayAllocationExpression) prim_expr.f0.choice).f3);
+			expr_ = new MExpr(((ArrayAllocationExpression) prim_expr.f0.choice).f3, father_);
 			break;
 		case 6:
 			// AllocationExpression
@@ -52,11 +55,11 @@ public class MPrimExpr {
 			break;
 		case 7:
 			// NotExpression
-			expr_ = new MExpr(((NotExpression) prim_expr.f0.choice).f1);
+			expr_ = new MExpr(((NotExpression) prim_expr.f0.choice).f1, father_);
 			break;
 		case 8:
 			// BracketExpression
-			expr_ = new MExpr(((BracketExpression) prim_expr.f0.choice).f1);
+			expr_ = new MExpr(((BracketExpression) prim_expr.f0.choice).f1, father_);
 			break;
 		default:
 			break;

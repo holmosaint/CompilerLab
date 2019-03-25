@@ -17,10 +17,44 @@ public class SymbolTable {
 	// list of MClass
 	private static MClass main_class_ = null; // main class
 	private static ArrayList<MClass> class_list_ = new ArrayList<MClass>(); // class list
-		
+
 	// unique MType
 	private static boolean first_time_ = true;
 
+	// reserved words
+	private static HashSet<String> reserv_words = null;
+	
+	public static boolean isReserved(String name) {
+		if (reserv_words == null) {
+			reserv_words = new HashSet<String>();
+			reserv_words.add("class");
+			reserv_words.add("public");
+			reserv_words.add("static");
+			reserv_words.add("void");
+			reserv_words.add("main");
+			reserv_words.add("String");
+			reserv_words.add("extends");
+			reserv_words.add("return");
+			reserv_words.add("int");
+			reserv_words.add("boolean");
+			reserv_words.add("if");
+			reserv_words.add("while");
+			reserv_words.add("System");
+			reserv_words.add("out");
+			reserv_words.add("println");
+			reserv_words.add("true");
+			reserv_words.add("false");
+			reserv_words.add("this");
+			reserv_words.add("new");
+		}
+		if (reserv_words.contains(name)) {
+			System.out.println(name + " is a reserverd word!");
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public static boolean parse(final File file) {
 		// 0.Initialize the MRoot
 		file_name_ = file.getName();
@@ -142,5 +176,4 @@ public class SymbolTable {
 		return true;
 	}
 	
-
 }
