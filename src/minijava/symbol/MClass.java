@@ -72,7 +72,7 @@ public class MClass extends MType {
 	private MClass findFather(){
 		ArrayList<MClass> class_list = SymbolTable.getClassList();
 		for(MClass c : class_list) {
-			if(c.getFatherName() == this.father_name_) 
+			if(c.getName().equals(father_name_)) 
 				return c;
 		}
 		return null;
@@ -81,22 +81,25 @@ public class MClass extends MType {
 	public void registerFather() {
 		// check the extension loop
 		String father_name = getFatherName();
+		MClass father;
 		if(father_name == null) {
 			return;
 		}
-		this.father_ = findFather();
-		if(this.father_ == null) {
+		father_ = findFather();
+		if(father_ == null) {
 			System.out.printf("The father [%s] of class [%s] is not defined!\n",
 								father_name, getName());
 			System.exit(1);
 		}
-		while(father_ != null) {
-			if(father_.getName() == getName()) {
+		
+		father = father_;
+		while(father != null) {
+			if(father.getName().equals(getName())) {
 				System.out.printf("Extension loop found in class: [%s] and [%s]\n",
 									father_.getName(), getName());
 				System.exit(1);
 			}
-			father_ = father_.getFather();
+			father = father.getFather();
 		}
 	}
 

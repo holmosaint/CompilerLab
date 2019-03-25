@@ -4,7 +4,7 @@ class Test{
     }
 }
 
-class Fac {
+class Fac  extends Test {
     int[] b;
     public int ComputeFac(int num, int key){
         int num_aux ;
@@ -16,4 +16,10 @@ class Fac {
             num_aux = num * (this.ComputeFac(num-1)) ;
         return num_aux  + 1;
     }
+}
+
+class Fac3 extends Fac2 {
+}
+
+class Fac2 extends Fac {
 }
