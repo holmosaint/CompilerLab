@@ -79,7 +79,7 @@ public class MPrimExpr {
 			break;
 		case 8:
 			// BracketExpression
-			expr_ = new MExpr(((NotExpression) prim_expr.f0.choice).f1, father_);
+			expr_ = new MExpr(((BracketExpression) prim_expr.f0.choice).f1, father_);
 			type_ = expr_.getType();
 			break;
 		default:
@@ -157,6 +157,14 @@ public class MPrimExpr {
 	}
 
 	public MType getType() {
-		return this.type_;
+		return type_;
+	}
+	
+	public int getWhich() {
+		return which_;
+	}
+	
+	public MVar getVar() {
+		return var_;
 	}
 }

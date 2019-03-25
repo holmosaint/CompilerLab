@@ -4,11 +4,12 @@ class Test{
     }
 }
 
-class Fac {
+class Fac  {
     int[] b;
     public int ComputeFac(int num, int key){
         int num_aux ;
         {
+            System.out.println(b.call());
         }
         if (num < 1)
             num_aux = 1 ;
