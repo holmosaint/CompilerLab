@@ -78,9 +78,58 @@ public class MBlock extends MScope {
 			System.exit(1);
 		}
 
+		// check each expression
+		registerStatement();
+
+		// check the children blocks
 		for(MBlock b : children_) {
 			b.register();
 		}
+	}
+
+	void registerStatement() {
+		if(expression_ == null)
+			return;
+		String errorMsg;
+		switch (which_) {
+			case 0:
+				// Block
+				return;
+			case 1:
+				// AssignmentSatement
+				System.out.println(">>Assignment");
+				var_name_ = ((AssignmentStatement) node_choice.choice).f0.f0.toString();
+				expression_ = new MExpr(((AssignmentStatement) node_choice.choice).f2);
+				break;
+			case 2:
+				// ArrayAssignment
+				System.out.println(">>ArrayAssignment");
+				var_name_ = ((ArrayAssignmentStatement) node_choice.choice).f0.f0.toString();
+				index_expression_ = new MExpr(((ArrayAssignmentStatement) node_choice.choice).f2);
+				expression_ = new MExpr(((ArrayAssignmentStatement) node_choice.choice).f5);
+				break;
+			case 3:
+				// IfStatement
+				if(expression_.getType() instanceof MBool)
+					return;
+				errorMsg = "The expression in the if statement is not a boolean type!";
+				break;
+			case 4:
+				// WhileStatement
+				if(expression_.getType() instanceof MBool)
+					return;
+				errorMsg = "The expression in the while statement is not a boolean type!";
+				break;
+			case 5:
+				// PrintStatement
+				if(expression_.getType() instanceof MInt)
+					return;
+				errorMsg = "The expression in the print statement is not a int type!";
+				break;
+			default: break;
+		}
+		System.out.println(errorMsg);
+		System.exit(1);
 	}
 	
 	public void addBlock(MScope block) {

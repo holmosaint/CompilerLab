@@ -19,6 +19,7 @@ public abstract class MType {
 		}
 		return true;
 	}
+	
 	public boolean Register(String new_type) {
 		if (Query(new_type)) {
 			return false;
