@@ -14,6 +14,7 @@ public class MMethod extends MScope {
 	
 	private ArrayList<MBlock> blocks_ = new ArrayList<MBlock>();
 	private MClass owner_;
+	private MScope father_ = null;
 	private MExpr return_;
 	
 	public MMethod(MClass owner, Node node) {

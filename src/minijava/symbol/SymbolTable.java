@@ -16,7 +16,7 @@ public class SymbolTable {
 	private static File file_;
 	// list of MClass
 	private static MClass main_class_ = null; // main class
-	private static ArrayList<MClass> class_list_ = new ArrayList<MClass>(); // class list
+	private static HashMap<MClass> class_list_ = new HashMap<MClass>(); // class list
 
 	// unique MType
 	private static boolean first_time_ = true;
@@ -112,7 +112,7 @@ public class SymbolTable {
 				System.exit(1);
 			}
 		}
-		class_list_.add(c);
+		class_list_.put(c);
 	}
 	
 	public static void buildClass() {
@@ -174,6 +174,10 @@ public class SymbolTable {
 			}
 		}
 		return true;
+	}
+
+	public static MClass queryClass(String className) {
+		return class_list_.get(className);
 	}
 	
 }

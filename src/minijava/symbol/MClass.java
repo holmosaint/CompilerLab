@@ -72,7 +72,7 @@ public class MClass extends MType {
 	private MClass findFather(){
 		ArrayList<MClass> class_list = SymbolTable.getClassList();
 		for(MClass c : class_list) {
-			if(c.getFatherName() == this.father_name_) 
+			if(c.getName().equals(this.father_name)) 
 				return c;
 		}
 		return null;

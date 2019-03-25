@@ -1,5 +1,7 @@
 package minijava.symbol;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ErrorMsg;
+
 import minijava.syntaxtree.*;
 
 public class MPrimExpr {
@@ -43,13 +45,20 @@ public class MPrimExpr {
 		case 3:
 			// Identifier
 			var_name_ = ((Identifier) prim_expr.f0.choice).f0.toString();
-			
+			errorMsg = findIdentifierType();
+			if(errorMsg == null)
+				return;
 			break;
 		case 4:
 			// ThisExpression
 			literal_ = "this";
-
-			break;
+			MScope fatherScope = father_;
+			while(fatherScope != null)
+				fatherScope = fatherScope.getFather();
+			assert fatherScope instanceof MMethod;
+			MClass fatherClass = fatherScope.getOwner();
+			type_ = fatherClass;
+			return;
 		case 5:
 			// ArrayAllocationExpression
 			expr_ = new MExpr(((ArrayAllocationExpression) prim_expr.f0.choice).f3, father_);
@@ -58,7 +67,10 @@ public class MPrimExpr {
 		case 6:
 			// AllocationExpression
 			literal_ = ((AllocationExpression) prim_expr.f0.choice).f0.toString();
-
+			type_ = SymbolTable.queryClass(literal);
+			if(type != null)
+				return;
+			errorMsg = "The identifier [" + literal_ + "] in an allocation expression is not defined";
 			break;
 		case 7:
 			// NotExpression
@@ -75,7 +87,31 @@ public class MPrimExpr {
 		}
 	}
 
-	void register() {
+	private String findIdentifierType() {
+		MScope tmp_father = father_;
+		while(tmp_father != null) {
+			MVar v = tmp_father.queryVar(var_name);
+			if(v != null) {
+				type_ = v.getType();
+				return null;
+			}
+			tmp_father = tmp_father.getFather();
+		}
+		assert tmp_father instanceof MMethod;
+		MClass c = tmp_father.getOwner();
+		while(c != null) {
+			MVar v = c.queryVar(var_name);
+			if(v != null) {
+				type_ = v.getType();
+				return null;
+			}
+			c = c.getFather();
+		}
+		String errorMsg = "Variable [" + var_name_ + "] in primary expression not found!";
+		return errorMsg;
+	}
+
+	public void register() {
 		String errorMsg = "";
 		switch (which_) {
 			case 0:
