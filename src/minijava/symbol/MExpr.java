@@ -21,6 +21,7 @@ public class MExpr {
 	private ArrayList<MExpr> exprs_ = null;
 	private String var_name_ = null;
 	private MVar var_ = null;
+	private String method_name_ = null;
 	// TODO: type_ should be assigned when checking
 	private MType type_ = null;
 	
@@ -34,70 +35,61 @@ public class MExpr {
 			op_ = "&&";
 			prim_expr_ = new MPrimExpr(((AndExpression) expr.f0.choice).f0, father_);
 			prim_expr2_ = new MPrimExpr(((AndExpression) expr.f0.choice).f2, father_);
-			type_ = new MBool();
 			break;
 		case 1:
 			// CompareExpression
 			op_ = "<";
 			prim_expr_ = new MPrimExpr(((CompareExpression) expr.f0.choice).f0, father_);
 			prim_expr2_ = new MPrimExpr(((CompareExpression) expr.f0.choice).f2, father_);
-			type_ = new MBool();
 			break;
 		case 2:
 			// PlusExpression
 			op_ = "+";
 			prim_expr_ = new MPrimExpr(((PlusExpression) expr.f0.choice).f0, father_);
 			prim_expr2_ = new MPrimExpr((((PlusExpression) expr.f0.choice)).f2, father_);
-			type_ = new MInt();
 			break;
 		case 3:
 			// MinusExpression
 			op_ = "-";
 			prim_expr_ = new MPrimExpr(((MinusExpression) expr.f0.choice).f0, father_);
 			prim_expr2_ = new MPrimExpr(((MinusExpression) expr.f0.choice).f2, father_);
-			type_ = new MInt();
 			break;
 		case 4:
 			// TimesExpression
 			op_ = "*";
 			prim_expr_ = new MPrimExpr(((TimesExpression) expr.f0.choice).f0, father_);
 			prim_expr2_ = new MPrimExpr(((TimesExpression) expr.f0.choice).f2, father_);
-			type_ = new MInt();
 			break;
 		case 5:
 			// ArrayLookup
 			op_ = "[]";
 			prim_expr_ = new MPrimExpr(((ArrayLookup) expr.f0.choice).f0, father_);
 			prim_expr_ = new MPrimExpr(((ArrayLookup) expr.f0.choice).f2, father_);
-			type_ = new MInt();
 			break;
 		case 6:
 			// ArrayLength
 			op_ = ".length";
 			prim_expr_ = new MPrimExpr(((ArrayLength) expr.f0.choice).f0, father_);
-			type_ = new MInt();
 			break;
 		case 7:
 			// MessageSend
 			op_ = "message_send";
 			prim_expr_ = new MPrimExpr(((MessageSend) expr.f0.choice).f0, father_);
-			var_name_ = ((MessageSend) expr.f0.choice).f2.f0.toString();
+			method_name_ = ((MessageSend) expr.f0.choice).f2.f0.toString();
+			exprs_ = new ArrayList<MExpr>();
 			if (((MessageSend) expr.f0.choice).f4.present()) {
 				ExpressionList expr_list = ((ExpressionList) ((MessageSend) expr.f0.choice).f4.node);
-				exprs_ = new ArrayList<MExpr>();
 				exprs_.add(new MExpr(expr_list.f0, father_));
 				for (Node node : expr_list.f1.nodes) {
 					ExpressionRest declare = (ExpressionRest) node;
 					exprs_.add(new MExpr(declare.f1, father_));
 				}
 			}
-			// TODO: Don't know what the expression is...
 			break;
 		case 8:
 			// PrimaryExpression
 			op_ = "";
 			prim_expr_ = new MPrimExpr((PrimaryExpression) expr.f0.choice, father_);
-			type_ = prim_expr_.getType();
 			break;
 		default:
 			break;
@@ -108,37 +100,34 @@ public class MExpr {
 		String errorMsg = "";
 		switch (which_) {
 			case 0:
-				// AndExpression
+			case 1:
+				// And(Compare)Expression
+				type_ = new MBool();
+				prim_expr_.register();
+				prim_expr2_.register();
+				
 				if((prim_expr_.getType() instanceof MBool) && (prim_expr2_.getType() instanceof MBool))
 					return;
-				errorMsg = "The two part of the And Expression are not all boolean type!";
-				break;
-			case 1:
-				// CompareExpression
-				if((prim_expr_.getType() instanceof MInt) && (prim_expr2_.getType() instanceof MInt))
-					return;
-				errorMsg = "The two part of the Compare Expression are not all int type!";
+				errorMsg = "The two part of the Expression are not all boolean type!";
 				break;
 			case 2:
-				// PlusExpression
-				if((prim_expr_.getType() instanceof MInt) && (prim_expr2_.getType() instanceof MInt))
-					return;
-				errorMsg = "The two part of the Plus Expression are not all int type!";
-				break;
 			case 3:
-				// MinusExpression
-				if((prim_expr_.getType() instanceof MInt) && (prim_expr2_.getType() instanceof MInt))
-					return;
-				errorMsg = "The two part of the Minus Expression are not all int type!";
-				break;
 			case 4:
-				// TimesExpression
+				// Plus(Minus|Times)Expression
+				type_ = new MInt();
+				prim_expr_.register();
+				prim_expr2_.register();
+				
 				if((prim_expr_.getType() instanceof MInt) && (prim_expr2_.getType() instanceof MInt))
 					return;
-				errorMsg = "The two part of the Times Expression are not all int type!";
+				errorMsg = "The two part of the Expression are not all int type!";
 				break;
 			case 5:
 				// ArrayLookup
+				type_ = new MInt();
+				prim_expr_.register();
+				prim_expr2_.register();
+				
 				if((prim_expr_.getType() instanceof MArray) && (prim_expr2_.getType() instanceof MInt))
 					return;
 				errorMsg = "The first part of the Array Lookup Expression is not a array type or " + 
@@ -146,18 +135,26 @@ public class MExpr {
 				break;
 			case 6:
 				// ArrayLength
+				type_ = new MInt();
+				prim_expr_.register();
+				
 				if((prim_expr_.getType() instanceof MArray))
 					return;
 				errorMsg = "The part of the Plus Expression is not a array type!";
 				break;
 			case 7:
-				// MessageSend, use of method
-				if (prim_expr_.getWhich() != 3) {
-					System.out.println("Primaray expression in MessageSend should be a var");
-					System.exit(1);
+				// MessageSend, using of method
+				type_ = new MBool();
+				prim_expr_.register();
+				for (MExpr expr : exprs_) {
+					expr.register();
 				}
+				
+				if (prim_expr_.getType() instanceof MVar)
 				MVar var = prim_expr_.getVar();
+				assert var != null : "There should be a variable in MessageSend";
 				// Check if "var" is a class instance
+				System.out.println("var.name = " + var.getName() + " var.type_ = " + var.getType().getName());
 				if (!(var.getType() instanceof MClass)) {
 					System.out.println("The var in MessageSend should be an instance of class");
 					System.exit(1);
@@ -167,6 +164,7 @@ public class MExpr {
 			case 8:
 				// PrimaryExpression
 				prim_expr_.register();
+				type_ = prim_expr_.getType();
 				return;
 			default:
 				break;

@@ -23,63 +23,45 @@ public class MPrimExpr {
 	public MPrimExpr(PrimaryExpression prim_expr, MScope father) {
 		father_ = father;
 		which_ = prim_expr.f0.which;
-		String errorMsg = "";
 		
 		switch (which_) {
 		case 0:
 			// IntegerLiteral
 			literal_ = ((IntegerLiteral) prim_expr.f0.choice).f0.toString();
-			type_ = new MInt();
 			break;
 		case 1:
 			// TrueLiteral
 			literal_ = "true";
-			type_ = new MBool();
 			break;
 		case 2:
 			// FalseLiteral
 			literal_ = "false";
-			type_ = new MBool();
 			break;
 		case 3:
 			// Identifier
 			var_name_ = ((Identifier) prim_expr.f0.choice).f0.toString();
-			errorMsg = findIdentifierType();
-			if(errorMsg == null)
-				return;
 			break;
 		case 4:
 			// ThisExpression
 			literal_ = "this";
-			MScope fatherScope = father_;
-			while(fatherScope != null)
-				fatherScope = fatherScope.getFather();
-			assert fatherScope instanceof MMethod;
-			MClass fatherClass = ((MMethod)fatherScope).getOwner();
-			type_ = fatherClass;
-			return;
+			var_name_ = "this";
+			break;
 		case 5:
 			// ArrayAllocationExpression
 			expr_ = new MExpr(((ArrayAllocationExpression) prim_expr.f0.choice).f3, father_);
-			type_ = new MArray();
 			break;
 		case 6:
 			// AllocationExpression
-			literal_ = ((AllocationExpression) prim_expr.f0.choice).f0.toString();
-			type_ = SymbolTable.queryClass(literal_);
-			if(type_ != null)
-				return;
-			errorMsg = "The identifier [" + literal_ + "] in an allocation expression is not defined";
+			literal_ = ((AllocationExpression) prim_expr.f0.choice).f1.f0.toString();
+			var_name_ = "";
 			break;
 		case 7:
 			// NotExpression
 			expr_ = new MExpr(((NotExpression) prim_expr.f0.choice).f1, father_);
-			type_ = new MBool();
 			break;
 		case 8:
 			// BracketExpression
 			expr_ = new MExpr(((BracketExpression) prim_expr.f0.choice).f1, father_);
-			type_ = expr_.getType();
 			break;
 		default:
 			break;
@@ -115,38 +97,61 @@ public class MPrimExpr {
 		switch (which_) {
 			case 0:
 				// IntegerLiteral
+				type_ = new MInt();
 				return;
 			case 1:
 				// TrueLiteral
+				type_ = new MBool();
 				return;
 			case 2:
 				// FalseLiteral
+				type_ = new MBool();
 				return;
 			case 3:
 				// Identifier
-				// TODO: find whether the Identifier has been defined.
+				// TODO: find whether the Identifier has been allocated
+				errorMsg = findIdentifierType();
+				if(errorMsg == null)
+					return;
 				return;
 			case 4:
 				// ThisExpression
+				MScope fatherScope = father_;
+				while(fatherScope.getFather() != null)
+					fatherScope = fatherScope.getFather();
+				assert fatherScope instanceof MMethod;
+				MClass fatherClass = ((MMethod)fatherScope).getOwner();
+				type_ = fatherClass;
+				var_ = new MVar(fatherClass);
 				return;
 			case 5:
 				// ArrayAllocationExpression
+				type_ = new MArray();
+				expr_.register();
 				if(expr_.getType() instanceof MInt)
 					return;
 				errorMsg = "The part in the array allocation expression is not an int type!";
 				break;
 			case 6:
 				// AllocationExpression
-				// TODOs
+				type_ = SymbolTable.queryClass(literal_);
+				var_ = new MVar(type_);
+				if(type_ != null)
+					return;
+				errorMsg = "The identifier [" + literal_ + "] in an allocation expression is not defined";
 				break;
 			case 7:
 				// NotExpression
+				type_ = new MBool();
+				expr_.register();
 				if(expr_.getType() instanceof MBool)
 					return;
 				errorMsg = "The part in the not expression is not a boolean type";
 				break;
 			case 8:
 				// BracketExpression
+				expr_.register();
+				type_ = expr_.getType();
 				return;
 			default:
 				break;

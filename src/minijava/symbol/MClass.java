@@ -135,10 +135,25 @@ public class MClass extends MType {
 	}
 
 	public MVar queryVar(String var_name) {
-		MVar v = vars_.get(var_name);
-		if(v == null && father_ != null)
-			v = father_.queryVar(var_name);
-		return v;
+		if (vars_.containsKey(var_name)) {
+			return vars_.get(var_name);
+		} else {
+			if (father_ != null)
+				return father_.queryVar(var_name);
+			else
+				return null;
+		}
+	}
+	
+	public MMethod queryMethod(String method_name) {
+		if (methods_.containsKey(method_name)) {
+			return methods_.get(method_name);
+		} else {
+			if (father_ != null)
+				return father_.queryMethod(method_name);
+			else
+				return null;
+		}
 	}
 	
 	public void checkMethods() {

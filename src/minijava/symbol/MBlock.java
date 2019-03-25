@@ -6,9 +6,14 @@ import minijava.syntaxtree.*;
 public class MBlock extends MScope {
 	// attributes
 	private MScope father_ = null;
+	private int divide = 0;
 	private ArrayList<MBlock> children_ = null;
-	// 0->block, 1->assignment-statement, 2->arrayassignment-statement, 3->if-statement
-	// 4->while-statement, 5->print-statement
+	// 0->block
+	// 1->assignment statement
+	// 2->array assignment statement
+	// 3->if statement
+	// 4->while statement
+	// 5->print statement
 	private int which_ = 0;
 	private MExpr expression_ = null, index_expression_ = null;  // Expression in If or While statement
 	private String var_name_ = null;
@@ -42,6 +47,7 @@ public class MBlock extends MScope {
 			System.out.println(">>IfStatement");
 			expression_ = new MExpr(((IfStatement) node_choice.choice).f2, this);
 			parseStatement(((IfStatement) node_choice.choice).f4, this);
+			divide = children_.size();  // The variable "divide" is prepared for the further task
 			parseStatement(((IfStatement) node_choice.choice).f6, this);
 			break;
 		case 4:
@@ -62,9 +68,6 @@ public class MBlock extends MScope {
 	}
 	
 	public void register() {
-		if(var_name_ == null) 
-			return;
-
 		// check whether the variable in the block has been defined
 		MScope father = father_;
 		while(!(father instanceof MMethod)) {
@@ -72,21 +75,56 @@ public class MBlock extends MScope {
 			assert father!=null: "The father of a block is null!\n";
 		}
 		
-		var_ = queryVar(var_name_);
-		if(var_ == null) {
-			System.out.printf("The var [%s] is not defined!\n", var_.getName());
-			System.exit(1);
-		}
-
-		// check each expression
-		registerStatement();
-
-		// check the children blocks
-		for(MBlock b : children_) {
-			b.register();
+		switch (which_) {
+		case 0:
+			// Block
+			for (MBlock child : children_) {
+				child.register();
+			}
+			break;
+		case 1:
+			// AssignmentSatement
+			var_ = queryVar(var_name_);
+			if(var_ == null) {
+				System.out.printf("The var [%s] is not defined!\n", var_.getName());
+				System.exit(1);
+			}
+			expression_.register();
+			break;
+		case 2:
+			// ArrayAssignment
+			var_ = queryVar(var_name_);
+			if(var_ == null) {
+				System.out.printf("The var [%s] is not defined!\n", var_.getName());
+				System.exit(1);
+			}
+			index_expression_.register();
+			expression_.register();
+			break;
+		case 3:
+			// IfStatement
+			expression_.register();
+			for (MBlock child : children_) {
+				child.register();
+			}
+			break;
+		case 4:
+			// WhileStatement
+			expression_.register();
+			for (MBlock child : children_) {
+				child.register();
+			}
+			break;
+		case 5:
+			// PrintStatement
+			expression_.register();
+			break;
+		default:
+			break;
 		}
 	}
 
+	/*
 	void registerStatement() {
 		if(expression_ == null)
 			return;
@@ -132,6 +170,7 @@ public class MBlock extends MScope {
 		System.out.println(errorMsg);
 		System.exit(1);
 	}
+	*/
 	
 	public void addBlock(MScope block) {
 		if (children_ == null) {
@@ -141,18 +180,11 @@ public class MBlock extends MScope {
 		children_.add((MBlock)block);
 	}
 	
-	private MVar getVar(String name) {
-		return null;
-	}
-
 	public MScope getFather() {
 		return father_;
 	}
 
 	public MVar queryVar(String var_name) {
-		MVar v = var_;
-		if(v == null && father_ != null)
-			v = father_.queryVar(var_name);
-		return v;
+		return father_.queryVar(var_name);
 	}
 }

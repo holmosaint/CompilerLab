@@ -7,6 +7,11 @@ public class MVar {
 	private String name_;
 	private boolean allocated_ = false;
 	
+	public MVar(MType type) {
+		type_ = type;
+		name_ = "";
+	}
+	
 	public MVar(Node node) {
 		if (node instanceof VarDeclaration) {
 			VarDeclaration declare = (VarDeclaration) node;

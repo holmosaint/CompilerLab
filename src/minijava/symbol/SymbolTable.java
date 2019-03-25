@@ -110,12 +110,12 @@ public class SymbolTable {
 			System.out.printf("Get duplicate definition of class: %s\n", c.getName());
 			System.exit(1);
 		}
+		System.out.println("Add class " + c.getName() + " to list");
 		class_list_.put(c.getName(), c);
 	}
 	
 	public static void buildClass() {
 		root_.accept(new ClassTreeBuilder(file_name_));
-
 		// register the class into the class list
 		for (String key : class_list_.keySet()) {
 			class_list_.get(key).register();
@@ -135,22 +135,18 @@ public class SymbolTable {
 		switch (which) {
 		case 0:
 			// ArrayType
-			System.out.println("You decare Array");
 			type = new MArray();
 			break;
 		case 1:
 			// BooleanType
-			System.out.println("You declare Bool");
 			type = new MBool();
 			break;
 		case 2:
 			// IntegerType
-			System.out.println("You declare Int");
 			type = new MInt();
 			break;
 		case 3:
 			// Identifier (User-defined class)
-			System.out.println("Your declare class");
 			// TODO: change the class_array to class_hash_map
 			// type = new MClass();
 		default:
@@ -175,6 +171,10 @@ public class SymbolTable {
 	}
 
 	public static MClass queryClass(String className) {
+		if (!class_list_.containsKey(className)) {
+			System.out.println("Usage of undefined class " + className);
+			System.exit(1);
+		}
 		return class_list_.get(className);
 	}
 	
