@@ -1,0 +1,5 @@
+赋值前的初始化
+类之间赋值上溯造型
+method中的expression
+extends main class
+MScope father上升

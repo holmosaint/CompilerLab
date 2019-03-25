@@ -16,7 +16,7 @@ public class SymbolTable {
 	private static File file_;
 	// list of MClass
 	private static MClass main_class_ = null; // main class
-	private static HashMap<MClass> class_list_ = new HashMap<MClass>(); // class list
+	private static HashMap<String, MClass> class_list_ = new HashMap<String, MClass>(); // class list
 
 	// unique MType
 	private static boolean first_time_ = true;
@@ -91,7 +91,7 @@ public class SymbolTable {
 	public static void addMainClass(MClass c) {
 		if(main_class_ == null) {
 			main_class_ = c;
-			class_list_.add(c);
+			class_list_.put(c.getName(), c);
 			if(!file_name_.equals(c.getName() + ".java")) {
 				System.out.printf("The main class name is not identical to the file name! ");
 				System.out.printf("Get main class: %s while the file name is %s\n", c.getName(), file_name_);
@@ -106,21 +106,19 @@ public class SymbolTable {
 	}
 
 	public static void addClass(MClass c) {
-		for(MClass e : class_list_) {
-			if(e.getName() == c.getName()) {
-				System.out.printf("Get duplicate definition of class: %s\n", e.getName());
-				System.exit(1);
-			}
+		if(class_list_.containsKey(c.getName())) {
+			System.out.printf("Get duplicate definition of class: %s\n", c.getName());
+			System.exit(1);
 		}
-		class_list_.put(c);
+		class_list_.put(c.getName(), c);
 	}
 	
 	public static void buildClass() {
 		root_.accept(new ClassTreeBuilder(file_name_));
 
 		// register the class into the class list
-		for(MClass c : class_list_) {
-			c.register();
+		for (String key : class_list_.keySet()) {
+			class_list_.get(key).register();
 		}
 	}
 
@@ -128,7 +126,7 @@ public class SymbolTable {
 		
 	}
 
-	public static ArrayList<MClass> getClassList() {
+	public static HashMap<String, MClass> getClassList() {
 		return class_list_;
 	}
 	

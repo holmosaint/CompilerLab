@@ -70,12 +70,7 @@ public class MClass extends MType {
 	}
 
 	private MClass findFather(){
-		ArrayList<MClass> class_list = SymbolTable.getClassList();
-		for(MClass c : class_list) {
-			if(c.getName().equals(father_name_)) 
-				return c;
-		}
-		return null;
+		return SymbolTable.queryClass(father_name_);
 	}
 	
 	public void registerFather() {
