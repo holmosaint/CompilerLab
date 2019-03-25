@@ -121,6 +121,14 @@ public class MPrimExpr {
 	}
 
 	public MType getType() {
-		return this.type_;
+		return type_;
+	}
+	
+	public int getWhich() {
+		return which_;
+	}
+	
+	public MVar getVar() {
+		return var_;
 	}
 }

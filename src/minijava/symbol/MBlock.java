@@ -97,26 +97,32 @@ public class MBlock extends MScope {
 				return;
 			case 1:
 				// AssignmentSatement
+				expression_.register();
 				System.out.println(">>Assignment");
 				break;
 			case 2:
 				// ArrayAssignment
+				expression_.register();
+				index_expression_.register();
 				System.out.println(">>ArrayAssignment");
 				break;
 			case 3:
 				// IfStatement
+				expression_.register();
 				if(expression_.getType() instanceof MBool)
 					return;
 				errorMsg = "The expression in the if statement is not a boolean type!";
 				break;
 			case 4:
 				// WhileStatement
+				expression_.register();
 				if(expression_.getType() instanceof MBool)
 					return;
 				errorMsg = "The expression in the while statement is not a boolean type!";
 				break;
 			case 5:
 				// PrintStatement
+				expression_.register();
 				if(expression_.getType() instanceof MInt)
 					return;
 				errorMsg = "The expression in the print statement is not a int type!";

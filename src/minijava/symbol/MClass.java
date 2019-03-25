@@ -115,6 +115,7 @@ public class MClass extends MType {
 				}
 				father = father.getFather();
 			}
+			m.getValue().register();
 		}
 	}
 

@@ -151,8 +151,18 @@ public class MExpr {
 				errorMsg = "The part of the Plus Expression is not a array type!";
 				break;
 			case 7:
-				// MessageSend
-				// TODO: Don't know what the expression is...
+				// MessageSend, use of method
+				if (prim_expr_.getWhich() != 3) {
+					System.out.println("Primaray expression in MessageSend should be a var");
+					System.exit(1);
+				}
+				MVar var = prim_expr_.getVar();
+				// Check if "var" is a class instance
+				if (!(var.getType() instanceof MClass)) {
+					System.out.println("The var in MessageSend should be an instance of class");
+					System.exit(1);
+				}
+				
 				break;
 			case 8:
 				// PrimaryExpression
@@ -165,7 +175,11 @@ public class MExpr {
 		System.exit(1);
 	}
 
-	MType getType() {
-		return this.type_;
+	public MType getType() {
+		return type_;
+	}
+	
+	public int getWhich() {
+		return which_;
 	}
 }

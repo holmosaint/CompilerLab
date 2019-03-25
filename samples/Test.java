@@ -4,11 +4,12 @@ class Test{
     }
 }
 
-class Fac  extends Test {
+class Fac  {
     int[] b;
     public int ComputeFac(int num, int key){
         int num_aux ;
         {
+            System.out.println(b.call());
         }
         if (num < 1)
             num_aux = 1 ;
@@ -16,10 +17,4 @@ class Fac  extends Test {
             num_aux = num * (this.ComputeFac(num-1)) ;
         return num_aux  + 1;
     }
-}
-
-class Fac3 extends Fac2 {
-}
-
-class Fac2 extends Fac {
 }
