@@ -4,11 +4,11 @@ import java.util.*;
 import minijava.syntaxtree.*;
 import minijava.visitor.*;
 
-public class MClass {
+public class MClass extends MType {
 	// attributes
-	private String name_;
-	private String father_name_;
-	private MClass father_;
+	private String name_ = null;
+	private String father_name_ = null;
+	private MClass father_ = null;
 	private int size_ = 0;
 	
 	// symbol tables
@@ -20,6 +20,10 @@ public class MClass {
 			ClassDeclaration class_node = (ClassDeclaration) node;
 			System.out.println("Declare: " + (class_node.f1.f0.toString()));
 			name_ = class_node.f1.f0.toString();
+			if (SymbolTable.isReserved(name_)) {
+				System.exit(1);
+			}
+			
 			father_ = null;
 			if (!SymbolTable.parseVar(class_node.f3, vars_)) {
 				System.out.println("in class " + name_);
@@ -30,6 +34,10 @@ public class MClass {
 			ClassExtendsDeclaration class_node = (ClassExtendsDeclaration) node;
 			System.out.println("Declare: " + ((ClassExtendsDeclaration) node).f1.f0.toString());
 			name_ = class_node.f1.f0.toString();
+			if (SymbolTable.isReserved(name_)) {
+				System.exit(1);
+			}
+			
 			father_name_ = class_node.f3.f0.toString();
 			if (!SymbolTable.parseVar(class_node.f5, vars_)) {
 				System.out.println("in class " + name_);
@@ -40,7 +48,10 @@ public class MClass {
 			System.out.println("Declare: " + ((MainClass) node).f1.f0.toString());
 			MainClass class_node = (MainClass) node;
 			name_ = class_node.f1.f0.toString();
-			father_ = null;
+			if (SymbolTable.isReserved(name_)) {
+				System.exit(1);
+			}
+			
 			methods_.put("main", new MMethod(this, (MainClass) node));
 		}
 		
@@ -162,13 +173,17 @@ public class MClass {
 	public MClass getFather() {
 		return father_;
 	}
-	
-	public boolean isAssignable(MType target, Node n) {
-		return false;
-	}
-
 
 	public HashMap<String, MMethod> getMethod() {
 		return methods_;
+	}
+
+	public boolean isAssignable(MType target) {
+		if (!(target instanceof MClass)) return false;
+		MClass cur = (MClass) target;
+		while (!cur.getName().equals(this.name_) && (cur.getFather() != null)) {
+			cur = cur.getFather();
+		}
+		return cur.getName().equals(this.name_);
 	}
 }

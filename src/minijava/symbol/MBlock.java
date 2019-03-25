@@ -28,32 +28,32 @@ public class MBlock extends MScope {
 			// AssignmentSatement
 			System.out.println(">>Assignment");
 			var_name_ = ((AssignmentStatement) node_choice.choice).f0.f0.toString();
-			expression_ = new MExpr(((AssignmentStatement) node_choice.choice).f2);
+			expression_ = new MExpr(((AssignmentStatement) node_choice.choice).f2, this);
 			break;
 		case 2:
 			// ArrayAssignment
 			System.out.println(">>ArrayAssignment");
 			var_name_ = ((ArrayAssignmentStatement) node_choice.choice).f0.f0.toString();
-			index_expression_ = new MExpr(((ArrayAssignmentStatement) node_choice.choice).f2);
-			expression_ = new MExpr(((ArrayAssignmentStatement) node_choice.choice).f5);
+			index_expression_ = new MExpr(((ArrayAssignmentStatement) node_choice.choice).f2, this);
+			expression_ = new MExpr(((ArrayAssignmentStatement) node_choice.choice).f5, this);
 			break;
 		case 3:
 			// IfStatement
 			System.out.println(">>IfStatement");
-			expression_ = new MExpr(((IfStatement) node_choice.choice).f2);
+			expression_ = new MExpr(((IfStatement) node_choice.choice).f2, this);
 			parseStatement(((IfStatement) node_choice.choice).f4, this);
 			parseStatement(((IfStatement) node_choice.choice).f6, this);
 			break;
 		case 4:
 			// WhileStatement
 			System.out.println(">>WhileStatement");
-			expression_ = new MExpr(((WhileStatement) node_choice.choice).f2);
+			expression_ = new MExpr(((WhileStatement) node_choice.choice).f2, this);
 			parseStatement(((WhileStatement) node_choice.choice).f4, this);
 			break;
 		case 5:
 			// PrintStatement
 			System.out.println(">>PrintStatement");
-			expression_ = new MExpr(((PrintStatement) node_choice.choice).f2);
+			expression_ = new MExpr(((PrintStatement) node_choice.choice).f2, this);
 			break;
 		default:
 			System.out.println("Uknown statement");

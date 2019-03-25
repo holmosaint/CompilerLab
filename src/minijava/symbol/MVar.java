@@ -5,6 +5,7 @@ import minijava.syntaxtree.*;
 public class MVar {
 	private MType type_;
 	private String name_;
+	private boolean allocated_ = false;
 	
 	public MVar(Node node) {
 		if (node instanceof VarDeclaration) {
@@ -33,5 +34,26 @@ public class MVar {
 	
 	public MType getType() {
 		return type_;
+	}
+	
+	public boolean allocate() {
+		if (type_ instanceof MClass || type_ instanceof MArray) {
+			if (allocated_) return false;
+			else {
+				allocated_ = true;
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	// Check if the variable is allocated
+	// Only for instance of MClass and MArray
+	public boolean isAllocated() {
+		if (type_ instanceof MClass || type_ instanceof MArray)
+			return allocated_;
+		else
+			return false;
 	}
 }

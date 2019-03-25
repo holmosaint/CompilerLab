@@ -5,6 +5,30 @@
 
 # Structure of CompileLab
 
+## What errors should we check?
+- Using of undefined:
+  - class
+  - method
+  - variable
+- Duplicate definition of:
+  - class
+  - method
+  - variable
+- Type mismatch:
+  - Expression in "if" or "while" should be boolean expression
+  - Parameter in "println" should be an integer
+  - The index of an array should be an integer
+  - The left and right operands of an assignment must match the type
+- Parameters mismatch:
+  - Type, number, return type
+  - Reloading is not allowed
+- Operands of "+", "/" and "*" should be integers
+- Circulation inheritance or multiple inheritance of class
+
+## The phase of our work
+### Phase 1
+The program iterates through the syntax tree top-down, and constructs a symbol table.
+
 ## About MBlock and MMethod
 > MScope
 >> MBlock <br>
@@ -26,7 +50,7 @@ graph LR
 MExpr-->expr_content:
     subgraph Content
         expr_content:
-        which
+        which'
         op
         prim_exprl
         prim_exprr
