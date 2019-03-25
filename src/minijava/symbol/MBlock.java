@@ -90,7 +90,7 @@ public class MBlock extends MScope {
 	void registerStatement() {
 		if(expression_ == null)
 			return;
-		String errorMsg;
+		String errorMsg = "";
 		switch (which_) {
 			case 0:
 				// Block
@@ -98,15 +98,10 @@ public class MBlock extends MScope {
 			case 1:
 				// AssignmentSatement
 				System.out.println(">>Assignment");
-				var_name_ = ((AssignmentStatement) node_choice.choice).f0.f0.toString();
-				expression_ = new MExpr(((AssignmentStatement) node_choice.choice).f2);
 				break;
 			case 2:
 				// ArrayAssignment
 				System.out.println(">>ArrayAssignment");
-				var_name_ = ((ArrayAssignmentStatement) node_choice.choice).f0.f0.toString();
-				index_expression_ = new MExpr(((ArrayAssignmentStatement) node_choice.choice).f2);
-				expression_ = new MExpr(((ArrayAssignmentStatement) node_choice.choice).f5);
 				break;
 			case 3:
 				// IfStatement

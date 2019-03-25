@@ -28,17 +28,17 @@ public class MPrimExpr {
 		case 0:
 			// IntegerLiteral
 			literal_ = ((IntegerLiteral) prim_expr.f0.choice).f0.toString();
-			type = new MInt();
+			type_ = new MInt();
 			break;
 		case 1:
 			// TrueLiteral
 			literal_ = "true";
-			type = new MBool();
+			type_ = new MBool();
 			break;
 		case 2:
 			// FalseLiteral
 			literal_ = "false";
-			type = new MBool();
+			type_ = new MBool();
 			break;
 		case 3:
 			// Identifier
@@ -53,7 +53,7 @@ public class MPrimExpr {
 		case 5:
 			// ArrayAllocationExpression
 			expr_ = new MExpr(((ArrayAllocationExpression) prim_expr.f0.choice).f3, father_);
-			type = new MArray();
+			type_ = new MArray();
 			break;
 		case 6:
 			// AllocationExpression
@@ -63,12 +63,12 @@ public class MPrimExpr {
 		case 7:
 			// NotExpression
 			expr_ = new MExpr(((NotExpression) prim_expr.f0.choice).f1, father_);
-			type = new MBool();
+			type_ = new MBool();
 			break;
 		case 8:
 			// BracketExpression
 			expr_ = new MExpr(((NotExpression) prim_expr.f0.choice).f1, father_);
-			type = expr_.getType();
+			type_ = expr_.getType();
 			break;
 		default:
 			break;
@@ -76,7 +76,7 @@ public class MPrimExpr {
 	}
 
 	void register() {
-		String errorMsg;
+		String errorMsg = "";
 		switch (which_) {
 			case 0:
 				// IntegerLiteral
@@ -120,7 +120,7 @@ public class MPrimExpr {
 		System.exit(1);
 	}
 
-	MType getType() {
+	public MType getType() {
 		return this.type_;
 	}
 }

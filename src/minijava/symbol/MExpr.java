@@ -97,7 +97,7 @@ public class MExpr {
 			// PrimaryExpression
 			op_ = "";
 			prim_expr_ = new MPrimExpr((PrimaryExpression) expr.f0.choice, father_);
-			type = prim_expr_.getType();
+			type_ = prim_expr_.getType();
 			break;
 		default:
 			break;
@@ -105,7 +105,7 @@ public class MExpr {
 	}
 
 	void register() {
-		String errorMsg;
+		String errorMsg = "";
 		switch (which_) {
 			case 0:
 				// AndExpression
@@ -152,18 +152,6 @@ public class MExpr {
 				break;
 			case 7:
 				// MessageSend
-				op_ = "message_send";
-				prim_expr_ = new MPrimExpr(((MessageSend) expr.f0.choice).f0);
-				var_name_ = ((MessageSend) expr.f0.choice).f2.f0.toString();
-				if (((MessageSend) expr.f0.choice).f4.present()) {
-					ExpressionList expr_list = ((ExpressionList) ((MessageSend) expr.f0.choice).f4.node);
-					exprs_ = new ArrayList<MExpr>();
-					exprs_.add(new MExpr(expr_list.f0));
-					for (Node node : expr_list.f1.nodes) {
-						ExpressionRest declare = (ExpressionRest) node;
-						exprs_.add(new MExpr(declare.f1));
-					}
-				}
 				// TODO: Don't know what the expression is...
 				break;
 			case 8:
