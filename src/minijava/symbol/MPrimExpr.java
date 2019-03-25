@@ -96,8 +96,7 @@ public class MPrimExpr {
 				return;
 			case 5:
 				// ArrayAllocationExpression
-				expr_ = new MExpr(((ArrayAllocationExpression) prim_expr.f0.choice).f3);
-				if(expr_ instanceof MInt)
+				if(expr_.getType() instanceof MInt)
 					return;
 				errorMsg = "The part in the array allocation expression is not an int type!";
 				break;
@@ -107,7 +106,7 @@ public class MPrimExpr {
 				break;
 			case 7:
 				// NotExpression
-				if(expr_ instanceof MBool)
+				if(expr_.getType() instanceof MBool)
 					return;
 				errorMsg = "The part in the not expression is not a boolean type";
 				break;
