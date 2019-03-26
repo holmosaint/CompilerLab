@@ -68,6 +68,7 @@ public class MPrimExpr {
 		}
 	}
 
+	/*
 	private String findIdentifierType() {
 		MScope tmp_father = father_;
 		while(tmp_father != null) {
@@ -91,6 +92,7 @@ public class MPrimExpr {
 		String errorMsg = "Variable [" + var_name_ + "] in primary expression not found!";
 		return errorMsg;
 	}
+	*/
 
 	public void register() {
 		String errorMsg = "";
@@ -110,9 +112,18 @@ public class MPrimExpr {
 			case 3:
 				// Identifier
 				// TODO: find whether the Identifier has been allocated
+				/*
 				errorMsg = findIdentifierType();
 				if(errorMsg == null)
 					return;
+				return;
+				*/
+				var_ = father_.queryVar(var_name_);
+				if (var_ == null) {
+					System.out.println("Using of undefined variable");
+					System.exit(1);
+				}
+				type_ = var_.getType();
 				return;
 			case 4:
 				// ThisExpression

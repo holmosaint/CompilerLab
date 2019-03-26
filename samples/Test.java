@@ -1,12 +1,13 @@
 class Test{
     public static void main(String[] a){
+        Fac fac;
         System.out.println(new Fac().ComputeFac(10));
     }
 }
 
 class Fac  {
     int[] b;
-    public int ComputeFac(int num, int key){
+    public int ComputeFac(int num){
         int num_aux ;
         if (num < 1)
             num_aux = 1 ;

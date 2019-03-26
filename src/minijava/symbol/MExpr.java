@@ -22,6 +22,7 @@ public class MExpr {
 	private String var_name_ = null;
 	private MVar var_ = null;
 	private String method_name_ = null;
+	private MMethod method_ = null;
 	// TODO: type_ should be assigned when checking
 	private MType type_ = null;
 	
@@ -100,8 +101,7 @@ public class MExpr {
 		String errorMsg = "";
 		switch (which_) {
 			case 0:
-			case 1:
-				// And(Compare)Expression
+				// AndExpression
 				type_ = new MBool();
 				prim_expr_.register();
 				prim_expr2_.register();
@@ -110,17 +110,27 @@ public class MExpr {
 					return;
 				errorMsg = "The two part of the Expression are not all boolean type!";
 				break;
+			case 1:
+				// Compare Expression
+				type_ = new MBool();
+				prim_expr_.register();
+				prim_expr2_.register();
+
+				if((prim_expr_.getType() instanceof MInt) && (prim_expr2_.getType() instanceof MInt))
+					return;
+				errorMsg = "The two part of the Expression are not all int type! in which " + which_;
+				break;
 			case 2:
 			case 3:
 			case 4:
-				// Plus(Minus|Times)Expression
+				// (Plus|Minus|Times)Expression
 				type_ = new MInt();
 				prim_expr_.register();
 				prim_expr2_.register();
-				
+
 				if((prim_expr_.getType() instanceof MInt) && (prim_expr2_.getType() instanceof MInt))
 					return;
-				errorMsg = "The two part of the Expression are not all int type!";
+				errorMsg = "The two part of the Expression are not all int type! in which " + which_;
 				break;
 			case 5:
 				// ArrayLookup
@@ -144,23 +154,24 @@ public class MExpr {
 				break;
 			case 7:
 				// MessageSend, using of method
-				type_ = new MBool();
 				prim_expr_.register();
 				for (MExpr expr : exprs_) {
 					expr.register();
 				}
 				
-				if (prim_expr_.getType() instanceof MVar)
-				MVar var = prim_expr_.getVar();
-				assert var != null : "There should be a variable in MessageSend";
-				// Check if "var" is a class instance
-				System.out.println("var.name = " + var.getName() + " var.type_ = " + var.getType().getName());
-				if (!(var.getType() instanceof MClass)) {
-					System.out.println("The var in MessageSend should be an instance of class");
+				if (!(prim_expr_.getType() instanceof MClass)) {
+					System.out.println("Primary Expression in MessageSend should be an instance of a class");
+					System.exit(1);
+				}
+				method_ = ((MClass)prim_expr_.getType()).queryMethod(method_name_);
+				if (method_ == null) {
+					System.out.println("Using of undefined method " + method_name_);
 					System.exit(1);
 				}
 				
-				break;
+				method_.matchParam(exprs_);
+				type_ = method_.getRetType();
+				return;
 			case 8:
 				// PrimaryExpression
 				prim_expr_.register();
@@ -172,7 +183,7 @@ public class MExpr {
 		System.out.println(errorMsg);
 		System.exit(1);
 	}
-
+	
 	public MType getType() {
 		return type_;
 	}

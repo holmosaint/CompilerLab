@@ -23,6 +23,7 @@ public class MMethod extends MScope {
 		ret_type_ = SymbolTable.getType(declare.f1.f0.which);
 		name_ = declare.f2.f0.toString();
 		if (SymbolTable.isReserved(name_)) {
+			System.out.println("Using reserved name");
 			System.exit(1);
 		}
 		
@@ -114,8 +115,12 @@ public class MMethod extends MScope {
 	}
 
 	public void register() {
-		for(MBlock b : this.blocks_) {
+		System.out.println("This is method " + name_);
+		for(MBlock b : blocks_) {
 			b.register();
+		}
+		if (return_ != null) {
+			return_.register();
 		}
 	}
 
@@ -125,5 +130,27 @@ public class MMethod extends MScope {
 
 	public MScope getFather() {
 		return null;
+	}
+	
+	public MType getRetType() {
+		return ret_type_;
+	}
+	
+	public boolean matchParam(ArrayList<MExpr> exprs) {
+		// First, check the number of parameters
+		if (params_.size() != exprs.size()) {
+			System.out.println("In method " + name_ + " number of parameters does not match: " + "get " + 
+							   exprs.size() + ", expect " + params_.size());
+			System.exit(1);
+		}
+		// Then, check each parameter
+		for (int i = 0; i < params_.size(); i++) {
+			if (!params_.get(index2name_.get(i)).getType().isAssignable(exprs.get(i).getType())) {
+				System.out.println("Type mismatch in method's parameters");
+				System.exit(1);
+			}
+		}
+		
+		return true;
 	}
 }

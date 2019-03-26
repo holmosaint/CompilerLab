@@ -147,10 +147,9 @@ public class SymbolTable {
 			break;
 		case 3:
 			// Identifier (User-defined class)
-			// TODO: change the class_array to class_hash_map
-			// type = new MClass();
+			
 		default:
-			System.out.println("Uknown variable type");
+			System.out.println("Uknown variable type ");
 			System.exit(1);
 		}
 		
@@ -172,7 +171,7 @@ public class SymbolTable {
 
 	public static MClass queryClass(String className) {
 		if (!class_list_.containsKey(className)) {
-			System.out.println("Usage of undefined class " + className);
+			System.out.println("Using of undefined class " + className);
 			System.exit(1);
 		}
 		return class_list_.get(className);
