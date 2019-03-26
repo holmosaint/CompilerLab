@@ -120,7 +120,7 @@ public class MPrimExpr {
 				*/
 				var_ = father_.queryVar(var_name_);
 				if (var_ == null) {
-					System.out.println("Using of undefined variable");
+					System.out.println("Using undefined variable");
 					System.exit(1);
 				}
 				type_ = var_.getType();

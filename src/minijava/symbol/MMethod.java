@@ -20,7 +20,7 @@ public class MMethod extends MScope {
 	public MMethod(MClass owner, Node node) {
 		owner_ = owner;
 		MethodDeclaration declare = (MethodDeclaration) node;
-		ret_type_ = SymbolTable.getType(declare.f1.f0.which);
+		ret_type_ = SymbolTable.getType(declare.f1);
 		name_ = declare.f2.f0.toString();
 		if (SymbolTable.isReserved(name_)) {
 			System.out.println("Using reserved name");
@@ -105,6 +105,23 @@ public class MMethod extends MScope {
 		}
 	}
 
+	private void fillBack() {
+		MVar var = null;
+		
+		for (String name : vars_.keySet()) {
+			var = vars_.get(name);
+			if (var.getType() instanceof MUndefined) {
+				MType type = SymbolTable.queryClass(((MUndefined)var.getType()).getClassName());
+				if (type == null) {
+					System.out.println("Using undefined class " + ((MUndefined)var.getType()).getClassName());
+					System.exit(1);
+				} else {
+					vars_.get(name).setType(type);
+				}
+			}
+		}
+	}
+	
 	public MVar queryVar(String var_name) {
 		if (vars_.containsKey(var_name)) {
 			return vars_.get(var_name);
@@ -115,7 +132,8 @@ public class MMethod extends MScope {
 	}
 
 	public void register() {
-		System.out.println("This is method " + name_);
+		System.out.println("Registering method " + name_);
+		fillBack();
 		for(MBlock b : blocks_) {
 			b.register();
 		}

@@ -153,7 +153,7 @@ public class MExpr {
 				errorMsg = "The part of the Plus Expression is not a array type!";
 				break;
 			case 7:
-				// MessageSend, using of method
+				// MessageSend, using method
 				prim_expr_.register();
 				for (MExpr expr : exprs_) {
 					expr.register();
@@ -165,7 +165,7 @@ public class MExpr {
 				}
 				method_ = ((MClass)prim_expr_.getType()).queryMethod(method_name_);
 				if (method_ == null) {
-					System.out.println("Using of undefined method " + method_name_);
+					System.out.println("Using undefined method " + method_name_);
 					System.exit(1);
 				}
 				

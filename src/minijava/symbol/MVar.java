@@ -16,11 +16,11 @@ public class MVar {
 		if (node instanceof VarDeclaration) {
 			VarDeclaration declare = (VarDeclaration) node;
 			name_ = declare.f1.f0.toString();
-			type_ = SymbolTable.getType(declare.f0.f0.which);
+			type_ = SymbolTable.getType(declare.f0);
 		} else if (node instanceof FormalParameter){
 			FormalParameter declare = (FormalParameter) node;
 			name_ = declare.f1.f0.toString();
-			type_ = SymbolTable.getType(declare.f0.f0.which);
+			type_ = SymbolTable.getType(declare.f0);
 		} else {
 			System.out.println("Error in MVar(): Not an VarDeclaration.");
 			System.exit(1);
@@ -35,6 +35,10 @@ public class MVar {
 
 	public String getName() {
 		return name_;
+	}
+	
+	public void setType(MType type) {
+		type_ = type;
 	}
 	
 	public MType getType() {

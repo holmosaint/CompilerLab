@@ -130,9 +130,10 @@ public class SymbolTable {
 		return class_list_;
 	}
 	
-	public static MType getType(int which) {
+	public static MType getType(Type t) {
+		System.out.println("SymbolTabel.gettype: " + t.f0.which);
 		MType type = null;
-		switch (which) {
+		switch (t.f0.which) {
 		case 0:
 			// ArrayType
 			type = new MArray();
@@ -147,7 +148,8 @@ public class SymbolTable {
 			break;
 		case 3:
 			// Identifier (User-defined class)
-			
+			type = new MUndefined(((Identifier)t.f0.choice).f0.toString());
+			break;
 		default:
 			System.out.println("Uknown variable type ");
 			System.exit(1);

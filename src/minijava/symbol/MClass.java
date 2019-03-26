@@ -68,9 +68,26 @@ public class MClass extends MType {
 			}
 		}
 	}
-
+	
 	private MClass findFather(){
 		return SymbolTable.queryClass(father_name_);
+	}
+
+	private void fillBack() {
+		MVar var = null;
+		
+		for (String name : vars_.keySet()) {
+			var = vars_.get(name);
+			if (var.getType() instanceof MUndefined) {
+				MType type = SymbolTable.queryClass(((MUndefined)var.getType()).getClassName());
+				if (type == null) {
+					System.out.println("Using undefined class " + ((MUndefined)var.getType()).getClassName());
+					System.exit(1);
+				} else {
+					vars_.get(name).setType(type);
+				}
+			}
+		}
 	}
 	
 	public void registerFather() {
@@ -130,6 +147,7 @@ public class MClass extends MType {
 
 	public void register() {
 		registerFather();
+		fillBack();
 		registerMethod();
 		registerVar();
 	}
@@ -157,10 +175,6 @@ public class MClass extends MType {
 	}
 	
 	public void checkMethods() {
-		
-	}
-	
-	public void buildScope() {
 		
 	}
 	
@@ -200,4 +214,5 @@ public class MClass extends MType {
 		}
 		return cur.getName().equals(this.name_);
 	}
+
 }
