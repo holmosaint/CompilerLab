@@ -65,6 +65,7 @@ public class MMethod extends MScope {
 	
 	private void parseParam(NodeOptional param_list) {
 		System.out.println("has_params = " + param_list.present());
+		if (param_list.present() == false) return;
 		// Parse the first parameter
 		FormalParameter param = ((FormalParameterList) param_list.node).f0;
 		String param_name = param.f1.f0.toString();
@@ -105,7 +106,7 @@ public class MMethod extends MScope {
 		}
 	}
 
-	private void fillBack() {
+	public void fillBack() {
 		MVar var = null;
 		
 		for (String name : vars_.keySet()) {
@@ -117,6 +118,19 @@ public class MMethod extends MScope {
 					System.exit(1);
 				} else {
 					vars_.get(name).setType(type);
+				}
+			}
+		}
+		
+		for (String name : params_.keySet()) {
+			var = params_.get(name);
+			if (var.getType() instanceof MUndefined) {
+				MType type = SymbolTable.queryClass(((MUndefined)var.getType()).getClassName());
+				if (type == null) {
+					System.out.println("Using undefined class " + ((MUndefined)var.getType()).getClassName());
+					System.exit(1);
+				} else {
+					params_.get(name).setType(type);
 				}
 			}
 		}
@@ -133,12 +147,15 @@ public class MMethod extends MScope {
 
 	public void register() {
 		System.out.println("Registering method " + name_);
-		fillBack();
 		for(MBlock b : blocks_) {
 			b.register();
 		}
 		if (return_ != null) {
 			return_.register();
+			if (!ret_type_.isAssignable(return_.getType())) {
+				System.out.println("Return expression's type is wrong");
+				System.exit(1);
+			}
 		}
 	}
 
@@ -154,6 +171,10 @@ public class MMethod extends MScope {
 		return ret_type_;
 	}
 	
+	public void setRetType(MType type) {
+		ret_type_ = type;
+	}
+	
 	public boolean matchParam(ArrayList<MExpr> exprs) {
 		// First, check the number of parameters
 		if (params_.size() != exprs.size()) {
@@ -164,9 +185,36 @@ public class MMethod extends MScope {
 		// Then, check each parameter
 		for (int i = 0; i < params_.size(); i++) {
 			if (!params_.get(index2name_.get(i)).getType().isAssignable(exprs.get(i).getType())) {
-				System.out.println("Type mismatch in method's parameters");
+				System.out.println("Type mismatch in " + name_ + "'s parameters: " 
+							   	   + params_.get(index2name_.get(i)).getType().getName() + " "
+							   	   + params_.get(index2name_.get(i)).getName() + " "
+							   	   + exprs.get(i).getType().getName() + " " + exprs.get(i).getWhich());
 				System.exit(1);
 			}
+		}
+		
+		return true;
+	}
+	
+	public HashMap<String, MVar> getParams() {
+		return params_;
+	}
+	
+	public HashMap<Integer, String> getIndex2Name() {
+		return index2name_;
+	}
+	
+	public boolean matchParam(MMethod method) {
+		HashMap<String, MVar> params = method.getParams();
+		HashMap<Integer, String> index2name = method.getIndex2Name();
+		if (params_.size() != params.size()) {
+			return false;
+		}
+		
+		for (int i = 0; i < params.size(); i++) {
+			if (!params_.get(index2name_.get(i)).getType().getName().equals(
+					params.get(index2name.get(i)).getType().getName()))
+				return false;
 		}
 		
 		return true;

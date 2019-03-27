@@ -60,6 +60,10 @@ public class MClass extends MType {
 	private void parseMethod(NodeListOptional method_list) {
 		for (Node node : method_list.nodes) {
 			String method_name = ((MethodDeclaration) node).f2.f0.toString();
+			if (vars_.containsKey(method_name)) {
+				System.out.println("method " + method_name + " is also a variable ??");
+				System.exit(1);
+			}
 			if (methods_.containsKey(method_name)) {
 				System.out.println("Duplicate declaration of method " + method_name);
 				System.exit(1);
@@ -73,8 +77,9 @@ public class MClass extends MType {
 		return SymbolTable.queryClass(father_name_);
 	}
 
-	private void fillBack() {
+	public void fillBack() {
 		MVar var = null;
+		MMethod method = null;
 		
 		for (String name : vars_.keySet()) {
 			var = vars_.get(name);
@@ -88,21 +93,36 @@ public class MClass extends MType {
 				}
 			}
 		}
+		
+		for (String name : methods_.keySet()) {
+			method = methods_.get(name);
+			if (method.getRetType() instanceof MUndefined) {
+				MType type = SymbolTable.queryClass(((MUndefined)method.getRetType()).getClassName());
+				if (type == null) {
+					System.out.println("Using undefined class " + ((MUndefined)method.getRetType()).getClassName());
+					System.exit(1);
+				} else {
+					methods_.get(name).setRetType(type);
+				}
+			}
+			method.fillBack();
+		}
 	}
 	
 	public void registerFather() {
 		// check the extension loop
-		String father_name = getFatherName();
 		MClass father;
-		if(father_name == null) {
+
+		if(father_name_ == null) {
 			return;
 		}
 		father_ = findFather();
 		if(father_ == null) {
 			System.out.printf("The father [%s] of class [%s] is not defined!\n",
-								father_name, getName());
+								father_name_, getName());
 			System.exit(1);
 		}
+
 		
 		father = father_;
 		while(father != null) {
@@ -115,15 +135,19 @@ public class MClass extends MType {
 		}
 	}
 
+	// TODO: Carefully check the problems of function overloading
 	public void registerMethod() {
 		// check for multiple definitions
 		for(HashMap.Entry<String, MMethod> m : methods_.entrySet()) {
 			MClass father = getFather();
 			while(father != null) {
 				if(father.getMethod().containsKey(m.getKey())){
-					System.out.printf("Dupicative definition of function: [%s] in class [%s] and class [%s]\n", 
-									m.getKey(), father.getName(), getName());
-					System.exit(1);
+					// Check the parameters
+					if (!father.getMethod().get(m.getKey()).matchParam(m.getValue())) {
+						System.out.printf("Dupicative definition of function: [%s] in class [%s] and class [%s]\n", 
+										m.getKey(), father.getName(), getName());
+						System.exit(1);
+					}
 				}
 				father = father.getFather();
 			}
@@ -146,8 +170,6 @@ public class MClass extends MType {
 	}
 
 	public void register() {
-		registerFather();
-		fillBack();
 		registerMethod();
 		registerVar();
 	}

@@ -92,6 +92,7 @@ public class SymbolTable {
 		if(main_class_ == null) {
 			main_class_ = c;
 			class_list_.put(c.getName(), c);
+			
 			if(!file_name_.equals(c.getName() + ".java")) {
 				System.out.printf("The main class name is not identical to the file name! ");
 				System.out.printf("Get main class: %s while the file name is %s\n", c.getName(), file_name_);
@@ -118,6 +119,12 @@ public class SymbolTable {
 		root_.accept(new ClassTreeBuilder(file_name_));
 		// register the class into the class list
 		for (String key : class_list_.keySet()) {
+			class_list_.get(key).registerFather();
+		}
+		for (String key : class_list_.keySet()) {
+			class_list_.get(key).fillBack();
+		}
+		for (String key : class_list_.keySet()) {
 			class_list_.get(key).register();
 		}
 	}
@@ -131,7 +138,6 @@ public class SymbolTable {
 	}
 	
 	public static MType getType(Type t) {
-		System.out.println("SymbolTabel.gettype: " + t.f0.which);
 		MType type = null;
 		switch (t.f0.which) {
 		case 0:

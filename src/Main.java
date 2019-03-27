@@ -3,7 +3,7 @@ import minijava.typecheck.*;
 public class Main {
 	public static void main(String args[]) {
 		try {
-			String file_path = "..\\samples\\Test.java";
+			String file_path = "..\\samples\\New\\QuickSort.java";
 			if (args.length > 0) {
 				file_path = args[0];
 			}

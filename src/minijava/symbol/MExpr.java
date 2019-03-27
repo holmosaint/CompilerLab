@@ -65,7 +65,7 @@ public class MExpr {
 			// ArrayLookup
 			op_ = "[]";
 			prim_expr_ = new MPrimExpr(((ArrayLookup) expr.f0.choice).f0, father_);
-			prim_expr_ = new MPrimExpr(((ArrayLookup) expr.f0.choice).f2, father_);
+			prim_expr2_ = new MPrimExpr(((ArrayLookup) expr.f0.choice).f2, father_);
 			break;
 		case 6:
 			// ArrayLength
@@ -137,7 +137,6 @@ public class MExpr {
 				type_ = new MInt();
 				prim_expr_.register();
 				prim_expr2_.register();
-				
 				if((prim_expr_.getType() instanceof MArray) && (prim_expr2_.getType() instanceof MInt))
 					return;
 				errorMsg = "The first part of the Array Lookup Expression is not a array type or " + 

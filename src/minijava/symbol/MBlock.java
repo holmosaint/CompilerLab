@@ -90,7 +90,9 @@ public class MBlock extends MScope {
 			}
 			expression_.register();
 			if (!var_.getType().isAssignable(expression_.getType())) {
-				System.out.println("Type mismatch in AssignmentStatement");
+				System.out.println("Type mismatch in AssignmentStatement: " + var_.getType().getName() 
+								   + " " + var_name_ + " versus " + expression_.getType().getName() 
+								   + " " + expression_.getWhich());
 				System.exit(1);
 			}
 			break;
