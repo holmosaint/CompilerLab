@@ -102,16 +102,18 @@ public class MExpr {
 		switch (which_) {
 			case 0:
 				// AndExpression
+				// AndExpression ::= PrimaryExpression "&&" PrimaryExpression
 				type_ = new MBool();
 				prim_expr_.register();
 				prim_expr2_.register();
 				
 				if((prim_expr_.getType() instanceof MBool) && (prim_expr2_.getType() instanceof MBool))
 					return;
-				errorMsg = "The two part of the Expression are not all boolean type!";
+				errorMsg = "The two parts of the Expression are not all boolean types!";
 				break;
 			case 1:
 				// Compare Expression
+				// CompareExpression ::= PrimaryExpression "<" PrimaryExpression
 				type_ = new MBool();
 				prim_expr_.register();
 				prim_expr2_.register();
@@ -134,25 +136,35 @@ public class MExpr {
 				break;
 			case 5:
 				// ArrayLookup
+				// ArrayLookup ::= PrimaryExpression "[" PrimaryExpression "]"
 				type_ = new MInt();
 				prim_expr_.register();
 				prim_expr2_.register();
-				if((prim_expr_.getType() instanceof MArray) && (prim_expr2_.getType() instanceof MInt))
-					return;
-				errorMsg = "The first part of the Array Lookup Expression is not a array type or " + 
-						   "the second part of the Array Lookup Expression is not a int type!";
+				if((prim_expr_.getType() instanceof MArray)) {
+					if(prim_expr2_.getType() instanceof MInt) {
+						return;
+					}
+					else {
+						errorMsg = "the index part of the Array Lookup Expression is not an int type!";
+					}
+				}
+				else {
+					errorMsg = "The first part of the Array Lookup Expression is not an array type";
+				}
 				break;
 			case 6:
 				// ArrayLength
+				// ArrayLength ::= PrimaryExpression "." "length"
 				type_ = new MInt();
 				prim_expr_.register();
 				
 				if((prim_expr_.getType() instanceof MArray))
 					return;
-				errorMsg = "The part of the Plus Expression is not a array type!";
+				errorMsg = "The part of the ArrayLength expression is not an array type!";
 				break;
 			case 7:
 				// MessageSend, using method
+				// MessageSend ::= PrimaryExpression "." Identifier "(" ( ExpressionList )? ")"
 				prim_expr_.register();
 				for (MExpr expr : exprs_) {
 					expr.register();

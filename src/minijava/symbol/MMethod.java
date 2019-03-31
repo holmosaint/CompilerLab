@@ -109,6 +109,7 @@ public class MMethod extends MScope {
 	public void fillBack() {
 		MVar var = null;
 		
+		// Check the type of the variables in a method and register 
 		for (String name : vars_.keySet()) {
 			var = vars_.get(name);
 			if (var.getType() instanceof MUndefined) {
@@ -122,6 +123,7 @@ public class MMethod extends MScope {
 			}
 		}
 		
+		// Check the type of the variables in a method and register
 		for (String name : params_.keySet()) {
 			var = params_.get(name);
 			if (var.getType() instanceof MUndefined) {

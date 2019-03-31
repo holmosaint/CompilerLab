@@ -111,17 +111,10 @@ public class MPrimExpr {
 				return;
 			case 3:
 				// Identifier
-				// TODO: find whether the Identifier has been allocated
-				/*
-				errorMsg = findIdentifierType();
-				if(errorMsg == null)
-					return;
-				return;
-				*/
 				var_ = father_.queryVar(var_name_);
 				if (var_ == null) {
-					System.out.println("Using undefined variable");
-					System.exit(1);
+					errorMsg = "Using undefined variable";
+					break;
 				}
 				type_ = var_.getType();
 				return;

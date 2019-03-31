@@ -81,6 +81,7 @@ public class MClass extends MType {
 		MVar var = null;
 		MMethod method = null;
 		
+		// Check whether the type of the variables in the class scope has been defined and register variable
 		for (String name : vars_.keySet()) {
 			var = vars_.get(name);
 			if (var.getType() instanceof MUndefined) {
@@ -94,6 +95,7 @@ public class MClass extends MType {
 			}
 		}
 		
+		// Check whether the return type of a method has been defined and register
 		for (String name : methods_.keySet()) {
 			method = methods_.get(name);
 			if (method.getRetType() instanceof MUndefined) {
@@ -141,10 +143,10 @@ public class MClass extends MType {
 		for(HashMap.Entry<String, MMethod> m : methods_.entrySet()) {
 			MClass father = getFather();
 			while(father != null) {
-				if(father.getMethod().containsKey(m.getKey())){
-					// Check the parameters
+				if(father.getMethod().containsKey(m.getKey())) {
+					// Check the parameters (Override is allowed but overload is not allowed)
 					if (!father.getMethod().get(m.getKey()).matchParam(m.getValue())) {
-						System.out.printf("Dupicative definition of function: [%s] in class [%s] and class [%s]\n", 
+						System.out.printf("Dupicative definition of function: [%s] in father class [%s] and class [%s]\n", 
 										m.getKey(), father.getName(), getName());
 						System.exit(1);
 					}
@@ -228,9 +230,9 @@ public class MClass extends MType {
 		return methods_;
 	}
 
-	public boolean isAssignable(MType target) {
-		if (!(target instanceof MClass)) return false;
-		MClass cur = (MClass) target;
+	public boolean isAssignable(MType src) {
+		if (!(src instanceof MClass)) return false;
+		MClass cur = (MClass) src;
 		while (!cur.getName().equals(this.name_) && (cur.getFather() != null)) {
 			cur = cur.getFather();
 		}

@@ -82,10 +82,11 @@ public class MBlock extends MScope {
 			}
 			break;
 		case 1:
-			// AssignmentSatement
+			// AssignmentStatement
+			// AssignmentStatement	::=	Identifier "=" Expression ";"
 			var_ = queryVar(var_name_);
 			if(var_ == null) {
-				System.out.printf("The var [%s] is not defined!\n", var_name_);;
+				System.out.printf("The var [%s] is not defined!\n", var_name_);
 				System.exit(1);
 			}
 			expression_.register();
