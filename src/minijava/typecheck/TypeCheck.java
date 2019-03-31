@@ -3,6 +3,7 @@ package minijava.typecheck;
 import java.io.*;
 import minijava.*;
 import minijava.symbol.*;
+import util.ErrorHandler;
 
 public abstract class TypeCheck {
 
@@ -10,14 +11,12 @@ public abstract class TypeCheck {
         File file = new File(file_name);
         // System.out.println("Processing file " + file_name + "...");
         if (!file.isFile()) {
-            System.out.println(file_name + " is not a file!");
-            return false;
+        	ErrorHandler.errorPrint(file_name + " is not a file!");
         }
 
         // judge whether is a java file
         if (!file_name.endsWith(".java")) {
-            System.out.println(file_name + " is not a java file!");
-            return false;
+        	ErrorHandler.errorPrint(file_name + " is not a java file!");
         }
         
         // Parse and build the syntaxtree

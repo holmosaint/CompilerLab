@@ -3,6 +3,7 @@ package minijava.symbol;
 import java.util.*;
 import minijava.syntaxtree.*;
 import minijava.typecheck.*;
+import util.ErrorHandler;
 
 public class MMethod extends MScope {
 	
@@ -23,16 +24,12 @@ public class MMethod extends MScope {
 		ret_type_ = SymbolTable.getType(declare.f1);
 		name_ = declare.f2.f0.toString();
 		if (SymbolTable.isReserved(name_)) {
-			System.out.println("Using reserved name");
-			System.exit(1);
+			ErrorHandler.errorPrint("Using reserved name");
 		}
 		
 		// System.out.println("You declare method " + name_);
 		parseParam(declare.f4);
-		if (!SymbolTable.parseVar(declare.f7, vars_)) {
-			System.out.println("in method " + name_);
-			System.exit(1);
-		}
+		SymbolTable.parseVar(declare.f7, vars_);
 		parseStatement(declare.f8, this);
 		return_ = new MExpr(declare.f10, this);
 	}
@@ -70,14 +67,13 @@ public class MMethod extends MScope {
 		FormalParameter param = ((FormalParameterList) param_list.node).f0;
 		String param_name = param.f1.f0.toString();
 		if (params_.containsKey(param_name)) {
-			System.out.println("Duplicate declaration of parameter " + param_name);
-			System.exit(1);
+			ErrorHandler.errorPrint("Duplicate declaration of parameter " + param_name);
 		} else {
 			params_.put(param_name, new MVar(param));
 		}
 		// WARNING! Something could go wrong here
 		if (vars_.containsKey(param_name)) {
-			System.exit(1);
+			ErrorHandler.errorPrint("Duplicate declaration of parameter" + param_name);
 		} else {
 			vars_.put(param_name, new MVar(param));
 		}
@@ -91,13 +87,12 @@ public class MMethod extends MScope {
 			FormalParameterRest declare = (FormalParameterRest) node;
 			param_name = declare.f1.f1.f0.toString();
 			if (params_.containsKey(param_name)) {
-				System.out.println("Duplicate declaration of parameter " + param_name);
-				System.exit(1);
+				ErrorHandler.errorPrint("Duplicate declaration of parameter " + param_name);
 			} else {
 				params_.put(param_name, new MVar(declare.f1));
 			}
 			if (vars_.containsKey(param_name)) {
-				System.exit(1);
+				ErrorHandler.errorPrint("Duplicate declaration of parameter " + param_name);
 			} else {
 				vars_.put(param_name, new MVar(declare.f1));
 			}
@@ -115,8 +110,7 @@ public class MMethod extends MScope {
 			if (var.getType() instanceof MUndefined) {
 				MType type = SymbolTable.queryClass(((MUndefined)var.getType()).getClassName());
 				if (type == null) {
-					System.out.println("Using undefined class " + ((MUndefined)var.getType()).getClassName());
-					System.exit(1);
+					ErrorHandler.errorPrint("Using undefined class " + ((MUndefined)var.getType()).getClassName());
 				} else {
 					vars_.get(name).setType(type);
 				}
@@ -129,8 +123,7 @@ public class MMethod extends MScope {
 			if (var.getType() instanceof MUndefined) {
 				MType type = SymbolTable.queryClass(((MUndefined)var.getType()).getClassName());
 				if (type == null) {
-					System.out.println("Using undefined class " + ((MUndefined)var.getType()).getClassName());
-					System.exit(1);
+					ErrorHandler.errorPrint("Using undefined class " + ((MUndefined)var.getType()).getClassName());
 				} else {
 					params_.get(name).setType(type);
 				}
@@ -155,8 +148,7 @@ public class MMethod extends MScope {
 		if (return_ != null) {
 			return_.register();
 			if (!ret_type_.isAssignable(return_.getType())) {
-				System.out.println("Return expression's type is wrong");
-				System.exit(1);
+				ErrorHandler.errorPrint("Return expression's type is wrong");
 			}
 		}
 	}
@@ -180,21 +172,18 @@ public class MMethod extends MScope {
 	public boolean matchParam(ArrayList<MExpr> exprs) {
 		// First, check the number of parameters
 		if (params_.size() != exprs.size()) {
-			System.out.println("In method " + name_ + " number of parameters does not match: " + "get " + 
+			ErrorHandler.errorPrint("In method " + name_ + " number of parameters does not match: " + "get " + 
 							   exprs.size() + ", expect " + params_.size());
-			System.exit(1);
 		}
 		// Then, check each parameter
 		for (int i = 0; i < params_.size(); i++) {
 			if (!params_.get(index2name_.get(i)).getType().isAssignable(exprs.get(i).getType())) {
-				System.out.println("Type mismatch in " + name_ + "'s parameters: " 
+				ErrorHandler.errorPrint("Type mismatch in " + name_ + "'s parameters: " 
 							   	   + params_.get(index2name_.get(i)).getType().getName() + " "
 							   	   + params_.get(index2name_.get(i)).getName() + " "
 							   	   + exprs.get(i).getType().getName() + " " + exprs.get(i).getWhich());
-				System.exit(1);
 			}
 		}
-		
 		return true;
 	}
 	

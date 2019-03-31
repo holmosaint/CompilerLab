@@ -1,6 +1,7 @@
 package minijava.symbol;
 
 import minijava.syntaxtree.*;
+import util.*;
 
 public class MPrimExpr {
 	// 0->IntegerLiteral
@@ -160,8 +161,7 @@ public class MPrimExpr {
 			default:
 				break;
 		}
-		System.out.println(errorMsg);
-		System.exit(1);
+		ErrorHandler.errorPrint(errorMsg);
 	}
 
 	public MType getType() {
