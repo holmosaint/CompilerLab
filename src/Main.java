@@ -19,11 +19,3 @@ public class Main {
 		}
 	}
 }
-
-class errorHandler {
-	public static void errorPrint(String errorMsg) {
-		System.out.println(errorMsg);
-		System.out.println("Typecheck error");
-		System.exit(1);
-	}
-}
