@@ -3,6 +3,7 @@ package minijava.symbol;
 import java.util.*;
 import minijava.syntaxtree.*;
 import minijava.visitor.*;
+import util.ErrorHandler;
 
 public class MClass extends MType {
 	// attributes
@@ -16,12 +17,14 @@ public class MClass extends MType {
 	private HashMap<String, MVar> vars_ = new HashMap<String, MVar>();
 	
 	public MClass(Node node) {
+		String errorMsg = "";
 		if (node instanceof ClassDeclaration) {
 			ClassDeclaration class_node = (ClassDeclaration) node;
 			// System.out.println("Declare: " + (class_node.f1.f0.toString()));
 			name_ = class_node.f1.f0.toString();
 			if (SymbolTable.isReserved(name_)) {
-				System.exit(1);
+				errorMsg = "Use reserved words!";
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			
 			father_ = null;
@@ -35,7 +38,8 @@ public class MClass extends MType {
 			// System.out.println("Declare: " + ((ClassExtendsDeclaration) node).f1.f0.toString());
 			name_ = class_node.f1.f0.toString();
 			if (SymbolTable.isReserved(name_)) {
-				System.exit(1);
+				errorMsg = "Use reserved words!";
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			
 			father_name_ = class_node.f3.f0.toString();
@@ -58,15 +62,16 @@ public class MClass extends MType {
 	}
 	
 	private void parseMethod(NodeListOptional method_list) {
+		String errorMsg = "";
 		for (Node node : method_list.nodes) {
 			String method_name = ((MethodDeclaration) node).f2.f0.toString();
 			if (vars_.containsKey(method_name)) {
-				System.out.println("method " + method_name + " is also a variable ??");
-				System.exit(1);
+				errorMsg = "method " + method_name + " is also a variable ??";
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			if (methods_.containsKey(method_name)) {
-				System.out.println("Duplicate declaration of method " + method_name);
-				System.exit(1);
+				errorMsg = "Duplicate declaration of method " + method_name;
+				ErrorHandler.errorPrint(errorMsg);
 			} else {
 				methods_.put(method_name, new MMethod(this, node));
 			}
@@ -80,6 +85,7 @@ public class MClass extends MType {
 	public void fillBack() {
 		MVar var = null;
 		MMethod method = null;
+		String errorMsg = "";
 		
 		// Check whether the type of the variables in the class scope has been defined and register variable
 		for (String name : vars_.keySet()) {
@@ -87,8 +93,8 @@ public class MClass extends MType {
 			if (var.getType() instanceof MUndefined) {
 				MType type = SymbolTable.queryClass(((MUndefined)var.getType()).getClassName());
 				if (type == null) {
-					System.out.println("Using undefined class " + ((MUndefined)var.getType()).getClassName());
-					System.exit(1);
+					errorMsg = "Using undefined class " + ((MUndefined)var.getType()).getClassName();
+					ErrorHandler.errorPrint(errorMsg);
 				} else {
 					vars_.get(name).setType(type);
 				}
@@ -101,8 +107,8 @@ public class MClass extends MType {
 			if (method.getRetType() instanceof MUndefined) {
 				MType type = SymbolTable.queryClass(((MUndefined)method.getRetType()).getClassName());
 				if (type == null) {
-					System.out.println("Using undefined class " + ((MUndefined)method.getRetType()).getClassName());
-					System.exit(1);
+					errorMsg = "Using undefined class " + ((MUndefined)method.getRetType()).getClassName();
+					ErrorHandler.errorPrint(errorMsg);
 				} else {
 					methods_.get(name).setRetType(type);
 				}
@@ -114,24 +120,23 @@ public class MClass extends MType {
 	public void registerFather() {
 		// check the extension loop
 		MClass father;
+		String errorMsg = "";
 
 		if(father_name_ == null) {
 			return;
 		}
 		father_ = findFather();
 		if(father_ == null) {
-			System.out.printf("The father [%s] of class [%s] is not defined!\n",
-								father_name_, getName());
-			System.exit(1);
+			errorMsg = "The father "+ father_name_ + " of class " +  getName() + " is not defined!";
+			ErrorHandler.errorPrint(errorMsg);
 		}
 
 		
 		father = father_;
 		while(father != null) {
 			if(father.getName().equals(getName())) {
-				System.out.printf("Extension loop found in class: [%s] and [%s]\n",
-									father_.getName(), getName());
-				System.exit(1);
+				errorMsg = "Extension loop found in class: " + father_.getName() + " and " + getName();
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			father = father.getFather();
 		}
@@ -139,6 +144,7 @@ public class MClass extends MType {
 
 	// TODO: Carefully check the problems of function overloading
 	public void registerMethod() {
+		String errorMsg = "";
 		// check for multiple definitions
 		for(HashMap.Entry<String, MMethod> m : methods_.entrySet()) {
 			MClass father = getFather();
@@ -146,9 +152,9 @@ public class MClass extends MType {
 				if(father.getMethod().containsKey(m.getKey())) {
 					// Check the parameters (Override is allowed but overload is not allowed)
 					if (!father.getMethod().get(m.getKey()).matchParam(m.getValue())) {
-						System.out.printf("Dupicative definition of function: [%s] in father class [%s] and class [%s]\n", 
-										m.getKey(), father.getName(), getName());
-						System.exit(1);
+						errorMsg = "Dupicative definition of function: " + m.getKey() 
+							+ " in father class " + father.getName() +" and class " + getName();
+						ErrorHandler.errorPrint(errorMsg);
 					}
 				}
 				father = father.getFather();
@@ -158,13 +164,14 @@ public class MClass extends MType {
 	}
 
 	public void registerVar() {
+		String errorMsg = "";
 		for(HashMap.Entry<String, MVar> v : vars_.entrySet()) {
 			MClass father = getFather();
 			while(father != null) {
-				if(father.getMethod().containsKey(v.getKey())){
-					System.out.printf("Dupicative definition of variable: [%s] in class [%s] and class [%s]\n", 
-									v.getKey(), father.getName(), getName());
-					System.exit(1);
+				if(father.getMethod().containsKey(v.getKey())) {
+					errorMsg = "Dupicative definition of variable: " + v.getKey() 
+						+ " in father class " + father.getName() +" and class " + getName();
+					ErrorHandler.errorPrint(errorMsg);
 				}
 				father = father.getFather();
 			}

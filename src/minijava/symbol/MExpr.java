@@ -2,6 +2,8 @@ package minijava.symbol;
 
 
 import minijava.syntaxtree.*;
+import util.ErrorHandler;
+
 import java.util.*;
 
 public class MExpr {
@@ -191,8 +193,7 @@ public class MExpr {
 			default:
 				break;
 			}
-		System.out.println(errorMsg);
-		System.exit(1);
+		ErrorHandler.errorPrint(errorMsg);
 	}
 	
 	public MType getType() {

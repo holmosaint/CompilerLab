@@ -2,6 +2,7 @@ package minijava.symbol;
 
 import java.util.*;
 import minijava.syntaxtree.*;
+import util.ErrorHandler;
 
 public class MBlock extends MScope {
 	// attributes
@@ -62,7 +63,7 @@ public class MBlock extends MScope {
 			expression_ = new MExpr(((PrintStatement) node_choice.choice).f2, this);
 			break;
 		default:
-			System.out.println("Uknown statement");
+			System.out.println("Unknown statement");
 			System.exit(1);
 		}
 	}
@@ -74,6 +75,7 @@ public class MBlock extends MScope {
 			father = father.getFather();
 			assert father!=null: "The father of a block is null!\n";
 		}
+		String errorMsg = "";
 		switch (which_) {
 		case 0:
 			// Block
@@ -86,51 +88,51 @@ public class MBlock extends MScope {
 			// AssignmentStatement	::=	Identifier "=" Expression ";"
 			var_ = queryVar(var_name_);
 			if(var_ == null) {
-				System.out.printf("The var [%s] is not defined!\n", var_name_);
-				System.exit(1);
+				errorMsg = "The var " + var_name_ + " is not defined!\n"; 
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			expression_.register();
 			if (!var_.getType().isAssignable(expression_.getType())) {
-				System.out.println("Type mismatch in AssignmentStatement: " + var_.getType().getName() 
-								   + " " + var_name_ + " versus " + expression_.getType().getName() 
-								   + " " + expression_.getWhich());
-				System.exit(1);
+				errorMsg = "Type mismatch in AssignmentStatement: " + var_.getType().getName() 
+						   + " " + var_name_ + " versus " + expression_.getType().getName() 
+						   + " " + expression_.getWhich();
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			break;
 		case 2:
 			// ArrayAssignment
 			var_ = queryVar(var_name_);
 			if(var_ == null) {
-				System.out.printf("The var [%s] is not defined!\n", var_.getName());
-				System.exit(1);
+				errorMsg = "The var " + var_name_ + " is not defined!\n"; 
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			if (!(var_.getType() instanceof MArray)) {
-				System.out.println("ArrayAssignment's var should be an array, but get "
-								   + var_.getType().getName());
-				System.exit(1);
+				errorMsg = "ArrayAssignment's var should be an array, but get "
+						   + var_.getType().getName(); 
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			
 			index_expression_.register();
 			if (!(index_expression_.getType() instanceof MInt)) {
-				System.out.println("Array index expression should be an integer, but get "
-								   + index_expression_.getType().getName());
-				System.exit(1);
+				errorMsg = "Array index expression should be an integer, but get "
+						   + index_expression_.getType().getName(); 
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			
 			expression_.register();
 			if (!(expression_.getType() instanceof MInt)) {
-				System.out.println("ArrayAssignment's expression should be an integer, but get "
-								   + expression_.getType().getName());
-				System.exit(1);
+				errorMsg = "ArrayAssignment's expression should be an integer, but get "
+						   + expression_.getType().getName(); 
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			break;
 		case 3:
 			// IfStatement
 			expression_.register();
 			if (!(expression_.getType() instanceof MBool)) {
-				System.out.println("Expression in IfStatement should be a bool, but get " 
-								   + expression_.getType().getName());
-				System.exit(1);
+				errorMsg = "Expression in IfStatement should be a bool, but get " 
+						   + expression_.getType().getName(); 
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			for (MBlock child : children_) {
 				child.register();
@@ -140,9 +142,9 @@ public class MBlock extends MScope {
 			// WhileStatement
 			expression_.register();
 			if (!(expression_.getType() instanceof MBool)) {
-				System.out.println("Expression in WhileStatement should be a bool, but get " 
-								   + expression_.getType().getName());
-				System.exit(1);
+				errorMsg = "Expression in WhileStatement should be a bool, but get " 
+						   + expression_.getType().getName(); 
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			for (MBlock child : children_) {
 				child.register();
@@ -152,9 +154,9 @@ public class MBlock extends MScope {
 			// PrintStatement
 			expression_.register();
 			if (!(expression_.getType() instanceof MInt)) {
-				System.out.println("Expression in PrintStatement should be an integer, but get " 
-								   + expression_.getType().getName());
-				System.exit(1);
+				errorMsg = "Expression in PrintStatement should be an integer, but get " 
+						   + expression_.getType().getName(); 
+				ErrorHandler.errorPrint(errorMsg);
 			}
 			break;
 		default:
