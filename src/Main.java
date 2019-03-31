@@ -3,7 +3,7 @@ import minijava.typecheck.*;
 public class Main {
 	public static void main(String args[]) {
 		try {
-			String file_path = "..\\samples\\New\\QuickSort.java";
+			String file_path = "..\\samples\\Test.java";
 			if (args.length > 0) {
 				file_path = args[0];
 			}
@@ -17,5 +17,13 @@ public class Main {
 			System.out.println("Error: ");
 			e.printStackTrace();
 		}
+	}
+}
+
+class errorHandler {
+	public static void errorPrint(String errorMsg) {
+		System.out.println(errorMsg);
+		System.out.println("Typecheck error");
+		System.exit(1);
 	}
 }
