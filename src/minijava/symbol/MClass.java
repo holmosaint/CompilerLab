@@ -18,7 +18,7 @@ public class MClass extends MType {
 	public MClass(Node node) {
 		if (node instanceof ClassDeclaration) {
 			ClassDeclaration class_node = (ClassDeclaration) node;
-			System.out.println("Declare: " + (class_node.f1.f0.toString()));
+			// System.out.println("Declare: " + (class_node.f1.f0.toString()));
 			name_ = class_node.f1.f0.toString();
 			if (SymbolTable.isReserved(name_)) {
 				System.exit(1);
@@ -32,7 +32,7 @@ public class MClass extends MType {
 			parseMethod(class_node.f4);
 		} else if (node instanceof ClassExtendsDeclaration) {
 			ClassExtendsDeclaration class_node = (ClassExtendsDeclaration) node;
-			System.out.println("Declare: " + ((ClassExtendsDeclaration) node).f1.f0.toString());
+			// System.out.println("Declare: " + ((ClassExtendsDeclaration) node).f1.f0.toString());
 			name_ = class_node.f1.f0.toString();
 			if (SymbolTable.isReserved(name_)) {
 				System.exit(1);
@@ -45,7 +45,7 @@ public class MClass extends MType {
 			}
 			parseMethod(class_node.f6);
 		} else if (node instanceof MainClass) {
-			System.out.println("Declare: " + ((MainClass) node).f1.f0.toString());
+			// System.out.println("Declare: " + ((MainClass) node).f1.f0.toString());
 			MainClass class_node = (MainClass) node;
 			name_ = class_node.f1.f0.toString();
 			if (SymbolTable.isReserved(name_)) {

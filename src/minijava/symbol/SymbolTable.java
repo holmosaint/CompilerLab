@@ -64,7 +64,7 @@ public class SymbolTable {
 		// main_class = null;
 		
 		// 1.Initialize the parser
-		System.out.println("Initialize the parser...");
+		// System.out.println("Initialize the parser...");
 		try {
 			InputStream input_stream = new FileInputStream(file);
 			if (first_time_) {
@@ -78,7 +78,7 @@ public class SymbolTable {
 		}
 		
 		// 2.Start parsing
-		System.out.println("Parse and build syntaxtree...");
+		// System.out.println("Parse and build syntaxtree...");
 		try {
 			root_ = MiniJavaParser.Goal();
 		} catch (ParseException e) {
@@ -111,7 +111,7 @@ public class SymbolTable {
 			System.out.printf("Get duplicate definition of class: %s\n", c.getName());
 			System.exit(1);
 		}
-		System.out.println("Add class " + c.getName() + " to list");
+		// System.out.println("Add class " + c.getName() + " to list");
 		class_list_.put(c.getName(), c);
 	}
 	

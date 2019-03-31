@@ -27,7 +27,7 @@ public class MMethod extends MScope {
 			System.exit(1);
 		}
 		
-		System.out.println("You declare method " + name_);
+		// System.out.println("You declare method " + name_);
 		parseParam(declare.f4);
 		if (!SymbolTable.parseVar(declare.f7, vars_)) {
 			System.out.println("in method " + name_);
@@ -59,12 +59,12 @@ public class MMethod extends MScope {
 	}
 	
 	public void addBlock(MScope block) {
-		System.out.println("MMethod " + name_ + " add an MBlock");
+		// System.out.println("MMethod " + name_ + " add an MBlock");
 		blocks_.add((MBlock) block);
 	}
 	
 	private void parseParam(NodeOptional param_list) {
-		System.out.println("has_params = " + param_list.present());
+		// System.out.println("has_params = " + param_list.present());
 		if (param_list.present() == false) return;
 		// Parse the first parameter
 		FormalParameter param = ((FormalParameterList) param_list.node).f0;
@@ -148,7 +148,7 @@ public class MMethod extends MScope {
 	}
 
 	public void register() {
-		System.out.println("Registering method " + name_);
+		// System.out.println("Registering method " + name_);
 		for(MBlock b : blocks_) {
 			b.register();
 		}

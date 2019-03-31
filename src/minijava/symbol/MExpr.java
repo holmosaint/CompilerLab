@@ -171,13 +171,13 @@ public class MExpr {
 				}
 				
 				if (!(prim_expr_.getType() instanceof MClass)) {
-					System.out.println("Primary Expression in MessageSend should be an instance of a class");
-					System.exit(1);
+					errorMsg = "Primary Expression in MessageSend should be an instance of a class";
+					break;
 				}
 				method_ = ((MClass)prim_expr_.getType()).queryMethod(method_name_);
 				if (method_ == null) {
-					System.out.println("Using undefined method " + method_name_);
-					System.exit(1);
+					errorMsg = "Using undefined method " + method_name_;
+					break;
 				}
 				
 				method_.matchParam(exprs_);

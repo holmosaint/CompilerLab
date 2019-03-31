@@ -1,0 +1,125 @@
+[33mcommit c4ef269751f050ab9bce56e6caaa8e52ff77a1a4[m[33m ([m[1;36mHEAD -> [m[1;32mchenbinmaster[m[33m)[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Tue Mar 19 10:17:13 2019 +0800
+
+    update .gitignore
+
+[33mcommit a7dfe100369c047ab792bd69e928d6fd1046bf92[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Tue Mar 19 10:15:15 2019 +0800
+
+    Update the symbol
+
+[33mcommit 8357dac497b141d93b491c91c16fa3f7e3673107[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Mon Mar 18 17:27:46 2019 +0800
+
+    remove *.class
+
+[33mcommit f81bbf2b943d4a4063a3711ff748ad93768fdd1d[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Mon Mar 18 17:26:03 2019 +0800
+
+    Update MArray MClass MType MVar
+
+[33mcommit 60b4fe9da5c93704deb896bf473c60c21a31eb09[m
+Author: holmosaint <592839916@qq.com>
+Date:   Mon Mar 18 17:20:38 2019 +0800
+
+    Add visitor and register functions
+
+[33mcommit edecd91fbb86d2f46ae36a1ab7c7d43716759b25[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Mon Mar 18 16:35:32 2019 +0800
+
+    fix the MInt MBool MArray
+
+[33mcommit 330d7a2de3fe12d9ac5a828050269712ffc61e88[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Mon Mar 18 16:09:18 2019 +0800
+
+    Modify the symbol/
+
+[33mcommit b7f55e72a58a9c646483f9eb41640ce010b8e362[m
+Author: holmosaint <592839916@qq.com>
+Date:   Mon Mar 18 16:33:59 2019 +0800
+
+    Add some visitor functions
+
+[33mcommit e68ab2fb1cac250cb257bbfac306de15ad3ea2e8[m
+Author: holmosaint <592839916@qq.com>
+Date:   Mon Mar 18 16:08:08 2019 +0800
+
+     Adding getFather function
+
+[33mcommit 87c7ca099e85f107fba5186c627d4430d02206f1[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Mon Mar 18 15:28:46 2019 +0800
+
+    update mblock
+
+[33mcommit f893625069bcaa40b1f60984704c9d28e817c831[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Sat Mar 16 19:31:37 2019 +0800
+
+    rename MScope to MBlock
+
+[33mcommit 4c7e6c5882ba40ab7aaa55b0f0c3ee7e2ae3c28c[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Sat Mar 16 16:28:15 2019 +0800
+
+    Edit MType.java
+
+[33mcommit 1e9e88b9c7dbf312ec8d501dfd9fe8f105fe510c[m[33m ([m[1;32mmaster[m[33m)[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Sat Mar 16 16:11:10 2019 +0800
+
+    Add symboltable
+
+[33mcommit 8574da5ca32c367e1921c84cb1c8971e778802ea[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Sat Mar 16 14:28:48 2019 +0800
+
+    Add the structure of ClassTreeBuilder
+
+[33mcommit 2a760c29b547e476480ab3c062a54d91279a168a[m[33m ([m[1;31morigin/chenbinmaster[m[33m)[m
+Author: Amshoreline <zcbin@pku.edu.cn>
+Date:   Fri Mar 15 23:25:29 2019 +0800
+
+    modify the minijava/visitor and minijava/syntaxtree
+
+[33mcommit 56bd809f129ec717a0013f74e0ee3fec03298bef[m
+Author: holmosaint <592839916@qq.com>
+Date:   Mon Mar 11 17:24:37 2019 +0800
+
+            deleted:    src/README.md
+
+[33mcommit f7693850b0e93adcf76f7316c102ac77825eaaea[m
+Author: holmosaint <592839916@qq.com>
+Date:   Mon Mar 11 17:23:57 2019 +0800
+
+    src
+
+[33mcommit e2fa97a0d52d99a3901a40871a5da408c41ef850[m
+Author: holmosaint <32117229+holmosaint@users.noreply.github.com>
+Date:   Mon Mar 11 17:20:28 2019 +0800
+
+    src folder
+
+[33mcommit 3e8124eededbc4e8d52f60bf8753133812040200[m
+Author: holmosaint <32117229+holmosaint@users.noreply.github.com>
+Date:   Mon Mar 11 17:18:11 2019 +0800
+
+    src folder
+
+[33mcommit d050988915b98adc7159af14bf936053d960a41f[m
+Author: holmosaint <32117229+holmosaint@users.noreply.github.com>
+Date:   Mon Mar 11 17:16:31 2019 +0800
+
+    Src files
+
+[33mcommit a279be227e1464715e6adc1ddde61b65babf3842[m
+Author: holmosaint <32117229+holmosaint@users.noreply.github.com>
+Date:   Mon Mar 11 16:50:20 2019 +0800
+
+    Initial commit
