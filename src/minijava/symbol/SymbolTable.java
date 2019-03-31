@@ -6,6 +6,7 @@ import java.util.*;
 import minijava.MiniJavaParser;
 import minijava.syntaxtree.*;
 import minijava.typecheck.*;
+import util.ErrorHandler;
 import minijava.*;
 
 // MRoot maintains the global information about the syntaxtree
@@ -94,22 +95,19 @@ public class SymbolTable {
 			class_list_.put(c.getName(), c);
 			
 			if(!file_name_.equals(c.getName() + ".java")) {
-				System.out.printf("The main class name is not identical to the file name! ");
-				System.out.printf("Get main class: %s while the file name is %s\n", c.getName(), file_name_);
-				System.exit(1);
+				ErrorHandler.errorPrint("The main class name is not identical to the file name! " + 
+										"Get main class: " + c.getName() + " while the file name is " + file_name_ + "\n");
 			}
 		}
 		else {
-			System.out.printf("Too many main classes! Expect one but get two: %s and %s.\n", 
-								main_class_.getName(), c.getName());
-			System.exit(1);
+			ErrorHandler.errorPrint("Too many main classes! Expect one but get two: " + 
+									main_class_.getName() + " and " + c.getName() + ".\n");
 		}
 	}
 
 	public static void addClass(MClass c) {
 		if(class_list_.containsKey(c.getName())) {
-			System.out.printf("Get duplicate definition of class: %s\n", c.getName());
-			System.exit(1);
+			ErrorHandler.errorPrint("Get duplicate definition of class: " + c.getName() + "\n");
 		}
 		// System.out.println("Add class " + c.getName() + " to list");
 		class_list_.put(c.getName(), c);
@@ -157,8 +155,7 @@ public class SymbolTable {
 			type = new MUndefined(((Identifier)t.f0.choice).f0.toString());
 			break;
 		default:
-			System.out.println("Uknown variable type ");
-			System.exit(1);
+			ErrorHandler.errorPrint("Uknown variable type");
 		}
 		
 		return type;
@@ -168,8 +165,7 @@ public class SymbolTable {
 		for (Node node : var_list.nodes) {
 			MVar var = new MVar(node);
 			if (vars_.containsKey(var.getName())) {
-				System.out.print("Duplicate definition of variable " + var.getName() + " ");
-				return false;
+				ErrorHandler.errorPrint("Duplicate definition of variable " + var.getName());
 			} else {
 				vars_.put(var.getName(), var);
 			}
@@ -179,8 +175,7 @@ public class SymbolTable {
 
 	public static MClass queryClass(String className) {
 		if (!class_list_.containsKey(className)) {
-			System.out.println("Using of undefined class " + className);
-			System.exit(1);
+			ErrorHandler.errorPrint("Using of undefined class " + className);
 		}
 		return class_list_.get(className);
 	}

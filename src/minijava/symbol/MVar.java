@@ -1,6 +1,7 @@
 package minijava.symbol;
 
 import minijava.syntaxtree.*;
+import util.ErrorHandler;
 
 public class MVar {
 	private MType type_;
@@ -22,8 +23,7 @@ public class MVar {
 			name_ = declare.f1.f0.toString();
 			type_ = SymbolTable.getType(declare.f0);
 		} else {
-			System.out.println("Error in MVar(): Not an VarDeclaration.");
-			System.exit(1);
+			ErrorHandler.errorPrint("Error in MVar(): Not an VarDeclaration.");
 		}
 	}
 	
