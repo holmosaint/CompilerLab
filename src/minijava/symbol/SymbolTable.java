@@ -17,8 +17,8 @@ public class SymbolTable {
 	private static File file_;
 	// list of MClass
 	private static MClass main_class_ = null; // main class
+	// TODO: Add MInt MBool MArray to the class_list_
 	private static HashMap<String, MClass> class_list_ = new HashMap<String, MClass>(); // class list
-
 	// unique MType
 	private static boolean first_time_ = true;
 

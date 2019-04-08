@@ -18,3 +18,16 @@ class Fac  {
         return num_aux  + 1;
     }
 }
+
+class A {
+    public A a(int b) {
+        return new A();
+    }
+}
+
+class B extends A {
+    public B a(int b) {
+       return new A();
+    }
+}
+

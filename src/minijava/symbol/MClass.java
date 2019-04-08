@@ -151,7 +151,8 @@ public class MClass extends MType {
 			while(father != null) {
 				if(father.getMethod().containsKey(m.getKey())) {
 					// Check the parameters (Override is allowed but overload is not allowed)
-					if (!father.getMethod().get(m.getKey()).matchParam(m.getValue())) {
+					if (!father.getMethod().get(m.getKey()).matchParam(m.getValue()) || 
+						!father.getMethod().get(m.getKey()).getRetType().isAssignable(m.getValue().getRetType())) {
 						errorMsg = "Dupicative definition of function: " + m.getKey() 
 							+ " in father class " + father.getName() +" and class " + getName();
 						ErrorHandler.errorPrint(errorMsg);
