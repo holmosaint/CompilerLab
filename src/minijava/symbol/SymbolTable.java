@@ -18,7 +18,8 @@ public class SymbolTable {
 	// list of MClass
 	private static MClass main_class_ = null; // main class
 	// TODO: Add MInt MBool MArray to the class_list_
-	private static HashMap<String, MClass> class_list_ = new HashMap<String, MClass>(); // class list
+	private static HashMap<String, MType> type_map_ = new HashMap<String, MType>(); // class list
+	private static ArrayList<MClass> class_list_ = new ArrayList<MClass>();
 	// unique MType
 	private static boolean first_time_ = true;
 
@@ -57,12 +58,14 @@ public class SymbolTable {
 	}
 	
 	public static boolean parse(final File file) {
-		// 0.Initialize the MRoot
+		// 0.Initialize the SymbolTable
 		file_name_ = file.getName();
 		file_ = file;
+		type_map_.put("boolean", new MBool());
+		type_map_.put("int", new MInt());
+		type_map_.put("array", new MArray());
 		// classes.clear();
 		// bin_classes.put("String", String);
-		// main_class = null;
 		
 		// 1.Initialize the parser
 		// System.out.println("Initialize the parser...");
@@ -92,7 +95,8 @@ public class SymbolTable {
 	public static void addMainClass(MClass c) {
 		if(main_class_ == null) {
 			main_class_ = c;
-			class_list_.put(c.getName(), c);
+			type_map_.put(c.getName(), c);
+			class_list_.add(c);
 			
 			if(!file_name_.equals(c.getName() + ".java")) {
 				ErrorHandler.errorPrint("The main class name is not identical to the file name! " + 
@@ -106,33 +110,26 @@ public class SymbolTable {
 	}
 
 	public static void addClass(MClass c) {
-		if(class_list_.containsKey(c.getName())) {
+		if (type_map_.containsKey(c.getName())) {
 			ErrorHandler.errorPrint("Get duplicate definition of class: " + c.getName() + "\n");
 		}
 		// System.out.println("Add class " + c.getName() + " to list");
-		class_list_.put(c.getName(), c);
+		type_map_.put(c.getName(), c);
+		class_list_.add(c);
 	}
 	
 	public static void buildClass() {
 		root_.accept(new ClassTreeBuilder(file_name_));
 		// register the class into the class list
-		for (String key : class_list_.keySet()) {
-			class_list_.get(key).registerFather();
+		for (MClass mclass : class_list_) {
+			mclass.registerFather();
 		}
-		for (String key : class_list_.keySet()) {
-			class_list_.get(key).fillBack();
+		for (MClass mclass : class_list_) {
+			mclass.fillBack();
 		}
-		for (String key : class_list_.keySet()) {
-			class_list_.get(key).register();
+		for (MClass mclass : class_list_) {
+			mclass.register();
 		}
-	}
-
-	public static void buildScope() {
-		
-	}
-
-	public static HashMap<String, MClass> getClassList() {
-		return class_list_;
 	}
 	
 	public static MType getType(Type t) {
@@ -140,15 +137,15 @@ public class SymbolTable {
 		switch (t.f0.which) {
 		case 0:
 			// ArrayType
-			type = new MArray();
+			type = type_map_.get("array");
 			break;
 		case 1:
 			// BooleanType
-			type = new MBool();
+			type = type_map_.get("boolean");
 			break;
 		case 2:
 			// IntegerType
-			type = new MInt();
+			type = type_map_.get("int");
 			break;
 		case 3:
 			// Identifier (User-defined class)
@@ -160,6 +157,11 @@ public class SymbolTable {
 		
 		return type;
 	}
+	
+	public static MType getType(String type_name) {
+		return type_map_.get(type_name);
+	}
+	
 	
 	public static boolean parseVar(NodeListOptional var_list, HashMap<String, MVar> vars_) {
 		for (Node node : var_list.nodes) {
@@ -174,10 +176,10 @@ public class SymbolTable {
 	}
 
 	public static MClass queryClass(String className) {
-		if (!class_list_.containsKey(className)) {
-			ErrorHandler.errorPrint("Using of undefined class " + className);
+		if (!type_map_.containsKey(className)) {
+			ErrorHandler.errorPrint("Use undefined class " + className);
 		}
-		return class_list_.get(className);
+		return (MClass) type_map_.get(className);
 	}
 	
 }

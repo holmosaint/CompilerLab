@@ -148,7 +148,9 @@ public class MMethod extends MScope {
 		if (return_ != null) {
 			return_.register();
 			if (!ret_type_.isAssignable(return_.getType())) {
-				ErrorHandler.errorPrint("Return expression's type is wrong");
+				ErrorHandler.errorPrint(name_ + "'s return expression's type is wrong: " +
+										"expected " + ret_type_.getName() + ", but " +
+						                "get " + return_.getType().getName());
 			}
 		}
 	}

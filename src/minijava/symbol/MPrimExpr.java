@@ -100,15 +100,15 @@ public class MPrimExpr {
 		switch (which_) {
 			case 0:
 				// IntegerLiteral
-				type_ = new MInt();
+				type_ = SymbolTable.getType("int");
 				return;
 			case 1:
 				// TrueLiteral
-				type_ = new MBool();
+				type_ = SymbolTable.getType("boolean");
 				return;
 			case 2:
 				// FalseLiteral
-				type_ = new MBool();
+				type_ = SymbolTable.getType("boolean");
 				return;
 			case 3:
 				// Identifier
@@ -131,7 +131,7 @@ public class MPrimExpr {
 				return;
 			case 5:
 				// ArrayAllocationExpression
-				type_ = new MArray();
+				type_ = SymbolTable.getType("array");
 				expr_.register();
 				if(expr_.getType() instanceof MInt)
 					return;
@@ -147,7 +147,7 @@ public class MPrimExpr {
 				break;
 			case 7:
 				// NotExpression
-				type_ = new MBool();
+				type_ = SymbolTable.getType("boolean");
 				expr_.register();
 				if(expr_.getType() instanceof MBool)
 					return;

@@ -1,6 +1,7 @@
 package minijava.symbol;
 
 public class MUndefined extends MType {
+
 	private String class_name_ = null;
 	
 	public MUndefined(String class_name) {
@@ -8,7 +9,6 @@ public class MUndefined extends MType {
 	}
 	
 	public String getClassName() {
-		
 		return class_name_;
 	}
 	

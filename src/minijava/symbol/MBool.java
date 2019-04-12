@@ -3,7 +3,7 @@ package minijava.symbol;
 import minijava.syntaxtree.Node;
 
 public class MBool extends MType {
-
+	
 	public String getName() {
 		return "bool";
 	}

@@ -4,7 +4,6 @@ import minijava.syntaxtree.Node;
 
 public class MInt extends MType {
 
-	
 	public String getName() {
 		return "int";
 	}

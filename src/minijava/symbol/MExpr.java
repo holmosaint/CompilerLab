@@ -105,7 +105,7 @@ public class MExpr {
 			case 0:
 				// AndExpression
 				// AndExpression ::= PrimaryExpression "&&" PrimaryExpression
-				type_ = new MBool();
+				type_ = SymbolTable.getType("boolean");
 				prim_expr_.register();
 				prim_expr2_.register();
 				
@@ -116,7 +116,7 @@ public class MExpr {
 			case 1:
 				// Compare Expression
 				// CompareExpression ::= PrimaryExpression "<" PrimaryExpression
-				type_ = new MBool();
+				type_ = SymbolTable.getType("boolean");
 				prim_expr_.register();
 				prim_expr2_.register();
 
@@ -128,7 +128,7 @@ public class MExpr {
 			case 3:
 			case 4:
 				// (Plus|Minus|Times)Expression
-				type_ = new MInt();
+				type_ = SymbolTable.getType("int");
 				prim_expr_.register();
 				prim_expr2_.register();
 
@@ -139,7 +139,7 @@ public class MExpr {
 			case 5:
 				// ArrayLookup
 				// ArrayLookup ::= PrimaryExpression "[" PrimaryExpression "]"
-				type_ = new MInt();
+				type_ = SymbolTable.getType("int");
 				prim_expr_.register();
 				prim_expr2_.register();
 				if((prim_expr_.getType() instanceof MArray)) {
@@ -157,7 +157,7 @@ public class MExpr {
 			case 6:
 				// ArrayLength
 				// ArrayLength ::= PrimaryExpression "." "length"
-				type_ = new MInt();
+				type_ = SymbolTable.getType("int");
 				prim_expr_.register();
 				
 				if((prim_expr_.getType() instanceof MArray))
