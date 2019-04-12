@@ -24,7 +24,7 @@ public class MMethod extends MScope {
 		ret_type_ = SymbolTable.getType(declare.f1);
 		name_ = declare.f2.f0.toString();
 		if (SymbolTable.isReserved(name_)) {
-			ErrorHandler.errorPrint("Using reserved name");
+			ErrorHandler.errorPrint("Use reserved name " + name_);
 		}
 		
 		// System.out.println("You declare method " + name_);
