@@ -1,7 +1,14 @@
 package minijava.symbol;
 
-import java.util.*;
-import minijava.syntaxtree.*;
+import java.util.ArrayList;
+
+import minijava.syntaxtree.ArrayAssignmentStatement;
+import minijava.syntaxtree.AssignmentStatement;
+import minijava.syntaxtree.Block;
+import minijava.syntaxtree.IfStatement;
+import minijava.syntaxtree.NodeChoice;
+import minijava.syntaxtree.PrintStatement;
+import minijava.syntaxtree.WhileStatement;
 import util.ErrorHandler;
 
 public class MBlock extends MScope {
@@ -98,6 +105,8 @@ public class MBlock extends MScope {
 						   + " " + expression_.getWhich();
 				ErrorHandler.errorPrint(errorMsg);
 			}
+			var_.assign();
+			
 			break;
 		case 2:
 			// ArrayAssignment

@@ -39,6 +39,7 @@ public class MMethod extends MScope {
 		owner_ = owner;
 		name_ = "main";
 		
+		// TODO: Is this parameter available for the method?
 		String param_name = class_node.f11.f0.toString();
 		index2name_.put(0, param_name);
 		params_.put(param_name, new MVar(param_name));
@@ -66,16 +67,21 @@ public class MMethod extends MScope {
 		// Parse the first parameter
 		FormalParameter param = ((FormalParameterList) param_list.node).f0;
 		String param_name = param.f1.f0.toString();
+		MVar var;
+		
+		var = new MVar(param);
+		var.assign();
+		
 		if (params_.containsKey(param_name)) {
 			ErrorHandler.errorPrint("Duplicate declaration of parameter " + param_name);
 		} else {
-			params_.put(param_name, new MVar(param));
+			params_.put(param_name, var);
 		}
 		// WARNING! Something could go wrong here
 		if (vars_.containsKey(param_name)) {
 			ErrorHandler.errorPrint("Duplicate declaration of parameter" + param_name);
 		} else {
-			vars_.put(param_name, new MVar(param));
+			vars_.put(param_name, var);
 		}
 		index2name_.put(0, param_name);
 		
@@ -86,15 +92,18 @@ public class MMethod extends MScope {
 		for (Node node : rest_params_list.nodes) {
 			FormalParameterRest declare = (FormalParameterRest) node;
 			param_name = declare.f1.f1.f0.toString();
+			
+			var = new MVar(declare.f1);
+			var.assign();
 			if (params_.containsKey(param_name)) {
 				ErrorHandler.errorPrint("Duplicate declaration of parameter " + param_name);
 			} else {
-				params_.put(param_name, new MVar(declare.f1));
+				params_.put(param_name, var);
 			}
 			if (vars_.containsKey(param_name)) {
 				ErrorHandler.errorPrint("Duplicate declaration of parameter " + param_name);
 			} else {
-				vars_.put(param_name, new MVar(declare.f1));
+				vars_.put(param_name, var);
 			}
 			index2name_.put(i, param_name);
 			i++;
