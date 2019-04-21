@@ -1,16 +1,11 @@
 class Test{
     public static void main(String[] asfadfas){
-        int a;
-        A b;
-        b = new A();
-        System.out.println(b.print(a));
-    }
-}
-
-class A {
-    public int print(int a) {
-        System.out.println(a);
-        return a;
+        int[] a;
+        int b;
+        b = 3;
+        a = new int[4];
+        a[0] = 2;
+        System.out.println(a[4]);
     }
 }
 

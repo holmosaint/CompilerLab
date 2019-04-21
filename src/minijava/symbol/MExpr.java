@@ -142,13 +142,27 @@ public class MExpr {
 				prim_expr2_.register();
 				if((prim_expr_.getType() instanceof MArray)) {
 					if(prim_expr2_.getType() instanceof MInt) {
-						return;
+						// Check index
+						int length, index;
+						
+						if (prim_expr_.getWhich() == 3) {
+							length = prim_expr_.getVar().getLength();
+						} else {
+							assert prim_expr_.getWhich() == 5;
+							length = prim_expr_.arrayLength();
+						}
+						index = prim_expr2_.getInteger();
+						
+						if (length != -1 && index != -1 && length <= index) {
+							errorMsg = "Array index is wrong " + index + "/" + length;
+						} else {
+							return;
+						}
 					}
 					else {
 						errorMsg = "the index part of the Array Lookup Expression is not an int type!";
 					}
-				}
-				else {
+				} else {
 					errorMsg = "The first part of the Array Lookup Expression is not an array type";
 				}
 				break;
@@ -218,5 +232,9 @@ public class MExpr {
 	
 	public int arrayLength() {
 		return prim_expr_.arrayLength();
+	}
+	
+	public int getInteger() {
+		return prim_expr_.getInteger();
 	}
 }

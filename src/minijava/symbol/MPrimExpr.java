@@ -16,6 +16,7 @@ public class MPrimExpr {
 	private MScope father_;
 	private int which_;
 	private String literal_ = null;
+	private MVar var_ = null;
 	private String var_name_ = null;
 	private MExpr expr_ = null;
 	private MType type_ = null;
@@ -85,15 +86,15 @@ public class MPrimExpr {
 				return;
 			case 3:
 				// Identifier
-				MVar var = father_.queryVar(var_name_);
-				if (var == null) {
-					errorMsg = "Use undefined variable " + var.getName();
+				var_ = father_.queryVar(var_name_);
+				if (var_ == null) {
+					errorMsg = "Use undefined variable " + var_.getName();
 					break;
-				} else if (!var.isAssigned()) {
-					errorMsg = "Use uninitialized variable " + var.getName();
+				} else if (!var_.isAssigned()) {
+					errorMsg = "Use uninitialized variable " + var_.getName();
 					break;
 				}
-				type_ = var.getType();
+				type_ = var_.getType();
 				return;
 			case 4:
 				// ThisExpression
@@ -103,6 +104,7 @@ public class MPrimExpr {
 				assert fatherScope instanceof MMethod;
 				MClass fatherClass = ((MMethod)fatherScope).getOwner();
 				type_ = fatherClass;
+				// TODO: Too many to list out...
 				return;
 			case 5:
 				// ArrayAllocationExpression
@@ -145,11 +147,21 @@ public class MPrimExpr {
 	public int getWhich() {
 		return which_;
 	}
+
+	public MVar getVar() {
+		return var_;
+	}
 	
+	// Only for case 5
 	public int arrayLength() {
 		if (expr_.getWhich() != 8) return -1;
 		MPrimExpr prim_expr = expr_.getPrimExpr();
 		if (prim_expr.which_ != 0) return -1;
-		return Integer.parseInt(prim_expr.literal_);
+		return prim_expr.getInteger();
+	}
+	
+	public int getInteger() {
+		if (which_ != 0) return -1;
+		else return Integer.parseInt(literal_);
 	}
 }

@@ -4,8 +4,6 @@ import minijava.syntaxtree.*;
 
 public class MArray extends MType {
 	
-	private int length_;
-	
 	public String getName() {
 		return "int[]";
 	}
