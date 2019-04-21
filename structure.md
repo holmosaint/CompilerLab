@@ -89,7 +89,7 @@ int addr_;      // base address
 int length_;    // for array
 
 MClass real_type_;  // for class instance
-// 'method_tabel_' will be updated everytime the variable is assignmented,
+// 'method_tabel_' will be updated everytime the variable is assigned,
 // it stores the method accessible for this variable. Each pair 
 // <method_name, class_name> in 'method_table' indicates a unique method
 // which has name <method_name>_<class_name> in the object code 
