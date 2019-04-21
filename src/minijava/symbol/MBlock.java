@@ -2,13 +2,7 @@ package minijava.symbol;
 
 import java.util.ArrayList;
 
-import minijava.syntaxtree.ArrayAssignmentStatement;
-import minijava.syntaxtree.AssignmentStatement;
-import minijava.syntaxtree.Block;
-import minijava.syntaxtree.IfStatement;
-import minijava.syntaxtree.NodeChoice;
-import minijava.syntaxtree.PrintStatement;
-import minijava.syntaxtree.WhileStatement;
+import minijava.syntaxtree.*;
 import util.ErrorHandler;
 
 public class MBlock extends MScope {
@@ -106,7 +100,7 @@ public class MBlock extends MScope {
 				ErrorHandler.errorPrint(errorMsg);
 			}
 			var_.assign();
-			
+			var_.allocate(expression_);
 			break;
 		case 2:
 			// ArrayAssignment
@@ -132,6 +126,15 @@ public class MBlock extends MScope {
 			if (!(expression_.getType() instanceof MInt)) {
 				errorMsg = "ArrayAssignment's expression should be an integer, but get "
 						   + expression_.getType().getName(); 
+				ErrorHandler.errorPrint(errorMsg);
+			}
+			
+			// Check the index
+			int length = var_.getLength();
+			int index = index_expression_.getInteger();
+			
+			if (length != -1 && index != -1 && length <= index) {
+				errorMsg = "Array index is wrong " + index + "/" + length;
 				ErrorHandler.errorPrint(errorMsg);
 			}
 			break;

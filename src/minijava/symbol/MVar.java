@@ -12,10 +12,9 @@ public class MVar {
 	private MType type_;
 	private String name_;
 	private boolean assigned_ = false;
-
+	
 	private int addr_;      // base address
-	private int length_;    // for array
-
+	private int length_;  // for array instance
 	private MClass real_type_;  // for class instance
 	
 	// 'method_tabel_' will be updated everytime the variable is assigned,
@@ -80,12 +79,6 @@ public class MVar {
 	}
 	
 	public boolean assign() {
-		if (type_ instanceof MClass) {
-			// TODO: Allocate and initialize variables for MClass
-		} else if (type_ instanceof MArray) {
-			// TODO: Get length for array
-		}
-		
 		if (assigned_) {
 			return false;
 		} else {
@@ -94,8 +87,15 @@ public class MVar {
 		}
 	}
 	
-	// Check if the variable is allocated
-	// Only for instance of MClass and MArray
+	public void allocate(MExpr expr) {
+		if (type_ instanceof MArray) {
+			length_ = expr.arrayLength();
+		} else if (type_ instanceof MClass) {
+			real_type_ = (MClass) expr.getType();
+		}
+	}
+	
+	// Check if the variable is assigned
 	public boolean isAssigned() {
 		return assigned_;
 	}
@@ -112,5 +112,11 @@ public class MVar {
 		this.tempID = tempID;
 	}
 	
-	
+	public int getLength() {
+		if (!(type_ instanceof MArray)) {
+			System.out.println("Error in getLength");
+			System.exit(1);
+		}
+		return length_;
+	}
 }
