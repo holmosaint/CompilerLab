@@ -14,7 +14,6 @@ public class MVar {
 	private boolean assigned_ = false;
 
 	private int addr_;      // base address
-	private int length_;    // for array
 
 	private MClass real_type_;  // for class instance
 	
@@ -81,7 +80,7 @@ public class MVar {
 		if (type_ instanceof MClass) {
 			// TODO: Allocate and initialize variables for MClass
 		} else if (type_ instanceof MArray) {
-			// TODO: Get length for array
+			
 		}
 		
 		if (assigned_) {
