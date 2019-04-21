@@ -61,6 +61,10 @@ public class MMethod extends MScope {
 		blocks_.add((MBlock) block);
 	}
 	
+	public ArrayList<MBlock> getBlockList() {
+		return blocks_;
+	}
+	
 	private void parseParam(NodeOptional param_list) {
 		// System.out.println("has_params = " + param_list.present());
 		if (param_list.present() == false) return;
@@ -220,5 +224,9 @@ public class MMethod extends MScope {
 		}
 		
 		return true;
+	}
+	
+	public HashMap<String, MVar> getVarMap() {
+		return vars_;
 	}
 }

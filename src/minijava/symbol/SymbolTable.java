@@ -182,4 +182,8 @@ public class SymbolTable {
 		return (MClass) type_map_.get(className);
 	}
 	
+	public static ArrayList<MClass> getClassList () {
+		return class_list_;
+	}
+	
 }

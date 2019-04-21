@@ -11,6 +11,7 @@ public class MClass extends MType {
 	private String father_name_ = null;
 	private MClass father_ = null;
 	private int size_ = 0;
+	private Boolean is_main_class = false;
 	
 	// symbol tables
 	private HashMap<String, MMethod> methods_ = new HashMap<String, MMethod>();
@@ -49,6 +50,7 @@ public class MClass extends MType {
 			}
 			parseMethod(class_node.f6);
 		} else if (node instanceof MainClass) {
+			is_main_class = true;
 			// System.out.println("Declare: " + ((MainClass) node).f1.f0.toString());
 			MainClass class_node = (MainClass) node;
 			name_ = class_node.f1.f0.toString();
@@ -245,6 +247,10 @@ public class MClass extends MType {
 			cur = cur.getFather();
 		}
 		return cur.getName().equals(this.name_);
+	}
+	
+	public boolean isMainClass() {
+		return is_main_class;
 	}
 
 }

@@ -28,6 +28,8 @@ public class MVar {
 	// var_list_ is a concatenation of variable lists in ['real_type_', 
 	// 'real_type_' 's father, ... , 'type_', 'type_' 's father ...]
 	private ArrayList<MVar> var_list_;
+	
+	private int tempID = -1;
 
 	// relation between the 'var_index_' and 'var_list_'
 	//  class1         class2
@@ -97,4 +99,18 @@ public class MVar {
 	public boolean isAssigned() {
 		return assigned_;
 	}
+
+	public int getTempID() {
+		if(tempID < 0)
+			ErrorHandler.errorPrint("Temp register has not been allocated to variable " + getName());
+		return tempID;
+	}
+
+	public void setTempID(int tempID) {
+		if(this.tempID >= 0)
+			ErrorHandler.errorPrint("Duplicate TEMP register allocation to variable " + getName());
+		this.tempID = tempID;
+	}
+	
+	
 }

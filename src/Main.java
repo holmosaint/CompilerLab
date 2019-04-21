@@ -13,6 +13,7 @@ public class Main {
 			} else {
 				System.out.println("Typecheck error!");
 			}
+			
 		} catch (Exception e) {
 			System.out.println("Error: ");
 			e.printStackTrace();
