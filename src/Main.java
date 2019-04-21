@@ -1,4 +1,3 @@
-import minijava.symbol.MType;
 import minijava.typecheck.*;
 
 public class Main {

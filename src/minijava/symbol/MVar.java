@@ -1,5 +1,7 @@
 package minijava.symbol;
 
+import java.util.HashMap;
+
 import minijava.syntaxtree.*;
 import util.ErrorHandler;
 
@@ -7,6 +9,10 @@ public class MVar {
 	private MType type_;
 	private String name_;
 	private boolean allocated_ = false;
+	private int addr_;	// 基址
+	private int array_length_ = -1;	// array属性
+	private HashMap<String, MVar> var_table_;	// var name 与 MVar之间的map
+	private HashMap<String, MMethod> method_table_;	// method 与 addr之间的map	
 	
 	public MVar(MType type) {
 		type_ = type;

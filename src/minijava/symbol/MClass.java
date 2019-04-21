@@ -15,7 +15,7 @@ public class MClass extends MType {
 	// symbol tables
 	private HashMap<String, MMethod> methods_ = new HashMap<String, MMethod>();
 	private HashMap<String, MVar> vars_ = new HashMap<String, MVar>();
-	
+		
 	public MClass(Node node) {
 		String errorMsg = "";
 		if (node instanceof ClassDeclaration) {
