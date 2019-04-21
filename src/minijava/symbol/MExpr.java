@@ -21,8 +21,6 @@ public class MExpr {
 	private String op_ = null;
 	private MPrimExpr prim_expr_ = null, prim_expr2_ = null;
 	private ArrayList<MExpr> exprs_ = null;
-	private String var_name_ = null;
-	private MVar var_ = null;
 	private String method_name_ = null;
 	private MMethod method_ = null;
 	// TODO: type_ should be assigned when checking
@@ -202,5 +200,23 @@ public class MExpr {
 	
 	public int getWhich() {
 		return which_;
+	}
+	
+	public MPrimExpr getPrimExpr() {
+		return prim_expr_;
+	}
+	
+	public boolean isAllocation() {
+		if (which_ != 8) return false;
+		return prim_expr_.getWhich() == 6;
+	}
+	
+	public boolean isArrayAllocation() {
+		if (which_ != 8) return false;
+		return prim_expr_.getWhich() == 5;
+	}
+	
+	public int arrayLength() {
+		return prim_expr_.arrayLength();
 	}
 }

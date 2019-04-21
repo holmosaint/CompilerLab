@@ -1,33 +1,16 @@
 class Test{
-    public static void main(String[] a){
-        Fac fac;
-        fac = new Fac();
-        System.out.println(new Fac().ComputeFac(10));
-    }
-}
-
-class Fac  {
-    int[] b;
-    Fac fac;
-    public int ComputeFac(int num){
-        int num_aux ;
-        if (num < 1)
-            num_aux = 1 ;
-        else
-            num_aux = num * (this.ComputeFac(num-1)) ;
-        return num_aux  + 1;
+    public static void main(String[] asfadfas){
+        int a;
+        A b;
+        b = new A();
+        System.out.println(b.print(a));
     }
 }
 
 class A {
-    public A a(int b) {
-        return new A();
-    }
-}
-
-class B extends A {
-    public B a(int b) {
-       return new A();
+    public int print(int a) {
+        System.out.println(a);
+        return a;
     }
 }
 

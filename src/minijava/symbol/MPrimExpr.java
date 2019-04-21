@@ -17,7 +17,6 @@ public class MPrimExpr {
 	private int which_;
 	private String literal_ = null;
 	private String var_name_ = null;
-	private MVar var_ = null;
 	private MExpr expr_ = null;
 	private MType type_ = null;
 	
@@ -69,32 +68,6 @@ public class MPrimExpr {
 		}
 	}
 
-	/*
-	private String findIdentifierType() {
-		MScope tmp_father = father_;
-		while(tmp_father != null) {
-			MVar v = tmp_father.queryVar(var_name_);
-			if(v != null) {
-				type_ = v.getType();
-				return null;
-			}
-			tmp_father = tmp_father.getFather();
-		}
-		assert tmp_father instanceof MMethod;
-		MClass c = ((MMethod)tmp_father).getOwner();
-		while(c != null) {
-			MVar v = c.queryVar(var_name_);
-			if(v != null) {
-				type_ = v.getType();
-				return null;
-			}
-			c = c.getFather();
-		}
-		String errorMsg = "Variable [" + var_name_ + "] in primary expression not found!";
-		return errorMsg;
-	}
-	*/
-
 	public void register() {
 		String errorMsg = "";
 		switch (which_) {
@@ -112,12 +85,15 @@ public class MPrimExpr {
 				return;
 			case 3:
 				// Identifier
-				var_ = father_.queryVar(var_name_);
-				if (var_ == null) {
-					errorMsg = "Using undefined variable";
+				MVar var = father_.queryVar(var_name_);
+				if (var == null) {
+					errorMsg = "Use undefined variable " + var.getName();
+					break;
+				} else if (!var.isAssigned()) {
+					errorMsg = "Use uninitialized variable " + var.getName();
 					break;
 				}
-				type_ = var_.getType();
+				type_ = var.getType();
 				return;
 			case 4:
 				// ThisExpression
@@ -127,7 +103,6 @@ public class MPrimExpr {
 				assert fatherScope instanceof MMethod;
 				MClass fatherClass = ((MMethod)fatherScope).getOwner();
 				type_ = fatherClass;
-				var_ = new MVar(fatherClass);
 				return;
 			case 5:
 				// ArrayAllocationExpression
@@ -140,7 +115,6 @@ public class MPrimExpr {
 			case 6:
 				// AllocationExpression
 				type_ = SymbolTable.queryClass(literal_);
-				var_ = new MVar(type_);
 				if(type_ != null)
 					return;
 				errorMsg = "The identifier [" + literal_ + "] in an allocation expression is not defined";
@@ -172,7 +146,10 @@ public class MPrimExpr {
 		return which_;
 	}
 	
-	public MVar getVar() {
-		return var_;
+	public int arrayLength() {
+		if (expr_.getWhich() != 8) return -1;
+		MPrimExpr prim_expr = expr_.getPrimExpr();
+		if (prim_expr.which_ != 0) return -1;
+		return Integer.parseInt(prim_expr.literal_);
 	}
 }

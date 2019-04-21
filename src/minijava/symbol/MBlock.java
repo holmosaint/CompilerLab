@@ -98,6 +98,8 @@ public class MBlock extends MScope {
 						   + " " + expression_.getWhich();
 				ErrorHandler.errorPrint(errorMsg);
 			}
+			var_.assign();
+			
 			break;
 		case 2:
 			// ArrayAssignment
