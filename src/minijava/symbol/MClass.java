@@ -1,6 +1,7 @@
 package minijava.symbol;
 
 import java.util.*;
+
 import minijava.syntaxtree.*;
 import minijava.visitor.*;
 import util.ErrorHandler;
@@ -40,6 +41,10 @@ public class MClass extends MType {
 				System.out.println("in class " + name_);
 				System.exit(1);
 			}
+			// SetOwner for MVar
+			for (String var_name : vars_.keySet()) {
+				vars_.get(var_name).setOwner(this);
+			}
 			parseMethod(class_node.f4);
 		} else if (node instanceof ClassExtendsDeclaration) {
 			ClassExtendsDeclaration class_node = (ClassExtendsDeclaration) node;
@@ -54,6 +59,10 @@ public class MClass extends MType {
 			if (!SymbolTable.parseVar(class_node.f5, vars_)) {
 				System.out.println("in class " + name_);
 				System.exit(1);
+			}
+			// SetOwner for MVar
+			for (String var_name : vars_.keySet()) {
+				vars_.get(var_name).setOwner(this);
 			}
 			parseMethod(class_node.f6);
 		} else if (node instanceof MainClass) {
@@ -270,8 +279,19 @@ public class MClass extends MType {
 
 	// code below for piglet code generation
 	public String generatePigletNewClassCode() {
-		// TODO:
-		String code = "";
+		String code = "new_" + name_ + "\n";
+		code += " [0]\n";
+		code += "BEGIN\n";
+		
+		// Allocate head pointer for method table
+		code += "MOVE TEMP 0 HALLOCATE 4\n";
+		// Allocate 
+		
+		
+		code += "RETURN\n";
+		code += "RETURN\n";
+		code += "	TEMP 0\n";
+		code += "END";
 		return code;
 	}
 	

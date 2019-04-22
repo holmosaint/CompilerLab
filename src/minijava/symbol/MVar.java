@@ -16,6 +16,8 @@ public class MVar {
 	private int length_;  // for array instance
 	private MClass real_type_;  // for class instance
 	
+	private MClass class_owner_ = null;
+	
 	// The attributes below will be removed in the future
 	private int addr_;      // base address
 	// 'method_tabel_' will be updated everytime the variable is assigned,
@@ -94,6 +96,10 @@ public class MVar {
 		} else if (type_ instanceof MClass) {
 			real_type_ = (MClass) expr.getType();
 		}
+	}
+	
+	public void setOwner(MClass class_owner) {
+		class_owner_ = class_owner;
 	}
 	
 	// Check if the variable is assigned
