@@ -231,7 +231,8 @@ public class MBlock extends MScope {
 				code += "MOVE TEMP " + var_.getTempID() + " ";
 			}
 			else {
-				
+				int offset = -1;
+				// TODO: 拿到var的class
 			}
 			code += expression_.generatePigletExpressionCode();
 			break;
@@ -239,6 +240,15 @@ public class MBlock extends MScope {
 		case 2:
 			// Array assignment expression
 			// ArrayAssignmentStatement	::=	Identifier "[" Expression "]" "=" Expression ";"
+			if(isLocal) {
+				code += "HSTORE TEMP " + var_.getTempID() + " ";
+			}
+			else {
+				int offset = -1;
+				// TODO: 拿到var的class				
+			}
+			code += "TIMES 4 " + index_expression_.generatePigletExpressionCode() + " ";
+			code += expression_.generatePigletExpressionCode();
 			break;
 			
 		case 3:
@@ -259,7 +269,7 @@ public class MBlock extends MScope {
 		default:
 			break;
 		}
-		
+		code += "\n";
 		return code;
 	}
 }
