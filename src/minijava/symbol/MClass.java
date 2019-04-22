@@ -16,7 +16,13 @@ public class MClass extends MType {
 	// symbol tables
 	private HashMap<String, MMethod> methods_ = new HashMap<String, MMethod>();
 	private HashMap<String, MVar> vars_ = new HashMap<String, MVar>();
-		
+	
+	// All the methods available to the instance of this class
+	// The "String" should be of format: <ClassName>:<MethodName>
+	private HashMap<String, Integer> method_offset_ = new HashMap<String, Integer>();
+	// All the variables available to the instance of this class
+	private HashMap<String, Integer> var_offset_ = new HashMap<String, Integer>();
+	
 	public MClass(Node node) {
 		String errorMsg = "";
 		if (node instanceof ClassDeclaration) {
@@ -253,4 +259,6 @@ public class MClass extends MType {
 		return is_main_class;
 	}
 
+	
+	
 }

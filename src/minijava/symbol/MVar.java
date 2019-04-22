@@ -13,10 +13,11 @@ public class MVar {
 	private String name_;
 	private boolean assigned_ = false;
 	
-	private int addr_;      // base address
 	private int length_;  // for array instance
 	private MClass real_type_;  // for class instance
 	
+	// The attributes below will be removed in the future
+	private int addr_;      // base address
 	// 'method_tabel_' will be updated everytime the variable is assigned,
 	// it stores the method accessible for this variable. Each pair 
 	// <method_name, class_name> in 'method_table' indicates a unique method

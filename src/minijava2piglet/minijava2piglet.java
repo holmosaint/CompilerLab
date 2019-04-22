@@ -46,7 +46,7 @@ public class minijava2piglet {
 	}
 	
 	public void generatePigletNewClassCode(MMethod method) {
-		
+		// TODO:
 	}
 	
 	public void generatePigletMethodCode(MMethod method) {
