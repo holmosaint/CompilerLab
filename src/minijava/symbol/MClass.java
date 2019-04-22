@@ -267,5 +267,12 @@ public class MClass extends MType {
 		return var_offset_.get(var_name);
 	}
 	
+	// code below for piglet code generation
+	public String generatePigletNewClassCode() {
+		// TODO:
+		String code = "";
+		return code;
+	}
+	
 	
 }

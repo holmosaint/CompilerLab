@@ -191,4 +191,32 @@ public class MBlock extends MScope {
 	public MVar queryVar(String var_name) {
 		return father_.queryVar(var_name);
 	}
+	
+	public int getWhich() {
+		return which_;
+	}
+	
+	// below for piglet code generation
+	public String generatePigletBlockCode(int tab) {
+		String code = "";
+		String tabPrefix = "";
+		for(int i = 0;i < tab; ++i)
+			tabPrefix += "\t";
+		
+		switch (which_) {
+		case 0:
+			// block
+			for(MBlock block : children_)
+				code += block.generatePigletBlockCode(tab);
+			break;
+		
+		case 1:
+			
+			break;
+			
+		default:
+			break;
+		}
+		return code;
+	}
 }

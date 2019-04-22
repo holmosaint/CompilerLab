@@ -1,8 +1,10 @@
 package minijava.symbol;
 
+import java.io.IOException;
 import java.util.*;
 import minijava.syntaxtree.*;
 import minijava.typecheck.*;
+import minijava2piglet.minijava2piglet;
 import util.ErrorHandler;
 
 public class MMethod extends MScope {
@@ -228,5 +230,36 @@ public class MMethod extends MScope {
 	
 	public HashMap<String, MVar> getVarMap() {
 		return vars_;
+	}
+	
+	// below for piglet code generation
+	public String generatePigletMethodCode() {
+		MClass c = getOwner();
+		String code = c.getName() + "_" + getName();
+		int parameterLength = params_.keySet().size();
+		++parameterLength; // 第一个参数是VTable
+		code += " [" + parameterLength + "]\n";
+		
+		String returnTemp = null;
+		if(!c.isMainClass())
+			returnTemp = minijava2piglet.TEMP + minijava2piglet.tempIndex++;
+		
+		// 分配TEMP给各个局部变量
+		for(String var_name : getVarMap().keySet()) {
+			MVar var = queryVar(var_name);
+			var.setTempID(minijava2piglet.tempIndex++);
+		}
+		
+		int tab = 1; // tab的数量
+		for(MBlock block : getBlockList()) {
+			code += block.generatePigletBlockCode(tab);
+		}
+		
+		if(!c.isMainClass())
+			code += "RETURN " + returnTemp + "\n";
+		
+		code += "END\n";
+		
+		return code;
 	}
 }
