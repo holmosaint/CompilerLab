@@ -9,9 +9,10 @@ import minijava.symbol.*;
 
 public class minijava2piglet {
 	
-	private File outputFile_;
-	private OutputStream pigletFile_;
+	private static File outputFile_;
+	private static OutputStream pigletFile_;
 	private static int tempIndex = 20; // 暴力搜索最小的没有被使用的TEMP值
+	private static int labelIndex = 0;
 	public static final String TEMP = "TEMP ";
 	
 	// 按照每个方法生成代码
@@ -34,20 +35,20 @@ public class minijava2piglet {
 		generatePigletCode();
 	}
 	
-	public void generatePigletCode() {
+	public static void generatePigletCode() {
 		String code = "";
 		for(MClass c : SymbolTable.getClassList()) {
 			code = c.generatePigletNewClassCode();
 			writeCode(code);
 			for(String m : c.getMethod().keySet()) {
 				MMethod method = c.queryMethod(m);
-				code = method.generatePigletMethodCode();
-				writeCode(code);
+				method.generatePigletMethodCode();
+				// writeCode(code);
 			}
 		}
 	}
 	
-	private void writeCode(String code) {
+	public static void writeCode(String code) {
 		try {
 			pigletFile_.write(code.getBytes());
 		} catch (IOException e) {
@@ -57,5 +58,9 @@ public class minijava2piglet {
 	
 	public static int getTempIndex() {
 		return tempIndex++;
+	}
+	
+	public static int getLabelIndex() {
+		return labelIndex++;
 	}
 }

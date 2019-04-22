@@ -1,6 +1,7 @@
 package minijava.symbol;
 
 import minijava.syntaxtree.*;
+import minijava2piglet.minijava2piglet;
 import util.*;
 
 public class MPrimExpr {
@@ -139,6 +140,16 @@ public class MPrimExpr {
 		}
 		ErrorHandler.errorPrint(errorMsg);
 	}
+	
+	// 判断在哪个method里面
+	public MMethod getMethodScope() {
+		MScope father = father_;
+		while(!(father instanceof MMethod)) {
+			father = father.getFather();
+			assert father!=null: "The father of a block is null!\n";
+		}
+		return (MMethod)father;
+	}
 
 	public MType getType() {
 		return type_;
@@ -163,5 +174,89 @@ public class MPrimExpr {
 	public int getInteger() {
 		if (which_ != 0) return -1;
 		else return Integer.parseInt(literal_);
+	}
+	
+	// below for piglet code generation
+	// return the TEMP register that contains the primary expression value
+	public String generatePigletPrimexprCode(int tab, boolean write) {
+		String code = "";
+		String prefixTab = "";
+		for(int i = 0;i < tab; ++i)
+			prefixTab += "\t";
+		String returnTemp = minijava2piglet.TEMP + minijava2piglet.getTempIndex();
+		String exprTemp;
+		int label1, label2, label3;
+		boolean isLocal = false;
+		MMethod method = getMethodScope();
+		if(var_ != null)
+			isLocal = method.judgeLocalVar(var_);
+		
+		switch (which_) {
+		case 0:
+			// IntegerLiteral
+			code += prefixTab + "MOVE " + returnTemp + " " + literal_ + "\n";
+			minijava2piglet.writeCode(code);
+			break;
+		case 1:
+			// TrueLiteral
+			code += prefixTab + "MOVE " + returnTemp + " 1\n";
+			minijava2piglet.writeCode(code);
+			break;
+		case 2:
+			// FalseLiteral
+			code += prefixTab + "MOVE " + returnTemp + " 0\n";
+			minijava2piglet.writeCode(code);
+			break;
+		case 3:
+			// Identifier
+			if(isLocal) {
+				code += prefixTab + "MOVE " + returnTemp + minijava2piglet.TEMP + var_.getTempID() + "\n";
+			}
+			else {
+				code += prefixTab + "HLOAD " + returnTemp + " TEMP 0 " + var_.getOwner().queryVarOffset(var_name_) + "\n";
+			}
+			minijava2piglet.writeCode(code);
+			break;
+		case 4:
+			// ThisExpression
+			code += prefixTab + "MOVE " + returnTemp + " TEMP 0\n";
+			minijava2piglet.writeCode(code);
+			break;
+		case 5:
+			// ArrayAllocationExpression
+			exprTemp = expr_.generatePigletExpressionCode(tab, write);
+			code += prefixTab + "MOVE " + returnTemp + " HALLOCATE TIMES PLUS " + exprTemp + " 1 4\n";
+			minijava2piglet.writeCode(code);
+			break;
+		case 6:
+			// AllocationExpression
+			MClass c = (MClass)type_;
+			code += prefixTab + "MOVE " + returnTemp + " CALL new_" + c.getName() + "()\n";
+			minijava2piglet.writeCode(code);
+			break;
+		case 7:
+			// NotExpression
+			exprTemp = expr_.generatePigletExpressionCode(tab, write);
+			label1 = minijava2piglet.getLabelIndex();
+			label2 = minijava2piglet.getLabelIndex();
+			label3 = minijava2piglet.getLabelIndex();
+			code += prefixTab + "CJUMP " + exprTemp + " L" + label2 + "\n";
+			code += prefixTab + "L" + label1 + "\n";
+			code += prefixTab + "\tMOVE " + returnTemp + " 0\n";
+			code += prefixTab + "\tJUMP L" + label3 + "\n";
+			code += prefixTab + "L" + label2 + "\n";
+			code += prefixTab + "\tMOVE " + returnTemp + " 1\n";
+			code += prefixTab + "L" + label3 + " NOOP\n";
+			break;
+		case 8:
+			// BracketExpression
+			exprTemp = expr_.generatePigletExpressionCode(tab, write);
+			code += "MOVE " + returnTemp + " " + exprTemp;
+			minijava2piglet.writeCode(code);
+			break;
+		default:
+			break;
+		}
+		return returnTemp;
 	}
 }

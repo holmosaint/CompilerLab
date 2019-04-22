@@ -1,6 +1,7 @@
 package minijava.symbol;
 
 import java.util.*;
+
 import minijava.syntaxtree.*;
 import minijava2piglet.minijava2piglet;
 import util.ErrorHandler;
@@ -237,8 +238,9 @@ public class MMethod extends MScope {
 		int parameterLength = params_.keySet().size();
 		++parameterLength; // 第一个参数是VTable
 		code += " [" + parameterLength + "]\n";
+		minijava2piglet.writeCode(code);
 		
-		String returnTemp = null;
+		code = "";
 		
 		// 分配params的TEMP寄存器，从1开始
 		for(int i = 0;i < params_.size(); ++i) {
@@ -254,14 +256,20 @@ public class MMethod extends MScope {
 		}
 		
 		int tab = 1; // tab的数量
-		for(MBlock block : getBlockList()) {
-			code += block.generatePigletBlockCode(tab);
+		for(int i = 0;i < blocks_.size(); ++i) {
+			blocks_.get(i).generatePigletBlockCode(tab, true); // code should be written in the block generation function
+		}
+
+		// return expression
+		code = "";
+		if(!c.isMainClass()) {
+			String returnTemp = "";
+			returnTemp = return_.generatePigletExpressionCode(0, true);
+			code += "RETURN " + returnTemp + "\n";
 		}
 		
-		if(!c.isMainClass())
-			code += "RETURN " + returnTemp + "\n";
-		
-		code += "END\n";
+		code += "END\n\n";
+		minijava2piglet.writeCode(code);
 		
 		return code;
 	}

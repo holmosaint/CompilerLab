@@ -51,11 +51,15 @@
 
 - If statement: `if (expression) statement1 else statement2`
 
-  > CJUMP expression LABEL
+  > CJUMP expression L1
   >
   > ​	statement1
   >
-  > LABEL	statement2
+  > ​	JUMP L2
+  >
+  > L1	statement2
+  >
+  > L2	NOOP
 
 - While statement: `while (expression) statement`
 
@@ -63,7 +67,7 @@
   >
   > ​	statement
   >
-  > JUMP L1
+  > ​	JUMP L1
   >
   > L2 NOOP
 
@@ -77,17 +81,33 @@
   >
   > 优先级！括号！
 
+- And expression: `primexp1 && primexp2`
+
+  > MOVE RETURNTEMP 1
+  >
+  > CJUMP LT 0 TEMP 1 L1
+  >
+  > ​	CJUMP LT 0 TEMP 2 L1
+  >
+  > ​		JUMP L2
+  >
+  > L1
+  >
+  > ​	MOVE RETURNTEMP 0
+  >
+  > L2 NOOP
+
 - not expression `! expression`
 
   > MOVE TEMP expression
   >
   > CJUMP TEMP L2
   >
-  > L1	MOVE TEMP '1'
+  > L1	MOVE TEMP '0'
   >
   > ​		JUMP L3
   >
-  > L2	MOVE TEMP '0'
+  > L2	MOVE TEMP '1'
   >
   > L3	NOOP
 

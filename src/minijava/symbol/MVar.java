@@ -102,6 +102,10 @@ public class MVar {
 		class_owner_ = class_owner;
 	}
 	
+	public MClass getOwner() {
+		return class_owner_;
+	}
+	
 	// Check if the variable is assigned
 	public boolean isAssigned() {
 		return assigned_;
