@@ -1,11 +1,17 @@
 class Test{
-    public static void main(String[] asfadfas){
-        int[] a;
-        int b;
-        b = 3;
-        a = new int[4];
-        a[0] = 2;
-        System.out.println(a[4]);
+    public static void main(String[] args){
+        System.out.println(1);
     }
 }
 
+class A {
+    public int func() {
+        return 1;
+    }
+}
+
+class B extends A {
+    public int func() {
+        return 2;
+    }
+}

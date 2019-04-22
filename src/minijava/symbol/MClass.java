@@ -283,41 +283,41 @@ public class MClass extends MType {
 	// code below for piglet code generation
 	public String generatePigletNewClassCode() {
 		createView();
-		String code = "new_" + name_ + "\n";
+		String code = "new_" + name_ + " [0]\n";
 		int allocate_size, cur;
-		
-		code += " [0]\n";
+
 		code += "BEGIN\n";
 		
 		// Allocate space for VTable
 		allocate_size = 4 * (1 + all_vars_.size());
-		code += "MOVE TEMP 0 HALLOCATE " + allocate_size + "\n";
+		code += "	MOVE TEMP 0 HALLOCATE " + allocate_size + "\n";
 		cur = 4;
 		for (String var_name : all_vars_) {
 			// TEMP 1 stores the current variable's address
-			code += "MOVE TEMP 1 PLUS TEMP 0 " + cur + "\n";
+			code += "	MOVE TEMP 1 PLUS TEMP 0 " + cur + "\n";
 			// Initialize all the variables to zero
-			code += "HSTORE TEMP 1 0 0\n";
+			code += "	HSTORE TEMP 1 0 0\n";
 			cur += 4;
 		}
 		
 		// Allocate space for MTable
 		allocate_size = 4 * all_methods_.size();
-		code += "MOVE TEMP 1 HALLOCATE " + allocate_size + "\n";
-		code += "HSTORE TEMP 0 0 TEMP 1";
-		cur = 0;
-		for (String method_name : all_methods_) {
-			// TEMP 2 stores the current method's address
-			code += "MOVE TEMP 2 PLUS TEMP 1 " + cur + "\n";
-			code += "MOVE TEMP 3 " + method_name + "\n";
-			code += "HSTORE TEMP 2 0 TEMP 3\n";
-			cur += 4;
+		if (allocate_size > 0) {
+			code += "	MOVE TEMP 1 HALLOCATE " + allocate_size + "\n";
+			code += "	HSTORE TEMP 0 0 TEMP 1\n";
+			cur = 0;
+			for (String method_name : all_methods_) {
+				// TEMP 2 stores the current method's address
+				code += "	MOVE TEMP 2 PLUS TEMP 1 " + cur + "\n";
+				code += "	MOVE TEMP 3 " + method_name + "\n";
+				code += "	HSTORE TEMP 2 0 TEMP 3\n";
+				cur += 4;
+			}
 		}
 		
 		code += "RETURN\n";
-		code += "RETURN\n";
 		code += "	TEMP 0\n";
-		code += "END";
+		code += "END\n\n";
 		return code;
 	}
 	
@@ -327,6 +327,7 @@ public class MClass extends MType {
 		ArrayList<MClass> father_list = new ArrayList<MClass>();
 		MClass cur_class = this;
 		int moffset = 0, voffset = 4;  // The offset in the view
+		int list_size;
 		
 		// Generate the father_list;
 		while (cur_class != null) {
@@ -334,17 +335,23 @@ public class MClass extends MType {
 			cur_class = cur_class.father_;
 		}
 		
-		Collections.reverse(father_list);
-		for (MClass cur : father_list) {
-			for (String method_name : cur.methods_.keySet()) {
-				method_offset_.put(cur.name_ + "_" + method_name, moffset);
-				all_methods_.add(cur.name_ + "_" + method_name);
-				moffset += 4;
-			}
-			for (String var_name : cur.vars_.keySet()) {
-				var_offset_.put(cur.name_ + "_" + var_name, voffset);
-				all_vars_.add(cur.name_ + "_" + var_name);
+		list_size = father_list.size();
+		for (int i = list_size - 1; i >= 0; i--) {
+			cur_class = father_list.get(i);
+			for (String var_name : cur_class.vars_.keySet()) {
+				var_offset_.put(cur_class.name_ + "_" + var_name, voffset);
+				all_vars_.add(cur_class.name_ + "_" + var_name);
 				voffset += 4;
+			}
+			for (String method_name : cur_class.methods_.keySet()) {
+				method_offset_.put(cur_class.name_ + "_" + method_name, moffset);
+				for (int j = 0; j <= i; j++) {
+					if (father_list.get(j).methods_.containsKey(method_name)) {
+						all_methods_.add(father_list.get(j).name_ + "_" + method_name);
+						break;
+					}
+				}
+				moffset += 4;
 			}
 		}
 		

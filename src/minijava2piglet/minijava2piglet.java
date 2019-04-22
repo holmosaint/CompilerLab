@@ -17,7 +17,8 @@ public class minijava2piglet {
 	
 	// 按照每个方法生成代码
 	public minijava2piglet(String file_name) {
-		file_name = file_name.split(".")[0] + ".pg";
+		file_name = file_name.replaceAll(".java", ".pg");
+		System.out.println("Outputting to " + file_name);
 		outputFile_ = new File(file_name);
 		if(!outputFile_.exists()) {
 			try {
