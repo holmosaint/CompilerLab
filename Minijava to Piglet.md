@@ -91,6 +91,14 @@
   >
   > L3	NOOP
 
+- Array look up expression: `Identifier[Exp]`
+
+  > HLOAD TEMP BaseAddress TIMES PLUS Exp 1 4
+
+- Array length expression: `Identifier.length`
+
+  > HLOAD TEMP BaseAddress 0
+
 - Array allocation expression: `new int [expression]`
 
   > HSTORE TEMP HALLOCATE TIMES expression 4
