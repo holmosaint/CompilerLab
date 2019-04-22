@@ -63,7 +63,7 @@ public class MVar {
 	
 	// Typical constructor for MainClass's parameter
 	public MVar(String param_name_) {
-		type_ = null;
+		type_ = new MUndefined(param_name_);
 		name_ = param_name_;
 	}
 

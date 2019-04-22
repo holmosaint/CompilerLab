@@ -36,7 +36,7 @@ public class MMethod extends MScope {
 		return_ = new MExpr(declare.f10, this);
 	}
 	
-	// Typical constructor for MainClass
+	// Typical constructor for MainClass's main method
 	public MMethod(MClass owner, MainClass class_node) {
 		owner_ = owner;
 		name_ = "main";

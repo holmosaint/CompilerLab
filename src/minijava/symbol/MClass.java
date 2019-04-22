@@ -17,10 +17,11 @@ public class MClass extends MType {
 	private HashMap<String, MMethod> methods_ = new HashMap<String, MMethod>();
 	private HashMap<String, MVar> vars_ = new HashMap<String, MVar>();
 	
-	// All the methods available to the instance of this class
-	// The "String" should be of format: <ClassName>:<MethodName>
+	// The method view of current class
+	// The "String" should be of format: <ClassName>_<MethodName>
 	private HashMap<String, Integer> method_offset_ = new HashMap<String, Integer>();
-	// All the variables available to the instance of this class
+	// The variable view of current class
+	// The "String" should be of format: <ClassName>_<VariableName>
 	private HashMap<String, Integer> var_offset_ = new HashMap<String, Integer>();
 	
 	public MClass(Node node) {
@@ -266,7 +267,7 @@ public class MClass extends MType {
 	public int queryVarOffset(String var_name) {
 		return var_offset_.get(var_name);
 	}
-	
+
 	// code below for piglet code generation
 	public String generatePigletNewClassCode() {
 		// TODO:
@@ -274,5 +275,31 @@ public class MClass extends MType {
 		return code;
 	}
 	
-	
+
+	// This function will generate the method_offset_ and the var_offset_
+	public void createView() {
+		ArrayList<MClass> father_list = new ArrayList<MClass>();
+		MClass cur_class = this;
+		int moffset = 0, voffset = 4;  // The offset in the view
+		
+		// Generate the father_list;
+		while (cur_class != null) {
+			father_list.add(cur_class);
+			cur_class = cur_class.father_;
+		}
+		
+		Collections.reverse(father_list);
+		for (MClass cur : father_list) {
+			for (String method_name : cur.methods_.keySet()) {
+				method_offset_.put(cur.father_name_ + "_" + method_name, moffset);
+				moffset += 4;
+			}
+			for (String var_name : cur.vars_.keySet()) {
+				var_offset_.put(cur.father_name_ + "_" + var_name, voffset);
+				voffset += 4;
+			}
+		}
+		
+		father_list.clear();
+	}
 }
