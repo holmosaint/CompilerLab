@@ -31,6 +31,10 @@ public class MMethod extends MScope {
 		// System.out.println("You declare method " + name_);
 		parseParam(declare.f4);
 		SymbolTable.parseVar(declare.f7, vars_);
+		// SetOwner for MVar
+		for (String var_name : vars_.keySet()) {
+			vars_.get(var_name).setOwner(owner_);
+		}
 		parseStatement(declare.f8, this);
 		return_ = new MExpr(declare.f10, this);
 	}
@@ -47,6 +51,10 @@ public class MMethod extends MScope {
 		vars_.put(param_name, new MVar(param_name));
 		SymbolTable.parseVar(class_node.f14, vars_);
 		
+		// SetOwner for MVar
+		for (String var_name : vars_.keySet()) {
+			vars_.get(var_name).setOwner(owner_);
+		}
 		parseStatement(class_node.f15, this);
 		
 		ret_type_ = null;
@@ -237,13 +245,16 @@ public class MMethod extends MScope {
 		String code = c.getName() + "_" + getName();
 		int parameterLength = params_.keySet().size();
 		++parameterLength; // 第一个参数是VTable
-		code += " [" + parameterLength + "]\n";
+		if(!c.isMainClass()) {
+			code += " [" + parameterLength + "]\nBEGIN\n";	
+		} else {
+			code = "MAIN\n";
+		}
 		minijava2piglet.writeCode(code);
-		
 		code = "";
 		
 		// 分配params的TEMP寄存器，从1开始
-		for(int i = 0;i < params_.size(); ++i) {
+		for(int i = 0; i < params_.size(); ++i) {
 			String param_name = index2name_.get(Integer.valueOf(i));
 			MVar var = params_.get(param_name);
 			var.setTempID(i + 1);
@@ -251,21 +262,21 @@ public class MMethod extends MScope {
 		
 		// 分配TEMP给各个局部变量
 		for(String var_name : getVarMap().keySet()) {
+			if (params_.containsKey(var_name)) continue;
 			MVar var = queryVar(var_name);
 			var.setTempID(minijava2piglet.getTempIndex());
 		}
-		
-		int tab = 1; // tab的数量
-		for(int i = 0;i < blocks_.size(); ++i) {
-			blocks_.get(i).generatePigletBlockCode(tab, true); // code should be written in the block generation function
+
+		for(int i = 0; i < blocks_.size(); ++i) {
+			blocks_.get(i).generatePigletBlockCode(1, true); // code should be written in the block generation function
 		}
 
 		// return expression
 		code = "";
 		if(!c.isMainClass()) {
 			String returnTemp = "";
-			returnTemp = return_.generatePigletExpressionCode(0, true);
-			code += "RETURN " + returnTemp + "\n";
+			returnTemp = return_.generatePigletExpressionCode(1, true);
+			code += "RETURN\n\t" + returnTemp + "\n";
 		}
 		
 		code += "END\n\n";

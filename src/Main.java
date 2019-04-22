@@ -13,6 +13,7 @@ public class Main {
 				System.out.println("Typecheck OK!");
 			} else {
 				System.out.println("Typecheck error!");
+				System.exit(1);
 			}
 			System.out.println("Converting minijava to piglet");
 			minijava2piglet convert2piglet = new minijava2piglet(file_path);
@@ -22,3 +23,4 @@ public class Main {
 		}
 	}
 }
+

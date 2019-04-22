@@ -240,7 +240,7 @@ public class MBlock extends MScope {
 				code += "HSTORE TEMP 0 " + offset  + " ";
 			}
 			// get the register that contains the return value
-			code += expression_.generatePigletExpressionCode(0, write) + "\n";
+			code += expression_.generatePigletExpressionCode(1, write) + "\n";
 			minijava2piglet.writeCode(code);
 			break;
 			
@@ -256,8 +256,8 @@ public class MBlock extends MScope {
 				offset = var_.getOwner().queryVarOffset(var_.getName());
 				code += "HSTORE TEMP 0 " + offset + " ";
 			}
-			code += "PLUS TIMES 4 " + index_expression_.generatePigletExpressionCode(0, write) + " 1 ";
-			code += expression_.generatePigletExpressionCode(0, write);
+			code += "PLUS TIMES 4 " + index_expression_.generatePigletExpressionCode(1, write) + " 1 ";
+			code += expression_.generatePigletExpressionCode(1, write);
 			code += "\n";
 			minijava2piglet.writeCode(code);
 			break;
@@ -269,10 +269,10 @@ public class MBlock extends MScope {
 			label2 = minijava2piglet.getLabelIndex();
 			code += prefixTab;
 			code += "CJUMP " + expression_.generatePigletExpressionCode(tab, write) + " L " + label1 + "\n";
-			code += children_.get(0).generatePigletBlockCode(tab + 1, write) + "\n";
+			code += children_.get(0).generatePigletBlockCode(1, write) + "\n";
 			code += prefixTab + "\t" + "JUMP L" + label2 + "\n";
 			code += prefixTab + "L " + label1 + "\n";
-			code += children_.get(1).generatePigletBlockCode(tab + 1, write) + "\n";
+			code += children_.get(1).generatePigletBlockCode(1, write) + "\n";
 			code += prefixTab + "L " + label2 + "\tNOOP\n";
 			minijava2piglet.writeCode(code);
 			break;
@@ -282,8 +282,8 @@ public class MBlock extends MScope {
 			// WhileStatement	::=	"while" "(" Expression ")" Statement
 			label1 = minijava2piglet.getLabelIndex();
 			label2 = minijava2piglet.getLabelIndex();
-			code += prefixTab + "L" + label1 + "\tCJUMP " + expression_.generatePigletExpressionCode(0, write) + " L" + label2 + "\n";
-			code += children_.get(0).generatePigletBlockCode(tab + 1, write) + "\n";
+			code += prefixTab + "L" + label1 + "\tCJUMP " + expression_.generatePigletExpressionCode(1, write) + " L" + label2 + "\n";
+			code += children_.get(0).generatePigletBlockCode(1, write) + "\n";
 			code += prefixTab + "\tJUMP L" + label1 + "\n";
 			code += prefixTab + "L" + label2 + "\tNOOP\n";
 			minijava2piglet.writeCode(code);
@@ -292,7 +292,7 @@ public class MBlock extends MScope {
 		case 5:
 			// Print assignment
 			// PrintStatement	::=	"System.out.println" "(" Expression ")" ";"
-			code += prefixTab + "PRINT " + expression_.generatePigletExpressionCode(0, write) + "\n";
+			code += prefixTab + "PRINT " + expression_.generatePigletExpressionCode(1, write) + "\n";
 			minijava2piglet.writeCode(code);
 			break;
 			

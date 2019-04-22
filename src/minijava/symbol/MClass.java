@@ -282,10 +282,13 @@ public class MClass extends MType {
 
 	// code below for piglet code generation
 	public String generatePigletNewClassCode() {
-		createView();
 		String code = "new_" + name_ + " [0]\n";
 		int allocate_size, cur;
 
+		if (isMainClass()) {
+			code += "BEGIN\n	MOVE TEMP 0 0\nRETURN\n	TEMP 0\nEND\n\n";
+			return code;
+		}
 		code += "BEGIN\n";
 		
 		// Allocate space for VTable

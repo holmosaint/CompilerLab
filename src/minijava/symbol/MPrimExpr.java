@@ -118,7 +118,7 @@ public class MPrimExpr {
 			case 6:
 				// AllocationExpression
 				type_ = SymbolTable.queryClass(literal_);
-				if(type_ != null)
+				if (type_ != null)
 					return;
 				errorMsg = "The identifier [" + literal_ + "] in an allocation expression is not defined";
 				break;
@@ -210,7 +210,7 @@ public class MPrimExpr {
 		case 3:
 			// Identifier
 			if(isLocal) {
-				code += prefixTab + "MOVE " + returnTemp + minijava2piglet.TEMP + var_.getTempID() + "\n";
+				code += prefixTab + "MOVE " + returnTemp + " " + minijava2piglet.TEMP + var_.getTempID() + "\n";
 			}
 			else {
 				code += prefixTab + "HLOAD " + returnTemp + " TEMP 0 " + var_.getOwner().queryVarOffset(var_name_) + "\n";
@@ -233,6 +233,7 @@ public class MPrimExpr {
 			MClass c = (MClass)type_;
 			code += prefixTab + "MOVE " + returnTemp + " CALL new_" + c.getName() + "()\n";
 			minijava2piglet.writeCode(code);
+			var_ = new MVar(type_);
 			break;
 		case 7:
 			// NotExpression

@@ -14,7 +14,6 @@ public class MVar {
 	private boolean assigned_ = false;
 	
 	private int length_;  // for array instance
-	private MClass real_type_;  // for class instance	
 	private MClass class_owner_ = null;
 	
 	private int tempID = -1;
@@ -69,7 +68,7 @@ public class MVar {
 		if (type_ instanceof MArray) {
 			length_ = expr.arrayLength();
 		} else if (type_ instanceof MClass) {
-			real_type_ = (MClass) expr.getType();
+			
 		}
 	}
 	

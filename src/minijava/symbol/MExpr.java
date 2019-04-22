@@ -317,12 +317,13 @@ public class MExpr {
 			for(MExpr e : exprs_) {
 				tempExprs.add(e.generatePigletExpressionCode(tab, write));
 			}
-			methodOffset = prim_expr_.getVar().getOwner().queryMethodOffset(method_name_); // 获得偏移量，保证是4的倍数
+			methodOffset = ((MClass) prim_expr_.getVar().getType()).queryMethodOffset(prim_expr_.getVar().getType().getName() + "_" + method_name_); // 获得偏移量，保证是4的倍数
 			
 			String midTemp = minijava2piglet.TEMP + minijava2piglet.getTempIndex();
 			code += prefixTab + "HLOAD " + midTemp + " " + tempExpr1 + " 0\n"; // 获得DTable的基址
 			code += prefixTab + "HLOAD " + midTemp + " " + midTemp + " " + methodOffset + "\n";
 			code += prefixTab + "MOVE " + returnTemp + " CALL " + midTemp + " ( ";
+			code += tempExpr1 + " ";
 			for(String s : tempExprs) {
 				code += s + " ";
 			}

@@ -39,13 +39,16 @@ public class minijava2piglet {
 	public static void generatePigletCode() {
 		String code = "";
 		for(MClass c : SymbolTable.getClassList()) {
-			code = c.generatePigletNewClassCode();
-			writeCode(code);
+			c.createView();
+		}
+		for(MClass c : SymbolTable.getClassList()) {
 			for(String m : c.getMethod().keySet()) {
 				MMethod method = c.queryMethod(m);
 				method.generatePigletMethodCode();
 				// writeCode(code);
 			}
+			code = c.generatePigletNewClassCode();
+			writeCode(code);
 		}
 	}
 	
