@@ -25,6 +25,10 @@ public class MClass extends MType {
 	// The "String" should be of format: <ClassName>_<VariableName>
 	private HashMap<String, Integer> var_offset_ = new HashMap<String, Integer>();
 	
+	// All the methods and variables in the memory
+	private ArrayList<String> all_methods_ = new ArrayList<String>();
+	private ArrayList<String> all_vars_ = new ArrayList<String>();
+	
 	public MClass(Node node) {
 		String errorMsg = "";
 		if (node instanceof ClassDeclaration) {
@@ -76,7 +80,6 @@ public class MClass extends MType {
 			
 			methods_.put("main", new MMethod(this, (MainClass) node));
 		}
-		
 	}
 	
 	private void parseMethod(NodeListOptional method_list) {
@@ -279,14 +282,37 @@ public class MClass extends MType {
 
 	// code below for piglet code generation
 	public String generatePigletNewClassCode() {
+		createView();
 		String code = "new_" + name_ + "\n";
+		int allocate_size, cur;
+		
 		code += " [0]\n";
 		code += "BEGIN\n";
 		
-		// Allocate head pointer for method table
-		code += "MOVE TEMP 0 HALLOCATE 4\n";
-		// Allocate 
+		// Allocate space for VTable
+		allocate_size = 4 * (1 + all_vars_.size());
+		code += "MOVE TEMP 0 HALLOCATE " + allocate_size + "\n";
+		cur = 4;
+		for (String var_name : all_vars_) {
+			// TEMP 1 stores the current variable's address
+			code += "MOVE TEMP 1 PLUS TEMP 0 " + cur + "\n";
+			// Initialize all the variables to zero
+			code += "HSTORE TEMP 1 0 0\n";
+			cur += 4;
+		}
 		
+		// Allocate space for MTable
+		allocate_size = 4 * all_methods_.size();
+		code += "MOVE TEMP 1 HALLOCATE " + allocate_size + "\n";
+		code += "HSTORE TEMP 0 0 TEMP 1";
+		cur = 0;
+		for (String method_name : all_methods_) {
+			// TEMP 2 stores the current method's address
+			code += "MOVE TEMP 2 PLUS TEMP 1 " + cur + "\n";
+			code += "MOVE TEMP 3 " + method_name + "\n";
+			code += "HSTORE TEMP 2 0 TEMP 3\n";
+			cur += 4;
+		}
 		
 		code += "RETURN\n";
 		code += "RETURN\n";
@@ -311,11 +337,13 @@ public class MClass extends MType {
 		Collections.reverse(father_list);
 		for (MClass cur : father_list) {
 			for (String method_name : cur.methods_.keySet()) {
-				method_offset_.put(cur.father_name_ + "_" + method_name, moffset);
+				method_offset_.put(cur.name_ + "_" + method_name, moffset);
+				all_methods_.add(cur.name_ + "_" + method_name);
 				moffset += 4;
 			}
 			for (String var_name : cur.vars_.keySet()) {
-				var_offset_.put(cur.father_name_ + "_" + var_name, voffset);
+				var_offset_.put(cur.name_ + "_" + var_name, voffset);
+				all_vars_.add(cur.name_ + "_" + var_name);
 				voffset += 4;
 			}
 		}
