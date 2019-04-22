@@ -11,7 +11,7 @@ public class minijava2piglet {
 	
 	private File outputFile_;
 	private OutputStream pigletFile_;
-	public static int tempIndex = 20; // 暴力搜索最小的没有被使用的TEMP值
+	private static int tempIndex = 20; // 暴力搜索最小的没有被使用的TEMP值
 	public static final String TEMP = "TEMP ";
 	
 	// 按照每个方法生成代码
@@ -37,7 +37,6 @@ public class minijava2piglet {
 	public void generatePigletCode() {
 		String code = "";
 		for(MClass c : SymbolTable.getClassList()) {
-			// TODO: 生成new_classname过程
 			code = c.generatePigletNewClassCode();
 			writeCode(code);
 			for(String m : c.getMethod().keySet()) {
@@ -54,5 +53,9 @@ public class minijava2piglet {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static int getTempIndex() {
+		return tempIndex++;
 	}
 }

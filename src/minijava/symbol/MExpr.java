@@ -237,4 +237,11 @@ public class MExpr {
 	public int getInteger() {
 		return prim_expr_.getInteger();
 	}
+	
+	// below for piglet code generation
+	public String generatePigletExpressionCode() {
+		String code = "";
+		
+		return code;
+	}
 }

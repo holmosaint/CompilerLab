@@ -196,12 +196,26 @@ public class MBlock extends MScope {
 		return which_;
 	}
 	
+	// 判断在哪个method里面
+	public MMethod getMethodScope() {
+		MScope father = father_;
+		while(!(father instanceof MMethod)) {
+			father = father.getFather();
+			assert father!=null: "The father of a block is null!\n";
+		}
+		return (MMethod)father;
+	}
+	
 	// below for piglet code generation
 	public String generatePigletBlockCode(int tab) {
 		String code = "";
-		String tabPrefix = "";
 		for(int i = 0;i < tab; ++i)
-			tabPrefix += "\t";
+			code += "\t";
+		
+		MMethod method = getMethodScope();
+		boolean isLocal = false;
+		if(var_ != null) 
+			isLocal = method.judgeLocalVar(var_);
 		
 		switch (which_) {
 		case 0:
@@ -211,12 +225,41 @@ public class MBlock extends MScope {
 			break;
 		
 		case 1:
-			
+			// Assignment expression
+			// AssignmentStatement	::=	Identifier "=" Expression ";"
+			if(isLocal) {
+				code += "MOVE TEMP " + var_.getTempID() + " ";
+			}
+			else {
+				
+			}
+			code += expression_.generatePigletExpressionCode();
 			break;
 			
+		case 2:
+			// Array assignment expression
+			// ArrayAssignmentStatement	::=	Identifier "[" Expression "]" "=" Expression ";"
+			break;
+			
+		case 3:
+			// If assignment
+			// IfStatement	::=	"if" "(" Expression ")" Statement "else" Statement
+			break;
+			
+		case 4:
+			// While assignment
+			// WhileStatement	::=	"while" "(" Expression ")" Statement
+			break;
+			
+		case 5:
+			// Print assignment
+			// PrintStatement	::=	"System.out.println" "(" Expression ")" ";"
+			
+			break;
 		default:
 			break;
 		}
+		
 		return code;
 	}
 }

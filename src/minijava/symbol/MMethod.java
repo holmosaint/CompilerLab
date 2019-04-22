@@ -1,9 +1,7 @@
 package minijava.symbol;
 
-import java.io.IOException;
 import java.util.*;
 import minijava.syntaxtree.*;
-import minijava.typecheck.*;
 import minijava2piglet.minijava2piglet;
 import util.ErrorHandler;
 
@@ -241,13 +239,18 @@ public class MMethod extends MScope {
 		code += " [" + parameterLength + "]\n";
 		
 		String returnTemp = null;
-		if(!c.isMainClass())
-			returnTemp = minijava2piglet.TEMP + minijava2piglet.tempIndex++;
+		
+		// 分配params的TEMP寄存器，从1开始
+		for(int i = 0;i < params_.size(); ++i) {
+			String param_name = index2name_.get(Integer.valueOf(i));
+			MVar var = params_.get(param_name);
+			var.setTempID(i + 1);
+		}
 		
 		// 分配TEMP给各个局部变量
 		for(String var_name : getVarMap().keySet()) {
 			MVar var = queryVar(var_name);
-			var.setTempID(minijava2piglet.tempIndex++);
+			var.setTempID(minijava2piglet.getTempIndex());
 		}
 		
 		int tab = 1; // tab的数量
@@ -261,5 +264,10 @@ public class MMethod extends MScope {
 		code += "END\n";
 		
 		return code;
+	}
+	
+	// 判断是不是局部变量（参数与局部变量）
+	public boolean judgeLocalVar(MVar var) {
+		return params_.containsKey(var.getName()) || vars_.containsKey(var.getName()); 
 	}
 }
