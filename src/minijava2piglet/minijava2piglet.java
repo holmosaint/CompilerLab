@@ -36,11 +36,17 @@ public class minijava2piglet {
 	
 	public void generatePigletCode() {
 		for(MClass c : SymbolTable.getClassList()) {
+			// TODO: 生成new_classname过程
+			
 			for(String m : c.getMethod().keySet()) {
 				MMethod method = c.queryMethod(m);
 				generatePigletMethodCode(method);
 			}
 		}
+	}
+	
+	public void generatePigletNewClassCode(MMethod method) {
+		
 	}
 	
 	public void generatePigletMethodCode(MMethod method) {
