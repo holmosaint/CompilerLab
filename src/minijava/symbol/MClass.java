@@ -259,6 +259,13 @@ public class MClass extends MType {
 		return is_main_class;
 	}
 
+	public int queryMethodOffset(String method_name) {
+		return method_offset_.get(method_name);
+	}
+	
+	public int queryVarOffset(String var_name) {
+		return var_offset_.get(var_name);
+	}
 	
 	
 }
