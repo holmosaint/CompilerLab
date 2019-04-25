@@ -325,7 +325,7 @@ public class MExpr {
 			for(MExpr e : exprs_) {
 				tempExprs.add(e.generatePigletExpressionCode(tab, write));
 			}
-			methodOffset = ((MClass) prim_expr_.getVar().getType()).queryMethodOffset(prim_expr_.getVar().getType().getName() + "_" + method_name_); // 获得偏移量，保证是4的倍数
+			methodOffset = ((MClass) prim_expr_.getVar().getType()).queryMethodOffset(method_name_); // 获得偏移量，保证是4的倍数
 			
 			String midTemp = minijava2piglet.TEMP + minijava2piglet.getTempIndex();
 			code += prefixTab + "HLOAD " + midTemp + " " + tempExpr1 + " 0\n"; // 获得DTable的基址
