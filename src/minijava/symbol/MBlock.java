@@ -231,6 +231,7 @@ public class MBlock extends MScope {
 			// Assignment expression
 			// AssignmentStatement	::=	Identifier "=" Expression ";"
 			code += prefixTab;
+			System.out.println(var_.getName());
 			if(isLocal) {
 				code += "MOVE TEMP " + var_.getTempID() + " ";
 			}
@@ -248,6 +249,7 @@ public class MBlock extends MScope {
 			// Array assignment expression
 			// ArrayAssignmentStatement	::=	Identifier "[" Expression "]" "=" Expression ";"
 			code += prefixTab;
+			String localTemp = minijava2piglet.TEMP + minijava2piglet.getTempIndex();
 			if(isLocal) {
 				code += "HSTORE TEMP " + var_.getTempID() + " ";
 			}
