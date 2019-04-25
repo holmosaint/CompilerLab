@@ -1,0 +1,10 @@
+MAIN
+END
+
+new_Test [0]
+BEGIN
+	MOVE TEMP 0 0
+RETURN
+	TEMP 0
+END
+

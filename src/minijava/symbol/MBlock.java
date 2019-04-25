@@ -218,7 +218,7 @@ public class MBlock extends MScope {
 		String localTemp = "";
 		String exprTemp1 = "", exprTemp2 = "";
 		boolean isLocal = false;
-		int label1 = -1, label2 = -1;
+		int label1 = -1, label2 = -1, label3 = -1;
 		if(var_ != null) 
 			isLocal = method.judgeLocalVar(var_);
 		
@@ -280,13 +280,19 @@ public class MBlock extends MScope {
 			// IfStatement	::=	"if" "(" Expression ")" Statement "else" Statement
 			label1 = minijava2piglet.getLabelIndex();
 			label2 = minijava2piglet.getLabelIndex();
-			code += prefixTab;
-			code += "CJUMP " + expression_.generatePigletExpressionCode(tab, write) + " L " + label1 + "\n";
-			code += children_.get(0).generatePigletBlockCode(tab, write) + "\n";
-			code += prefixTab + "\t" + "JUMP L" + label2 + "\n";
-			code += prefixTab + "L " + label1 + "\n";
-			code += children_.get(1).generatePigletBlockCode(tab, write) + "\n";
-			code += prefixTab + "L " + label2 + "\tNOOP\n";
+			label3 = minijava2piglet.getLabelIndex();
+			exprTemp1 = expression_.generatePigletExpressionCode(tab, write);
+			code += prefixTab + "CJUMP " + exprTemp1 + " L" + label2 + "\n";
+			code += prefixTab + "L" + label1 + "\n";
+			minijava2piglet.writeCode(code);
+			code = "";
+			children_.get(0).generatePigletBlockCode(tab + 1, write);
+			code += prefixTab + "\t" + "JUMP L" + label3 + "\n";
+			code += prefixTab + "L" + label2 + "\n";
+			minijava2piglet.writeCode(code);
+			code = "";
+			children_.get(1).generatePigletBlockCode(tab + 1, write);
+			code += prefixTab + "L" + label3 + "\tNOOP\n";
 			minijava2piglet.writeCode(code);
 			break;
 			
