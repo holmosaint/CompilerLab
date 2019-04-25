@@ -13,7 +13,7 @@ command = 'javac Main.java'
 print(os.popen(command).read())
 command = 'java Main'
 print(os.popen(command).read())
-command = 'java -jar ./tools/pgi.jar < ../samples/Test.pg'
+command = 'java -jar ./tools/pgi.jar < ../samples/' + args.java_file.replace('.java', '.pg')
 print(os.popen(command).read())
 
 print('\nUse javac')
