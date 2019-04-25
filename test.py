@@ -11,7 +11,7 @@ print('Use our comipler')
 os.chdir('./src')
 command = 'javac Main.java'
 print(os.popen(command).read())
-command = 'java Main'
+command = 'java Main ../samples/' + args.java_file 
 print(os.popen(command).read())
 command = 'java -jar ./tools/pgi.jar < ../samples/' + args.java_file.replace('.java', '.pg')
 print(os.popen(command).read())
