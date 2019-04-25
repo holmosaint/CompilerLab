@@ -257,8 +257,26 @@ public class MMethod extends MScope {
 		for(int i = 0; i < params_.size(); ++i) {
 			String param_name = index2name_.get(Integer.valueOf(i));
 			MVar var = params_.get(param_name);
-			var.setTempID(i + 1);
+			if(i < 18)
+				var.setTempID(i + 1);
+			else var.setTempID(minijava2piglet.getTempIndex());
 		}
+		// 大于18的必须先存到临时寄存器中
+		for(int i = 18; i < params_.size(); ++i) {
+			String param_name = index2name_.get(Integer.valueOf(i));
+			MVar var = params_.get(param_name);
+			int tempID = var.getTempID();
+			int offset = i - 18;
+			code += "\tHLOAD TEMP " + tempID + " TEMP 19 " + offset + "\n";
+		}
+		minijava2piglet.writeCode(code);
+		code = "";
+		/*// 大于18的存储在TEMP 18中，类似一个数组，存储的是地址的偏移量
+		for(int i = 18; i < params_.size(); ++i) {
+			String param_name = index2name_.get(Integer.valueOf(i));
+			MVar var = params_.get(param_name);
+			var.setTempID(-(i - 18 - 1));
+		}*/
 		
 		// 分配TEMP给各个局部变量
 		for(String var_name : getVarMap().keySet()) {

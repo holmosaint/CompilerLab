@@ -321,9 +321,24 @@ public class MExpr {
 			break;
 		case 7:
 			// MessageSend			
+			String paramTable = "";
+			// The size of parameters is larger then 18
+			if(exprs_.size() > 18) {
+				paramTable = minijava2piglet.TEMP + minijava2piglet.getTempIndex();
+				code += prefixTab + "MOVE " + paramTable + " HALLOCATE TIMES 4 " + (exprs_.size() - 18) + "\n";
+			}
 			tempExpr1 = prim_expr_.generatePigletPrimexprCode(tab, write); // base address and the first parameter
-			for(MExpr e : exprs_) {
+			/*for(MExpr e : exprs_) {
 				tempExprs.add(e.generatePigletExpressionCode(tab, write));
+			}*/
+			for(int i = 0; i < exprs_.size(); ++i) {
+				MExpr e = exprs_.get(i);
+				tempExpr2 = e.generatePigletExpressionCode(tab, write);
+				tempExprs.add(tempExpr2);
+				int offset = i - 18;
+				if(i >= 18) {
+					code += prefixTab + "HSTORE " + paramTable + " " + offset + " " + tempExpr2 + "\n"; 
+				}
 			}
 			methodOffset = ((MClass) prim_expr_.getVar().getType()).queryMethodOffset(method_name_); // 获得偏移量，保证是4的倍数
 			
@@ -332,9 +347,11 @@ public class MExpr {
 			code += prefixTab + "HLOAD " + midTemp + " " + midTemp + " " + methodOffset + "\n";
 			code += prefixTab + "MOVE " + returnTemp + " CALL " + midTemp + " ( ";
 			code += tempExpr1 + " ";
-			for(String s : tempExprs) {
-				code += s + " ";
+			for(int i = 0; i < Math.min(18, tempExprs.size()); ++i) {
+				code += tempExprs.get(i) + " ";
 			}
+			if(tempExprs.size() > 18)
+				code += paramTable;
 			code += ")\n";
 			minijava2piglet.writeCode(code);
 			break;
