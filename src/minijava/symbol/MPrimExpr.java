@@ -213,7 +213,9 @@ public class MPrimExpr {
 				code += prefixTab + "MOVE " + returnTemp + " " + minijava2piglet.TEMP + var_.getTempID() + "\n";
 			}
 			else {
-				code += prefixTab + "HLOAD " + returnTemp + " TEMP 0 " + var_.getOwner().queryVarOffset(var_name_) + "\n";
+				MClass owner = getMethodScope().getOwner();
+				code += prefixTab + "HLOAD " + returnTemp + " TEMP 0 " + 
+			            owner.queryVarOffset(var_name_) + "\n";
 			}
 			minijava2piglet.writeCode(code);
 			break;

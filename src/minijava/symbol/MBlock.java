@@ -236,7 +236,8 @@ public class MBlock extends MScope {
 			}
 			else {
 				int offset = -1;
-				offset = var_.getOwner().queryVarOffset(var_.getName());
+				MClass owner = getMethodScope().getOwner();
+				offset = owner.queryVarOffset(var_.getName());
 				code += "HSTORE TEMP 0 " + offset  + " ";
 			}
 			// get the register that contains the return value
@@ -253,7 +254,8 @@ public class MBlock extends MScope {
 			}
 			else {
 				int offset = -1;
-				offset = var_.getOwner().queryVarOffset(var_.getName());
+				MClass owner = getMethodScope().getOwner();
+				offset = owner.queryVarOffset(var_.getName());
 				code += "HSTORE TEMP 0 " + offset + " ";
 			}
 			code += "PLUS TIMES 4 " + index_expression_.generatePigletExpressionCode(1, write) + " 1 ";

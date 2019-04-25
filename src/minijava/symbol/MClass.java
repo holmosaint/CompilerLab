@@ -25,9 +25,13 @@ public class MClass extends MType {
 	// The "String" should be of format: <ClassName>_<VariableName>
 	private HashMap<String, Integer> var_offset_ = new HashMap<String, Integer>();
 	
-	// All the methods and variables in the memory
+	// All of the methods and variables in the memory
 	private ArrayList<String> all_methods_ = new ArrayList<String>();
 	private ArrayList<String> all_vars_ = new ArrayList<String>();
+	
+	// All of the fathers
+	private ArrayList<MClass> father_list_ = new ArrayList<MClass>();
+
 	
 	public MClass(Node node) {
 		String errorMsg = "";
@@ -48,6 +52,10 @@ public class MClass extends MType {
 			// SetOwner for MVar
 			for (String var_name : vars_.keySet()) {
 				vars_.get(var_name).setOwner(this);
+				if (vars_.get(var_name).getType() instanceof MBool ||
+					vars_.get(var_name).getType() instanceof MInt) {
+					vars_.get(var_name).assign();
+				}
 			}
 			parseMethod(class_node.f4);
 		} else if (node instanceof ClassExtendsDeclaration) {
@@ -67,6 +75,10 @@ public class MClass extends MType {
 			// SetOwner for MVar
 			for (String var_name : vars_.keySet()) {
 				vars_.get(var_name).setOwner(this);
+				if (vars_.get(var_name).getType() instanceof MBool ||
+						vars_.get(var_name).getType() instanceof MInt) {
+						vars_.get(var_name).assign();
+				}
 			}
 			parseMethod(class_node.f6);
 		} else if (node instanceof MainClass) {
@@ -273,11 +285,21 @@ public class MClass extends MType {
 	}
 
 	public int queryMethodOffset(String method_name) {
-		return method_offset_.get(method_name);
+		for (MClass mclass : father_list_) {
+			if (method_offset_.containsKey(mclass.getName() + "_" + method_name))
+				return method_offset_.get(mclass.getName() + "_" + method_name);
+		}
+		ErrorHandler.errorPrint("Error in getting method offset");
+		return -1;
 	}
 	
 	public int queryVarOffset(String var_name) {
-		return var_offset_.get(var_name);
+		for (MClass mclass : father_list_) {
+			if (var_offset_.containsKey(mclass.getName() + "_" + var_name))
+				return var_offset_.get(mclass.getName() + "_" + var_name);
+		}
+		ErrorHandler.errorPrint("Error in getting variable offset");
+		return -1;
 	}
 
 	// code below for piglet code generation
@@ -327,20 +349,19 @@ public class MClass extends MType {
 
 	// This function will generate the method_offset_ and the var_offset_
 	public void createView() {
-		ArrayList<MClass> father_list = new ArrayList<MClass>();
 		MClass cur_class = this;
 		int moffset = 0, voffset = 4;  // The offset in the view
 		int list_size;
 		
 		// Generate the father_list;
 		while (cur_class != null) {
-			father_list.add(cur_class);
+			father_list_.add(cur_class);
 			cur_class = cur_class.father_;
 		}
 		
-		list_size = father_list.size();
+		list_size = father_list_.size();
 		for (int i = list_size - 1; i >= 0; i--) {
-			cur_class = father_list.get(i);
+			cur_class = father_list_.get(i);
 			for (String var_name : cur_class.vars_.keySet()) {
 				var_offset_.put(cur_class.name_ + "_" + var_name, voffset);
 				all_vars_.add(cur_class.name_ + "_" + var_name);
@@ -349,15 +370,13 @@ public class MClass extends MType {
 			for (String method_name : cur_class.methods_.keySet()) {
 				method_offset_.put(cur_class.name_ + "_" + method_name, moffset);
 				for (int j = 0; j <= i; j++) {
-					if (father_list.get(j).methods_.containsKey(method_name)) {
-						all_methods_.add(father_list.get(j).name_ + "_" + method_name);
+					if (father_list_.get(j).methods_.containsKey(method_name)) {
+						all_methods_.add(father_list_.get(j).name_ + "_" + method_name);
 						break;
 					}
 				}
 				moffset += 4;
 			}
-		}
-		
-		father_list.clear();
+		}	
 	}
 }

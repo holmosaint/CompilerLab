@@ -6,7 +6,8 @@ class Test{
         System.out.println(b.set());
         System.out.println(b.func());
         a = b;
-        System.out.println(a.func());
+        System.out.println(a.getb());
+        System.out.println(b.getb());
     }
 }
 
@@ -15,6 +16,9 @@ class A {
     int attb;
     public int func() {
         return atta + attb;
+    }
+    public int getb() {
+        return attb;
     }
 }
 
