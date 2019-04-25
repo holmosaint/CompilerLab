@@ -92,8 +92,8 @@ public class MPrimExpr {
 					errorMsg = "Use undefined variable " + var_.getName();
 					break;
 				} else if (!var_.isAssigned()) {
-					errorMsg = "Use uninitialized variable " + var_.getName();
-					break;
+					// errorMsg = "Use uninitialized variable " + var_.getName();
+					// break;
 				}
 				type_ = var_.getType();
 				return;
@@ -135,6 +135,7 @@ public class MPrimExpr {
 				// BracketExpression
 				expr_.register();
 				type_ = expr_.getType();
+				var_ = expr_.getPrimExpr().getVar();
 				return;
 			default:
 				break;
