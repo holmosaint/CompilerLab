@@ -259,7 +259,6 @@ public class MBlock extends MScope {
 			exprTemp2 = expression_.generatePigletExpressionCode(tab, write);
 			if(isLocal) {
 				code += prefixTab + "MOVE " + localTemp + " TEMP " + var_.getTempID() + "\n";
-				code += prefixTab + "HLOAD " + localTemp + " TEMP " + var_.getTempID() + " 0\n";
 			}
 			else {
 				int offset = -1;
