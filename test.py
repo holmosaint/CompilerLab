@@ -19,6 +19,7 @@ command = 'java Main ' + directory + args.java_file
 print(os.popen(command).read())
 command = 'java -jar ./tools/pgi.jar < ' + directory + args.java_file.replace('.java', '.pg')
 print(os.popen(command).read())
+str1 = os.popen(command).read()
 
 print('\nUse javac')
 os.chdir(directory)
@@ -27,3 +28,6 @@ command = 'javac ' + args.java_file
 print(os.popen(command).read())
 command = 'java ' +args.java_file.split('.')[0]
 print(os.popen(command).read())
+str2 = os.popen(command).read()
+
+print("JUDGE: ", str1 == str2)

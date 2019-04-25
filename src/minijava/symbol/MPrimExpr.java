@@ -243,7 +243,7 @@ public class MPrimExpr {
 		case 7:
 			// NotExpression
 			exprTemp = expr_.generatePigletExpressionCode(tab, write);
-			label1 = minijava2piglet.getLabelIndex();
+			/*label1 = minijava2piglet.getLabelIndex();
 			label2 = minijava2piglet.getLabelIndex();
 			label3 = minijava2piglet.getLabelIndex();
 			code += prefixTab + "CJUMP " + exprTemp + " L" + label2 + "\n";
@@ -252,7 +252,9 @@ public class MPrimExpr {
 			code += prefixTab + "\tJUMP L" + label3 + "\n";
 			code += prefixTab + "L" + label2 + "\n";
 			code += prefixTab + "\tMOVE " + returnTemp + " 1\n";
-			code += prefixTab + "L" + label3 + " NOOP\n";
+			code += prefixTab + "L" + label3 + " NOOP\n";*/
+			code += prefixTab + "MOVE " + returnTemp + " MINUS 1 " + exprTemp + "\n";
+			minijava2piglet.writeCode(code);
 			break;
 		case 8:
 			// BracketExpression

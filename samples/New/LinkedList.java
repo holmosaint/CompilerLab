@@ -200,9 +200,14 @@ class List{
 
 		aux01 = this ;
 		var_end = end ;
+		if(var_end) {
+			System.out.println(15);
+		}
+		else {
+			System.out.println(16);
+		}
 		// var_elem = elem ;
 		while (!var_end){
-			System.out.println(666666667);
 			System.out.println(var_elem.GetAge());
 			aux01 = aux01.GetNext() ;
 			var_end = aux01.GetEnd();
