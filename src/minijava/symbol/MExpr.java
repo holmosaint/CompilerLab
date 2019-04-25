@@ -265,9 +265,9 @@ public class MExpr {
 			code += prefixTab + "CJUMP LT 0 " + tempExpr1 + " L" + label1 + "\n";
 			code += prefixTab + "\tCJUMP LT 0 " + tempExpr2 + " L" + label1 + "\n";
 			code += prefixTab + "\t\tJUMP L" + label2 + "\n";
-			code += prefixTab + "L " + label1 + "\n";
+			code += prefixTab + "L" + label1 + "\n";
 			code += prefixTab + "\tMOVE " + returnTemp + " 0\n";
-			code += prefixTab + "L " + label2 + " NOOP\n";
+			code += prefixTab + "L" + label2 + " NOOP\n";
 			minijava2piglet.writeCode(code);
 			break;
 		case 1:
