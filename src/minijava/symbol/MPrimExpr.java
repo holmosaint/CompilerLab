@@ -105,6 +105,7 @@ public class MPrimExpr {
 				assert fatherScope instanceof MMethod;
 				MClass fatherClass = ((MMethod)fatherScope).getOwner();
 				type_ = fatherClass;
+				var_ = new MVar(type_);
 				// TODO: Too many to list out...
 				return;
 			case 5:
