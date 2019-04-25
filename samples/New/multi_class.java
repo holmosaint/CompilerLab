@@ -3,6 +3,8 @@ class multi_class{
 		Start s1;
 		Start s2;
 		boolean s;
+		int a;
+		a = 1;
 		s1 = new Start();
 		s2 = new Start();
 		s = s1.not();
