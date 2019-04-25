@@ -228,6 +228,7 @@ public class MPrimExpr {
 			// ArrayAllocationExpression
 			exprTemp = expr_.generatePigletExpressionCode(tab, write);
 			code += prefixTab + "MOVE " + returnTemp + " HALLOCATE TIMES PLUS " + exprTemp + " 1 4\n";
+			code += prefixTab + "HSTORE " + returnTemp + " 0 " + exprTemp + "\n";
 			minijava2piglet.writeCode(code);
 			break;
 		case 6:

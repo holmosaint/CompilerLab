@@ -215,6 +215,8 @@ public class MBlock extends MScope {
 			prefixTab += "\t";
 		
 		MMethod method = getMethodScope();
+		String localTemp = "";
+		String exprTemp1 = "", exprTemp2 = "";
 		boolean isLocal = false;
 		int label1 = -1, label2 = -1;
 		if(var_ != null) 
@@ -242,27 +244,34 @@ public class MBlock extends MScope {
 				code += "HSTORE TEMP 0 " + offset  + " ";
 			}
 			// get the register that contains the return value
-			code += expression_.generatePigletExpressionCode(1, write) + "\n";
+			code += expression_.generatePigletExpressionCode(tab, write) + "\n";
 			minijava2piglet.writeCode(code);
 			break;
 			
 		case 2:
 			// Array assignment expression
 			// ArrayAssignmentStatement	::=	Identifier "[" Expression "]" "=" Expression ";"
-			code += prefixTab;
-			String localTemp = minijava2piglet.TEMP + minijava2piglet.getTempIndex();
+			localTemp = minijava2piglet.TEMP + minijava2piglet.getTempIndex();
+			String localTemp2 = minijava2piglet.TEMP + minijava2piglet.getTempIndex();
+			label1 = minijava2piglet.getLabelIndex();
+			label2 = minijava2piglet.getLabelIndex();
+			exprTemp1 = index_expression_.generatePigletExpressionCode(tab, write);
+			exprTemp2 = expression_.generatePigletExpressionCode(tab, write);
 			if(isLocal) {
-				code += "HSTORE TEMP " + var_.getTempID() + " ";
+				code += prefixTab + "MOVE " + localTemp + " TEMP " + var_.getTempID() + "\n";
+				code += prefixTab + "HLOAD " + localTemp + " TEMP " + var_.getTempID() + " 0\n";
 			}
 			else {
 				int offset = -1;
 				MClass owner = getMethodScope().getOwner();
 				offset = owner.queryVarOffset(var_.getName());
-				code += "HSTORE TEMP 0 " + offset + " ";
+				code += prefixTab + "HLOAD " + localTemp + " TEMP 0 " + offset + "\n";
 			}
-			code += "PLUS TIMES 4 " + index_expression_.generatePigletExpressionCode(1, write) + " 1 ";
-			code += expression_.generatePigletExpressionCode(1, write);
-			code += "\n";
+			code += prefixTab + "HLOAD " + localTemp2 + " " + localTemp + " 0\n";
+			code += prefixTab + "CJUMP LT " + localTemp2 + " PLUS 1 " + exprTemp1 + " L" + label2 + "\n";
+			code += prefixTab + "L" + label1 + " ERROR\n";
+			code += prefixTab + "L" + label2 + "\n";
+			code += prefixTab + "\tHSTORE PLUS " + localTemp + " TIMES PLUS " + exprTemp1 + " 1 4 0 " + exprTemp2 + "\n";
 			minijava2piglet.writeCode(code);
 			break;
 			
@@ -273,10 +282,10 @@ public class MBlock extends MScope {
 			label2 = minijava2piglet.getLabelIndex();
 			code += prefixTab;
 			code += "CJUMP " + expression_.generatePigletExpressionCode(tab, write) + " L " + label1 + "\n";
-			code += children_.get(0).generatePigletBlockCode(1, write) + "\n";
+			code += children_.get(0).generatePigletBlockCode(tab, write) + "\n";
 			code += prefixTab + "\t" + "JUMP L" + label2 + "\n";
 			code += prefixTab + "L " + label1 + "\n";
-			code += children_.get(1).generatePigletBlockCode(1, write) + "\n";
+			code += children_.get(1).generatePigletBlockCode(tab, write) + "\n";
 			code += prefixTab + "L " + label2 + "\tNOOP\n";
 			minijava2piglet.writeCode(code);
 			break;
@@ -286,8 +295,8 @@ public class MBlock extends MScope {
 			// WhileStatement	::=	"while" "(" Expression ")" Statement
 			label1 = minijava2piglet.getLabelIndex();
 			label2 = minijava2piglet.getLabelIndex();
-			code += prefixTab + "L" + label1 + "\tCJUMP " + expression_.generatePigletExpressionCode(1, write) + " L" + label2 + "\n";
-			code += children_.get(0).generatePigletBlockCode(1, write) + "\n";
+			code += prefixTab + "L" + label1 + "\tCJUMP " + expression_.generatePigletExpressionCode(tab, write) + " L" + label2 + "\n";
+			code += children_.get(0).generatePigletBlockCode(tab, write) + "\n";
 			code += prefixTab + "\tJUMP L" + label1 + "\n";
 			code += prefixTab + "L" + label2 + "\tNOOP\n";
 			minijava2piglet.writeCode(code);
@@ -296,7 +305,7 @@ public class MBlock extends MScope {
 		case 5:
 			// Print assignment
 			// PrintStatement	::=	"System.out.println" "(" Expression ")" ";"
-			code += prefixTab + "PRINT " + expression_.generatePigletExpressionCode(1, write) + "\n";
+			code += prefixTab + "PRINT " + expression_.generatePigletExpressionCode(tab, write) + "\n";
 			minijava2piglet.writeCode(code);
 			break;
 			

@@ -306,10 +306,10 @@ public class MExpr {
 			label2 = minijava2piglet.getLabelIndex();
 			// judge the out of bound
 			code += prefixTab + "HLOAD " + returnTemp + " " + tempExpr1 + " 0\n";
-			code += prefixTab + "CJUMP " + returnTemp + " " + tempExpr2 + " " + label2 + "\n";
+			code += prefixTab + "CJUMP LT " + returnTemp + " PLUS 1 " + tempExpr2 + " L" + label2 + "\n";
 			code += prefixTab + "L" + label1 + " ERROR\n";
 			code += prefixTab + "L" + label2 + "\n";
-			code += prefixTab + "\tHLOAD " + returnTemp + " " + tempExpr1 + " TIMES PLUS " + tempExpr2 + " 1 4\n";
+			code += prefixTab + "\tHLOAD " + returnTemp + " PLUS " + tempExpr1 + " TIMES PLUS " + tempExpr2 + " 1 4 0\n";
 			
 			minijava2piglet.writeCode(code);
 			break;
