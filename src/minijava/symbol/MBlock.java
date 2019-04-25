@@ -303,7 +303,7 @@ public class MBlock extends MScope {
 			code += prefixTab + "L" + label1  + "\n";
 			minijava2piglet.writeCode(code);
 			code = "";
-			exprTemp1 = expression_.generatePigletExpressionCode(tab, write);
+			exprTemp1 = expression_.generatePigletExpressionCode(tab + 1, write);
 			code += prefixTab + "\tCJUMP " + exprTemp1 + " L" + label2 + "\n";
 			minijava2piglet.writeCode(code);
 			code = "";

@@ -200,9 +200,9 @@ class List{
 
 		aux01 = this ;
 		var_end = end ;
-		var_elem = elem ;
+		// var_elem = elem ;
 		while (!var_end){
-			System.out.println(66666666);
+			System.out.println(666666667);
 			System.out.println(var_elem.GetAge());
 			aux01 = aux01.GetNext() ;
 			var_end = aux01.GetEnd();
@@ -231,6 +231,7 @@ class LL{
 		aux01 = last_elem.Init();
 		head = last_elem ;
 		aux01 = head.Init();
+		System.out.println(66666);
 		aux01 = head.Print();
 
 		// inserting first element
