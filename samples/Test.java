@@ -1,23 +1,30 @@
 class Test{
     public static void main(String[] args){
-        System.out.println(new C().call(new B()));
-    }
-}
-
-class C {
-    public int call(A a) {
-        return a.func();
+        B b;
+        A a;
+        b = new B();
+        System.out.println(b.set());
+        System.out.println(b.func());
+        a = b;
+        System.out.println(a.func());
     }
 }
 
 class A {
+    int atta;
+    int attb;
     public int func() {
-        return 10;
+        return atta + attb;
     }
 }
 
 class B extends A {
+    int attb;
     public int func() {
-        return 2;
+        return atta + attb;
+    }
+    public int set() {
+        attb = 1;
+        return 1;
     }
 }
