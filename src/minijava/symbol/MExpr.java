@@ -316,7 +316,7 @@ public class MExpr {
 		case 6:
 			// ArrayLength
 			tempExpr1 = prim_expr_.generatePigletPrimexprCode(tab, write); // base address
-			code += prefixTab + "MOVE " + returnTemp + " " + tempExpr1 + " 0\n";
+			code += prefixTab + "HLOAD " + returnTemp + " " + tempExpr1 + " 0\n";
 			minijava2piglet.writeCode(code);
 			break;
 		case 7:
