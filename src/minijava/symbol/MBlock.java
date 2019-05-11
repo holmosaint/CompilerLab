@@ -236,7 +236,7 @@ public class MBlock extends MScope {
 			exprTemp1 = expression_.generatePigletExpressionCode(tab, write);
 			code += prefixTab;
 			if(isLocal) {
-				code += "MOVE TEMP " + var_.getTempID() + " ";
+				code += "MOVE TEMP " + var_.getPigletTempID() + " ";
 			}
 			else {
 				int offset = -1;
@@ -259,7 +259,7 @@ public class MBlock extends MScope {
 			exprTemp1 = index_expression_.generatePigletExpressionCode(tab, write);
 			exprTemp2 = expression_.generatePigletExpressionCode(tab, write);
 			if(isLocal) {
-				code += prefixTab + "MOVE " + localTemp + " TEMP " + var_.getTempID() + "\n";
+				code += prefixTab + "MOVE " + localTemp + " TEMP " + var_.getPigletTempID() + "\n";
 			}
 			else {
 				int offset = -1;
@@ -355,7 +355,7 @@ public class MBlock extends MScope {
 			exprTemp1 = expression_.generateSpigletExpressionCode(tab, write);
 			code += prefixTab;
 			if(isLocal) {
-				code += "MOVE TEMP " + var_.getTempID() + " ";
+				code += "MOVE TEMP " + var_.getSpigletTempID() + " ";
 			}
 			else {
 				int offset = -1;
@@ -379,7 +379,7 @@ public class MBlock extends MScope {
 			exprTemp1 = index_expression_.generateSpigletExpressionCode(tab, write);
 			exprTemp2 = expression_.generateSpigletExpressionCode(tab, write);
 			if(isLocal) {
-				code += prefixTab + "MOVE " + localTemp + " TEMP " + var_.getTempID() + "\n";
+				code += prefixTab + "MOVE " + localTemp + " TEMP " + var_.getSpigletTempID() + "\n";
 			}
 			else {
 				int offset = -1;

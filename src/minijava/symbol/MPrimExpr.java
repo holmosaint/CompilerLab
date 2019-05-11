@@ -213,7 +213,7 @@ public class MPrimExpr {
 		case 3:
 			// Identifier
 			if(isLocal) {
-				code += prefixTab + "MOVE " + returnTemp + " " + minijava2piglet.TEMP + var_.getTempID() + "\n";
+				code += prefixTab + "MOVE " + returnTemp + " " + minijava2piglet.TEMP + var_.getPigletTempID() + "\n";
 			}
 			else {
 				MClass owner = getMethodScope().getOwner();
@@ -229,7 +229,7 @@ public class MPrimExpr {
 			break;
 		case 5:
 			// ArrayAllocationExpression
-			exprTemp = expr_.generateSpigletExpressionCode(tab, write);
+			exprTemp = expr_.generatePigletExpressionCode(tab, write);
 			code += prefixTab + "MOVE " + returnTemp + " HALLOCATE TIMES PLUS " + exprTemp + " 1 4\n";
 			code += prefixTab + "HSTORE " + returnTemp + " 0 " + exprTemp + "\n";
 			minijava2piglet.writeCode(code);
@@ -243,7 +243,7 @@ public class MPrimExpr {
 			break;
 		case 7:
 			// NotExpression
-			exprTemp = expr_.generateSpigletExpressionCode(tab, write);
+			exprTemp = expr_.generatePigletExpressionCode(tab, write);
 			/*label1 = minijava2piglet.getLabelIndex();
 			label2 = minijava2piglet.getLabelIndex();
 			label3 = minijava2piglet.getLabelIndex();
@@ -301,7 +301,7 @@ public class MPrimExpr {
 		case 3:
 			// Identifier
 			if(isLocal) {
-				code += prefixTab + "MOVE " + returnTemp + " " + minijava2spiglet.TEMP + var_.getTempID() + "\n";
+				code += prefixTab + "MOVE " + returnTemp + " " + minijava2spiglet.TEMP + var_.getSpigletTempID() + "\n";
 			}
 			else {
 				MClass owner = getMethodScope().getOwner();

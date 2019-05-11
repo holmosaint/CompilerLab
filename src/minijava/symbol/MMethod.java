@@ -259,14 +259,14 @@ public class MMethod extends MScope {
 			String param_name = index2name_.get(Integer.valueOf(i));
 			MVar var = params_.get(param_name);
 			if(i < 18)
-				var.setTempID(i + 1);
-			else var.setTempID(minijava2piglet.getTempIndex());
+				var.setPigletTempID(i + 1);
+			else var.setPigletTempID(minijava2piglet.getTempIndex());
 		}
 		// 大于18的必须先存到临时寄存器中
 		for(int i = 18; i < params_.size(); ++i) {
 			String param_name = index2name_.get(Integer.valueOf(i));
 			MVar var = params_.get(param_name);
-			int tempID = var.getTempID();
+			int tempID = var.getPigletTempID();
 			int offset = i - 18;
 			code += "\tHLOAD TEMP " + tempID + " TEMP 19 " + offset + "\n";
 		}
@@ -283,7 +283,7 @@ public class MMethod extends MScope {
 		for(String var_name : getVarMap().keySet()) {
 			if (params_.containsKey(var_name)) continue;
 			MVar var = queryVar(var_name);
-			var.setTempID(minijava2piglet.getTempIndex());
+			var.setPigletTempID(minijava2piglet.getTempIndex());
 		}
 
 		for(int i = 0; i < blocks_.size(); ++i) {
@@ -327,14 +327,14 @@ public class MMethod extends MScope {
 			String param_name = index2name_.get(Integer.valueOf(i));
 			MVar var = params_.get(param_name);
 			if(i < 18)
-				var.setTempID(i + 1);
-			else var.setTempID(minijava2spiglet.getTempIndex());
+				var.setSpigletTempID(i + 1);
+			else var.setSpigletTempID(minijava2spiglet.getTempIndex());
 		}
 		// 大于18的必须先存到临时寄存器中
 		for(int i = 18; i < params_.size(); ++i) {
 			String param_name = index2name_.get(Integer.valueOf(i));
 			MVar var = params_.get(param_name);
-			int tempID = var.getTempID();
+			int tempID = var.getSpigletTempID();
 			int offset = i - 18;
 			code += "\tHLOAD TEMP " + tempID + " TEMP 19 " + offset + "\n";
 		}
@@ -351,7 +351,7 @@ public class MMethod extends MScope {
 		for(String var_name : getVarMap().keySet()) {
 			if (params_.containsKey(var_name)) continue;
 			MVar var = queryVar(var_name);
-			var.setTempID(minijava2spiglet.getTempIndex());
+			var.setSpigletTempID(minijava2spiglet.getTempIndex());
 		}
 
 		for(int i = 0; i < blocks_.size(); ++i) {

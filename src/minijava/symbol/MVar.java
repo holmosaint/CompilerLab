@@ -16,7 +16,8 @@ public class MVar {
 	private int length_;  // for array instance
 	private MClass class_owner_ = null;
 	
-	private int tempID = -1;
+	private int pigletTempID = -1;
+	private int spigletTempID = -1;
 	
 	public MVar(MType type) {
 		type_ = type;
@@ -85,16 +86,28 @@ public class MVar {
 		return assigned_;
 	}
 
-	public int getTempID() {
-		if(tempID < 0)
-			ErrorHandler.errorPrint("Temp register has not been allocated to variable " + getName());
-		return tempID;
+	public int getPigletTempID() {
+		if(pigletTempID < 0)
+			ErrorHandler.errorPrint("In piglet, Temp register has not been allocated to variable " + getName());
+		return pigletTempID;
 	}
 
-	public void setTempID(int tempID) {
-		if(this.tempID >= 0)
-			ErrorHandler.errorPrint("Duplicate TEMP register allocation to variable " + getName());
-		this.tempID = tempID;
+	public void setPigletTempID(int tempID) {
+		if(this.pigletTempID >= 0)
+			ErrorHandler.errorPrint("In Piglet, Duplicate TEMP register allocation to variable " + getName());
+		this.pigletTempID = tempID;
+	}
+	
+	public int getSpigletTempID() {
+		if(spigletTempID < 0)
+			ErrorHandler.errorPrint("In Spiglet, Temp register has not been allocated to variable " + getName());
+		return spigletTempID;
+	}
+
+	public void setSpigletTempID(int tempID) {
+		if(this.spigletTempID  >= 0)
+			ErrorHandler.errorPrint("In Spiglet, Duplicate TEMP register allocation to variable " + getName());
+		this.spigletTempID = tempID;
 	}
 	
 	public int getLength() {

@@ -1,5 +1,6 @@
 import minijava.typecheck.*;
 import minijava2piglet.*;
+import minijava2spiglet.*;
 
 public class Main {
 	public static void main(String args[]) {
@@ -17,6 +18,8 @@ public class Main {
 			}
 			System.out.println("Converting minijava to piglet");
 			minijava2piglet convert2piglet = new minijava2piglet(file_path);
+			System.out.println("Converting minijava to spiglet");
+			minijava2spiglet convert2spiglet = new minijava2spiglet(file_path);
 		} catch (Exception e) {
 			System.out.println("Error: ");
 			e.printStackTrace();
