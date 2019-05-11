@@ -3,7 +3,6 @@ package minijava.symbol;
 import java.util.*;
 
 import minijava.syntaxtree.*;
-import minijava.visitor.*;
 import util.ErrorHandler;
 
 public class MClass extends MType {
@@ -315,33 +314,33 @@ public class MClass extends MType {
 		
 		// Allocate space for VTable
 		allocate_size = 4 * (1 + all_vars_.size());
-		code += "	MOVE TEMP 0 HALLOCATE " + allocate_size + "\n";
+		code += "\tMOVE TEMP 0 HALLOCATE " + allocate_size + "\n";
 		cur = 4;
 		for (String var_name : all_vars_) {
 			// TEMP 1 stores the current variable's address
-			code += "	MOVE TEMP 1 PLUS TEMP 0 " + cur + "\n";
+			code += "\tMOVE TEMP 1 PLUS TEMP 0 " + cur + "\n";
 			// Initialize all the variables to zero
-			code += "	HSTORE TEMP 1 0 0\n";
+			code += "\tHSTORE TEMP 1 0 0\n";
 			cur += 4;
 		}
 		
 		// Allocate space for MTable
 		allocate_size = 4 * all_methods_.size();
 		if (allocate_size > 0) {
-			code += "	MOVE TEMP 1 HALLOCATE " + allocate_size + "\n";
-			code += "	HSTORE TEMP 0 0 TEMP 1\n";
+			code += "\tMOVE TEMP 1 HALLOCATE " + allocate_size + "\n";
+			code += "\tHSTORE TEMP 0 0 TEMP 1\n";
 			cur = 0;
 			for (String method_name : all_methods_) {
 				// TEMP 2 stores the current method's address
-				code += "	MOVE TEMP 2 PLUS TEMP 1 " + cur + "\n";
-				code += "	MOVE TEMP 3 " + method_name + "\n";
-				code += "	HSTORE TEMP 2 0 TEMP 3\n";
+				code += "\tMOVE TEMP 2 PLUS TEMP 1 " + cur + "\n";
+				code += "\tMOVE TEMP 3 " + method_name + "\n";
+				code += "\tHSTORE TEMP 2 0 TEMP 3\n";
 				cur += 4;
 			}
 		}
 		
 		code += "RETURN\n";
-		code += "	TEMP 0\n";
+		code += "\tTEMP 0\n";
 		code += "END\n\n";
 		return code;
 	}
@@ -378,5 +377,51 @@ public class MClass extends MType {
 				moffset += 4;
 			}
 		}	
+	}
+
+	public String generateSpigletNewClassCode() {		
+		String code = "new_" + name_ + " [0]\n";
+		int allocate_size, cur;
+	
+		if (isMainClass()) {
+			code += "BEGIN\n	"
+					+ "MOVE TEMP 0 0\n"
+					+ "RETURN\n	TEMP 0\n"
+					+ "END\n\n";
+			return code;
+		}
+		code += "BEGIN\n";
+		
+		// Allocate space for VTable
+		allocate_size = 4 * (1 + all_vars_.size());
+		code += "\tMOVE TEMP 0 HALLOCATE " + allocate_size + "\n";
+		cur = 4;
+		for (String var_name : all_vars_) {
+			// TEMP 1 stores the current variable's address
+			code += "\tMOVE TEMP 1 PLUS TEMP 0 " + cur + "\n";
+			// Initialize all the variables to zero
+			code += "\tHSTORE TEMP 1 0 0\n";
+			cur += 4;
+		}
+		
+		// Allocate space for MTable
+		allocate_size = 4 * all_methods_.size();
+		if (allocate_size > 0) {
+			code += "\tMOVE TEMP 1 HALLOCATE " + allocate_size + "\n";
+			code += "\tHSTORE TEMP 0 0 TEMP 1\n";
+			cur = 0;
+			for (String method_name : all_methods_) {
+				// TEMP 2 stores the current method's address
+				code += "\tMOVE TEMP 2 PLUS TEMP 1 " + cur + "\n";
+				code += "\tMOVE TEMP 3 " + method_name + "\n";
+				code += "\tHSTORE TEMP 2 0 TEMP 3\n";
+				cur += 4;
+			}
+		}
+		
+		code += "RETURN\n";
+		code += "\tTEMP 0\n";
+		code += "END\n\n";
+		return code;
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import minijava.syntaxtree.*;
 import minijava2piglet.minijava2piglet;
+import minijava2spiglet.minijava2spiglet;
 import util.ErrorHandler;
 
 public class MBlock extends MScope {
@@ -319,6 +320,131 @@ public class MBlock extends MScope {
 			exprTemp1 = expression_.generatePigletExpressionCode(tab, write);
 			code += prefixTab + "PRINT " + exprTemp1 + "\n";
 			minijava2piglet.writeCode(code);
+			break;
+			
+		default:
+			break;
+		}
+		return code;
+	}
+
+	public String generateSpigletBlockCode(int tab, boolean write) {
+		String code = "";
+		String prefixTab = "";
+		for(int i = 0;i < tab; ++i)
+			prefixTab += "\t";
+		
+		MMethod method = getMethodScope();
+		String localTemp = "";
+		String exprTemp1 = "", exprTemp2 = "";
+		boolean isLocal = false;
+		int label1 = -1, label2 = -1, label3 = -1;
+		if(var_ != null) 
+			isLocal = method.judgeLocalVar(var_);
+		
+		switch (which_) {
+		case 0:
+			// block
+			for(MBlock block : children_)
+				block.generateSpigletBlockCode(tab, write);
+			break;
+		
+		case 1:
+			// Assignment expression
+			// AssignmentStatement	::=	Identifier "=" Expression ";"
+			exprTemp1 = expression_.generateSpigletExpressionCode(tab, write);
+			code += prefixTab;
+			if(isLocal) {
+				code += "MOVE TEMP " + var_.getTempID() + " ";
+			}
+			else {
+				int offset = -1;
+				MClass owner = getMethodScope().getOwner();
+				offset = owner.queryVarOffset(var_.getName());
+				code += "HSTORE TEMP 0 " + offset  + " ";
+			}
+			// get the register that contains the return value
+			code += exprTemp1 + "\n";
+			minijava2spiglet.writeCode(code);
+			break;
+			
+		case 2:
+			// Array assignment expression
+			// ArrayAssignmentStatement	::=	Identifier "[" Expression "]" "=" Expression ";"
+			localTemp = minijava2spiglet.TEMP + minijava2spiglet.getTempIndex();
+			String localTemp2 = minijava2spiglet.TEMP + minijava2spiglet.getTempIndex();
+			String localTemp3 = minijava2spiglet.TEMP + minijava2spiglet.getTempIndex();
+			label1 = minijava2spiglet.getLabelIndex();
+			label2 = minijava2spiglet.getLabelIndex();
+			exprTemp1 = index_expression_.generateSpigletExpressionCode(tab, write);
+			exprTemp2 = expression_.generateSpigletExpressionCode(tab, write);
+			if(isLocal) {
+				code += prefixTab + "MOVE " + localTemp + " TEMP " + var_.getTempID() + "\n";
+			}
+			else {
+				int offset = -1;
+				MClass owner = getMethodScope().getOwner();
+				offset = owner.queryVarOffset(var_.getName());
+				code += prefixTab + "HLOAD " + localTemp + " TEMP 0 " + offset + "\n";
+			}
+			code += prefixTab + "HLOAD " + localTemp2 + " " + localTemp + " 0\n";
+			code += prefixTab + "MOVE " + localTemp3 + " PLUS 1 " + exprTemp1 + "\n";
+			code += prefixTab + "MOVE " + localTemp2 + " LT " + localTemp2 + " " + localTemp3 + "\n";
+			code += prefixTab + "CJUMP " + localTemp2 + " L" + label2 + "\n"; 
+			code += prefixTab + "L" + label1 + " ERROR\n";
+			code += prefixTab + "L" + label2 + "\n";
+			code += prefixTab + "\tMOVE " + localTemp2 + " PLUS " + exprTemp1 + " 1\n"; // offset
+			code += prefixTab + "\tMOVE " + localTemp2 + "TIMES " + localTemp2 + " 4\n";
+			code += prefixTab + "\tMOVE " + localTemp + " PLUS " + localTemp + " " + localTemp2 + "\n";
+			code += prefixTab + "\tHSTORE " + localTemp + " 0 " + exprTemp2 + "\n";
+			minijava2spiglet.writeCode(code);
+			break;
+			
+		case 3:
+			// If assignment
+			// IfStatement	::=	"if" "(" Expression ")" Statement "else" Statement
+			label1 = minijava2spiglet.getLabelIndex();
+			label2 = minijava2spiglet.getLabelIndex();
+			label3 = minijava2spiglet.getLabelIndex();
+			exprTemp1 = expression_.generateSpigletExpressionCode(tab, write);
+			code += prefixTab + "CJUMP " + exprTemp1 + " L" + label2 + "\n";
+			code += prefixTab + "L" + label1 + "\n";
+			minijava2spiglet.writeCode(code);
+			code = "";
+			children_.get(0).generateSpigletBlockCode(tab + 1, write);
+			code += prefixTab + "\t" + "JUMP L" + label3 + "\n";
+			code += prefixTab + "L" + label2 + "\n";
+			minijava2spiglet.writeCode(code);
+			code = "";
+			children_.get(1).generateSpigletBlockCode(tab + 1, write);
+			code += prefixTab + "L" + label3 + "\tNOOP\n";
+			minijava2spiglet.writeCode(code);
+			break;
+			
+		case 4:
+			// While assignment
+			// WhileStatement	::=	"while" "(" Expression ")" Statement
+			label1 = minijava2spiglet.getLabelIndex();
+			label2 = minijava2spiglet.getLabelIndex();
+			code += prefixTab + "L" + label1  + "\n";
+			minijava2spiglet.writeCode(code);
+			code = "";
+			exprTemp1 = expression_.generateSpigletExpressionCode(tab + 1, write);
+			code += prefixTab + "\tCJUMP " + exprTemp1 + " L" + label2 + "\n";
+			minijava2spiglet.writeCode(code);
+			code = "";
+			children_.get(0).generateSpigletBlockCode(tab + 1, write);
+			code += prefixTab + "\tJUMP L" + label1 + "\n";
+			code += prefixTab + "L" + label2 + "\tNOOP\n";
+			minijava2spiglet.writeCode(code);
+			break;
+			
+		case 5:
+			// Print assignment
+			// PrintStatement	::=	"System.out.println" "(" Expression ")" ";"
+			exprTemp1 = expression_.generateSpigletExpressionCode(tab, write);
+			code += prefixTab + "PRINT " + exprTemp1 + "\n";
+			minijava2spiglet.writeCode(code);
 			break;
 			
 		default:

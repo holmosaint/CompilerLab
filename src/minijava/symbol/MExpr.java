@@ -3,6 +3,7 @@ package minijava.symbol;
 
 import minijava.syntaxtree.*;
 import minijava2piglet.minijava2piglet;
+import minijava2spiglet.minijava2spiglet;
 import util.ErrorHandler;
 
 import java.util.*;
@@ -360,6 +361,132 @@ public class MExpr {
 			tempExpr1 = prim_expr_.generatePigletPrimexprCode(tab, write);
 			code += prefixTab + "MOVE " + returnTemp + " " + tempExpr1 + "\n";
 			minijava2piglet.writeCode(code);
+			break;
+		default:
+			break;
+		}
+		
+		return returnTemp;
+	}
+
+	public String generateSpigletExpressionCode(int tab, boolean write) {
+		String code = "";
+		String prefixTab = "";
+		for(int i = 0;i < tab; ++i)
+			prefixTab += "\t";
+		
+		// 存表达式值的TEMP寄存器
+		String returnTemp = minijava2spiglet.TEMP + minijava2spiglet.getTempIndex();
+		String tempExpr1, tempExpr2; // 两个primexpr的返回寄存器
+		String localTemp1, localTemp2;
+		ArrayList<String> tempExprs = new ArrayList<String>();
+		int label1, label2;
+		int methodOffset = -1;
+		
+		switch (which_) {
+		case 0:
+			// AndExpression
+			tempExpr1 = prim_expr_.generateSpigletPrimexprCode(tab, write);
+			tempExpr2 = prim_expr2_.generateSpigletPrimexprCode(tab, write);
+			code += prefixTab + "MOVE " + returnTemp + " TIMES " + tempExpr1 + " " + tempExpr2 + "\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 1:
+			// CompareExpression
+			tempExpr1 = prim_expr_.generateSpigletPrimexprCode(tab, write);
+			tempExpr2 = prim_expr2_.generateSpigletPrimexprCode(tab, write);
+			code += prefixTab + "MOVE " + returnTemp + " LT " + tempExpr1 + " " + tempExpr2 + "\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 2:
+			// PlusExpression
+			tempExpr1 = prim_expr_.generateSpigletPrimexprCode(tab, write);
+			tempExpr2 = prim_expr2_.generateSpigletPrimexprCode(tab, write);
+			code += prefixTab + "MOVE " + returnTemp + " PLUS " + tempExpr1 + " " + tempExpr2 + "\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 3:
+			// MinusExpression
+			tempExpr1 = prim_expr_.generateSpigletPrimexprCode(tab, write);
+			tempExpr2 = prim_expr2_.generateSpigletPrimexprCode(tab, write);
+			code += prefixTab + "MOVE " + returnTemp + " MINUS " + tempExpr1 + " " + tempExpr2 + "\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 4:
+			// TimesExpression
+			tempExpr1 = prim_expr_.generateSpigletPrimexprCode(tab, write);
+			tempExpr2 = prim_expr2_.generateSpigletPrimexprCode(tab, write);
+			code += prefixTab + "MOVE " + returnTemp + " TIMES " + tempExpr1 + " " + tempExpr2 + "\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 5:
+			// ArrayLookup
+			localTemp1 = minijava2spiglet.TEMP + minijava2spiglet.getTempIndex();
+			localTemp2 = minijava2spiglet.TEMP + minijava2spiglet.getTempIndex();
+			tempExpr1 = prim_expr_.generateSpigletPrimexprCode(tab, write); // base address
+			tempExpr2 = prim_expr2_.generateSpigletPrimexprCode(tab, write);
+			label1 = minijava2spiglet.getLabelIndex();
+			label2 = minijava2spiglet.getLabelIndex();
+			// judge the out of bound
+			code += prefixTab + "HLOAD " + returnTemp + " " + tempExpr1 + " 0\n";
+			code += prefixTab + "MOVE " + localTemp1 + " PLUS 1 " + tempExpr2 + "\n";
+			code += prefixTab + "MOVE " + localTemp2 + " LT " + returnTemp + " " + localTemp1 + "\n";
+			code += prefixTab + "CJUMP " + localTemp2 + " L" + label2 + "\n";
+			code += prefixTab + "L" + label1 + " ERROR\n";
+			code += prefixTab + "L" + label2 + "\n";
+			code += prefixTab + "\tMOVE " + localTemp2 + " TIMES 4 " + localTemp1 + "\n"; 
+			code += prefixTab + "\tMOVE " + localTemp2 + " PLUS " + tempExpr1 + " " + localTemp2 + "\n";
+			code += prefixTab + "\tHLOAD " + returnTemp + " " + localTemp2 + " 0\n";
+			
+			minijava2spiglet.writeCode(code);
+			break;
+		case 6:
+			// ArrayLength
+			tempExpr1 = prim_expr_.generatePigletPrimexprCode(tab, write); // base address
+			code += prefixTab + "HLOAD " + returnTemp + " " + tempExpr1 + " 0\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 7:
+			// MessageSend			
+			String paramTable = "";
+			// The size of parameters is larger then 18
+			if(exprs_.size() > 18) {
+				paramTable = minijava2spiglet.TEMP + minijava2spiglet.getTempIndex();
+				code += prefixTab + "MOVE " + paramTable + " HALLOCATE TIMES 4 " + (exprs_.size() - 18) + "\n";
+			}
+			tempExpr1 = prim_expr_.generateSpigletPrimexprCode(tab, write); // base address and the first parameter
+			/*for(MExpr e : exprs_) {
+				tempExprs.add(e.generatePigletExpressionCode(tab, write));
+			}*/
+			for(int i = 0; i < exprs_.size(); ++i) {
+				MExpr e = exprs_.get(i);
+				tempExpr2 = e.generatePigletExpressionCode(tab, write);
+				tempExprs.add(tempExpr2);
+				int offset = i - 18;
+				if(i >= 18) {
+					code += prefixTab + "HSTORE " + paramTable + " " + offset + " " + tempExpr2 + "\n"; 
+				}
+			}
+			methodOffset = ((MClass) prim_expr_.getVar().getType()).queryMethodOffset(method_name_); // 获得偏移量，保证是4的倍数
+			
+			String midTemp = minijava2spiglet.TEMP + minijava2spiglet.getTempIndex();
+			code += prefixTab + "HLOAD " + midTemp + " " + tempExpr1 + " 0\n"; // 获得DTable的基址
+			code += prefixTab + "HLOAD " + midTemp + " " + midTemp + " " + methodOffset + "\n";
+			code += prefixTab + "MOVE " + returnTemp + " CALL " + midTemp + " ( ";
+			code += tempExpr1 + " ";
+			for(int i = 0; i < Math.min(18, tempExprs.size()); ++i) {
+				code += tempExprs.get(i) + " ";
+			}
+			if(tempExprs.size() > 18)
+				code += paramTable;
+			code += ")\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 8:
+			// PrimaryExpression
+			tempExpr1 = prim_expr_.generateSpigletPrimexprCode(tab, write);
+			code += prefixTab + "MOVE " + returnTemp + " " + tempExpr1 + "\n";
+			minijava2spiglet.writeCode(code);
 			break;
 		default:
 			break;

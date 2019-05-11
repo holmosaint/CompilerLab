@@ -4,6 +4,7 @@ import java.util.*;
 
 import minijava.syntaxtree.*;
 import minijava2piglet.minijava2piglet;
+import minijava2spiglet.minijava2spiglet;
 import util.ErrorHandler;
 
 public class MMethod extends MScope {
@@ -306,5 +307,68 @@ public class MMethod extends MScope {
 	// 判断是不是局部变量（参数与局部变量）
 	public boolean judgeLocalVar(MVar var) {
 		return params_.containsKey(var.getName()) || vars_.containsKey(var.getName()); 
+	}
+
+	public String generateSpigletMethodCode() {
+		MClass c = getOwner();
+		String code = c.getName() + "_" + getName();
+		int parameterLength = params_.keySet().size();
+		++parameterLength; // 第一个参数是VTable
+		if(!c.isMainClass()) {
+			code += " [" + parameterLength + "]\nBEGIN\n";	
+		} else {
+			code = "MAIN\n";
+		}
+		minijava2spiglet.writeCode(code);
+		code = "";
+		
+		// 分配params的TEMP寄存器，从1开始
+		for(int i = 0; i < params_.size(); ++i) {
+			String param_name = index2name_.get(Integer.valueOf(i));
+			MVar var = params_.get(param_name);
+			if(i < 18)
+				var.setTempID(i + 1);
+			else var.setTempID(minijava2spiglet.getTempIndex());
+		}
+		// 大于18的必须先存到临时寄存器中
+		for(int i = 18; i < params_.size(); ++i) {
+			String param_name = index2name_.get(Integer.valueOf(i));
+			MVar var = params_.get(param_name);
+			int tempID = var.getTempID();
+			int offset = i - 18;
+			code += "\tHLOAD TEMP " + tempID + " TEMP 19 " + offset + "\n";
+		}
+		minijava2spiglet.writeCode(code);
+		code = "";
+		/*// 大于18的存储在TEMP 18中，类似一个数组，存储的是地址的偏移量
+		for(int i = 18; i < params_.size(); ++i) {
+			String param_name = index2name_.get(Integer.valueOf(i));
+			MVar var = params_.get(param_name);
+			var.setTempID(-(i - 18 - 1));
+		}*/
+		
+		// 分配TEMP给各个局部变量
+		for(String var_name : getVarMap().keySet()) {
+			if (params_.containsKey(var_name)) continue;
+			MVar var = queryVar(var_name);
+			var.setTempID(minijava2spiglet.getTempIndex());
+		}
+
+		for(int i = 0; i < blocks_.size(); ++i) {
+			blocks_.get(i).generateSpigletBlockCode(1, true); // code should be written in the block generation function
+		}
+
+		// return expression
+		code = "";
+		if(!c.isMainClass()) {
+			String returnTemp = "";
+			returnTemp = return_.generateSpigletExpressionCode(1, true);
+			code += "RETURN\n\t" + returnTemp + "\n";
+		}
+		
+		code += "END\n\n";
+		minijava2spiglet.writeCode(code);
+		
+		return code;
 	}
 }

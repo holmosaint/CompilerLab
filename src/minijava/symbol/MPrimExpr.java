@@ -2,6 +2,7 @@ package minijava.symbol;
 
 import minijava.syntaxtree.*;
 import minijava2piglet.minijava2piglet;
+import minijava2spiglet.minijava2spiglet;
 import util.*;
 
 public class MPrimExpr {
@@ -228,7 +229,7 @@ public class MPrimExpr {
 			break;
 		case 5:
 			// ArrayAllocationExpression
-			exprTemp = expr_.generatePigletExpressionCode(tab, write);
+			exprTemp = expr_.generateSpigletExpressionCode(tab, write);
 			code += prefixTab + "MOVE " + returnTemp + " HALLOCATE TIMES PLUS " + exprTemp + " 1 4\n";
 			code += prefixTab + "HSTORE " + returnTemp + " 0 " + exprTemp + "\n";
 			minijava2piglet.writeCode(code);
@@ -242,7 +243,7 @@ public class MPrimExpr {
 			break;
 		case 7:
 			// NotExpression
-			exprTemp = expr_.generatePigletExpressionCode(tab, write);
+			exprTemp = expr_.generateSpigletExpressionCode(tab, write);
 			/*label1 = minijava2piglet.getLabelIndex();
 			label2 = minijava2piglet.getLabelIndex();
 			label3 = minijava2piglet.getLabelIndex();
@@ -261,6 +262,84 @@ public class MPrimExpr {
 			exprTemp = expr_.generatePigletExpressionCode(tab, write);
 			code += "MOVE " + returnTemp + " " + exprTemp;
 			minijava2piglet.writeCode(code);
+			break;
+		default:
+			break;
+		}
+		return returnTemp;
+	}
+
+	public String generateSpigletPrimexprCode(int tab, boolean write) {
+		String code = "";
+		String prefixTab = "";
+		for(int i = 0;i < tab; ++i)
+			prefixTab += "\t";
+		String returnTemp = minijava2spiglet.TEMP + minijava2spiglet.getTempIndex();
+		String exprTemp;
+		int label1, label2, label3;
+		boolean isLocal = false;
+		MMethod method = getMethodScope();
+		if(var_ != null)
+			isLocal = method.judgeLocalVar(var_);
+		
+		switch (which_) {
+		case 0:
+			// IntegerLiteral
+			code += prefixTab + "MOVE " + returnTemp + " " + literal_ + "\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 1:
+			// TrueLiteral
+			code += prefixTab + "MOVE " + returnTemp + " 1\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 2:
+			// FalseLiteral
+			code += prefixTab + "MOVE " + returnTemp + " 0\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 3:
+			// Identifier
+			if(isLocal) {
+				code += prefixTab + "MOVE " + returnTemp + " " + minijava2spiglet.TEMP + var_.getTempID() + "\n";
+			}
+			else {
+				MClass owner = getMethodScope().getOwner();
+				code += prefixTab + "HLOAD " + returnTemp + " TEMP 0 " + 
+			            owner.queryVarOffset(var_name_) + "\n";
+			}
+			minijava2spiglet.writeCode(code);
+			break;
+		case 4:
+			// ThisExpression
+			code += prefixTab + "MOVE " + returnTemp + " TEMP 0\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 5:
+			// ArrayAllocationExpression
+			exprTemp = expr_.generateSpigletExpressionCode(tab, write);
+			code += prefixTab + "MOVE " + returnTemp + " HALLOCATE TIMES PLUS " + exprTemp + " 1 4\n";
+			code += prefixTab + "HSTORE " + returnTemp + " 0 " + exprTemp + "\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 6:
+			// AllocationExpression
+			MClass c = (MClass)type_;
+			code += prefixTab + "MOVE " + returnTemp + " CALL new_" + c.getName() + "()\n";
+			minijava2spiglet.writeCode(code);
+			var_ = new MVar(type_);
+			break;
+		case 7:
+			// NotExpression
+			exprTemp = expr_.generateSpigletExpressionCode(tab, write);
+			code += prefixTab + "MOVE " + returnTemp + " MINUS 1 " + exprTemp + "\n";
+			minijava2spiglet.writeCode(code);
+			break;
+		case 8:
+			// BracketExpression
+			exprTemp = expr_.generateSpigletExpressionCode(tab, write);
+			code += "MOVE " + returnTemp + " " + exprTemp;
+			minijava2spiglet.writeCode(code);
 			break;
 		default:
 			break;
