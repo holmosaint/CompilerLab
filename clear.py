@@ -6,6 +6,8 @@ def remove(root):
     print(root)
     os.chdir(root)
     os.system('del *.class')
+    os.system('del *.pg')
+    os.system('del *.spg')
     paths = os.listdir('.')
     for path in paths:
         if os.path.isdir(path):
