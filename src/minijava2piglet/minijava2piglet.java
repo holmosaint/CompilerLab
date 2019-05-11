@@ -44,7 +44,8 @@ public class minijava2piglet {
 		for(MClass c : SymbolTable.getClassList()) {
 			for(String m : c.getMethod().keySet()) {
 				MMethod method = c.queryMethod(m);
-				method.generatePigletMethodCode();
+				code = method.generatePigletMethodCode();
+				System.out.println(code);
 				// writeCode(code);
 			}
 			code = c.generatePigletNewClassCode();

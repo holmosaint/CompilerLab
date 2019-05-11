@@ -260,7 +260,7 @@ public class MPrimExpr {
 		case 8:
 			// BracketExpression
 			exprTemp = expr_.generatePigletExpressionCode(tab, write);
-			code += "MOVE " + returnTemp + " " + exprTemp;
+			code += prefixTab + "MOVE " + returnTemp + " " + exprTemp + "\n";
 			minijava2piglet.writeCode(code);
 			break;
 		default:
@@ -338,7 +338,7 @@ public class MPrimExpr {
 		case 8:
 			// BracketExpression
 			exprTemp = expr_.generateSpigletExpressionCode(tab, write);
-			code += "MOVE " + returnTemp + " " + exprTemp;
+			code += prefixTab + "MOVE " + returnTemp + " " + exprTemp + "\n";
 			minijava2spiglet.writeCode(code);
 			break;
 		default:

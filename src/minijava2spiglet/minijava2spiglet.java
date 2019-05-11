@@ -13,7 +13,7 @@ import minijava.symbol.SymbolTable;
 public class minijava2spiglet {
 	
 	private static File outputFile_;
-	private static OutputStream pigletFile_;
+	private static OutputStream spigletFile_;
 	private static int tempIndex = 20; // 暴力搜索最小的没有被使用的TEMP值
 	private static int labelIndex = 0;
 	public static final String TEMP = "TEMP ";
@@ -31,19 +31,19 @@ public class minijava2spiglet {
 			}
 		}
 		try {
-			pigletFile_ = new FileOutputStream(outputFile_);
+			spigletFile_ = new FileOutputStream(outputFile_);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		
-		generatePigletCode();
+		generateSpigletCode();
 	}
 	
-	public static void generatePigletCode() {
+	public static void generateSpigletCode() {
 		String code = "";
-		for(MClass c : SymbolTable.getClassList()) {
+		/*for(MClass c : SymbolTable.getClassList()) {
 			c.createView();
-		}
+		}*/
 		for(MClass c : SymbolTable.getClassList()) {
 			for(String m : c.getMethod().keySet()) {
 				MMethod method = c.queryMethod(m);
@@ -57,7 +57,7 @@ public class minijava2spiglet {
 	
 	public static void writeCode(String code) {
 		try {
-			pigletFile_.write(code.getBytes());
+			spigletFile_.write(code.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

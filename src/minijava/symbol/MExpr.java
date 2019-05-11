@@ -442,7 +442,7 @@ public class MExpr {
 			break;
 		case 6:
 			// ArrayLength
-			tempExpr1 = prim_expr_.generatePigletPrimexprCode(tab, write); // base address
+			tempExpr1 = prim_expr_.generateSpigletPrimexprCode(tab, write); // base address
 			code += prefixTab + "HLOAD " + returnTemp + " " + tempExpr1 + " 0\n";
 			minijava2spiglet.writeCode(code);
 			break;
@@ -460,7 +460,7 @@ public class MExpr {
 			}*/
 			for(int i = 0; i < exprs_.size(); ++i) {
 				MExpr e = exprs_.get(i);
-				tempExpr2 = e.generatePigletExpressionCode(tab, write);
+				tempExpr2 = e.generateSpigletExpressionCode(tab, write);
 				tempExprs.add(tempExpr2);
 				int offset = i - 18;
 				if(i >= 18) {
