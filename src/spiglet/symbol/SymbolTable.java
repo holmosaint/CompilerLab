@@ -10,7 +10,6 @@ import spiglet.*;
 
 public class SymbolTable {
 	private static HashMap<String, MProcedure> label2procedure_;
-	
 	public static MProcedure main_procedure_;
 	public static void parse(Goal goal) {
 		// Get Main procedure
@@ -25,7 +24,14 @@ public class SymbolTable {
 		}
 	}
 	
-	public MProcedure getProcedure(String label) {
+	public static MProcedure getProcedure(String label) {
 		return label2procedure_.get(label);
+	}
+	
+	// For debugging
+	public static void printInfo() {
+		for (String label : label2procedure_.keySet()) {
+			System.out.println(label2procedure_.get(label).getInfo());
+		}
 	}
 }

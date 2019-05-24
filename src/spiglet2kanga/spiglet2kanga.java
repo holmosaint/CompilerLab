@@ -2,6 +2,7 @@ package spiglet2kanga;
 
 import java.io.*;
 import spiglet.*;
+import spiglet.symbol.SymbolTable;
 import util.ErrorHandler;
 
 class SpigletVisitor {
@@ -29,6 +30,7 @@ public class spiglet2kanga {
 		try {
 			// Code.init(dst_file);
 			SpigletParser.Goal().accept(new ClassTreeBuilder());
+			// SymbolTable.printInfo();
 			// Code.finish();
 		} catch (ParseException e) {
 			ErrorHandler.errorPrint(e.getMessage());
