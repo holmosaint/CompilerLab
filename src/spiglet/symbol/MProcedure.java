@@ -5,6 +5,7 @@ import java.util.*;
 import spiglet.syntaxtree.*;
 
 public class MProcedure {
+	// 标号label是全局的，而非局部的
 	private String label_ = null;
 	private int param_num_;
 	private HashMap<String, MStmt> label2stmt_ = null;
