@@ -394,7 +394,7 @@ public class MBlock extends MScope {
 			code += prefixTab + "L" + label1 + " ERROR\n";
 			code += prefixTab + "L" + label2 + "\n";
 			code += prefixTab + "\tMOVE " + localTemp2 + " PLUS " + exprTemp1 + " 1\n"; // offset
-			code += prefixTab + "\tMOVE " + localTemp2 + "TIMES " + localTemp2 + " 4\n";
+			code += prefixTab + "\tMOVE " + localTemp2 + " TIMES " + localTemp2 + " 4\n";
 			code += prefixTab + "\tMOVE " + localTemp + " PLUS " + localTemp + " " + localTemp2 + "\n";
 			code += prefixTab + "\tHSTORE " + localTemp + " 0 " + exprTemp2 + "\n";
 			minijava2spiglet.writeCode(code);
