@@ -1,6 +1,6 @@
 package spiglet.symbol;
 
-import java.util.ArrayList;
+import java.util.*;
 import util.ErrorHandler;
 import spiglet.syntaxtree.*;
 
@@ -51,12 +51,14 @@ public class MExp {
 		}
 	}
 	
-	public ArrayList<Integer> getUsedIds() {
-		ArrayList<Integer> used_ids = new ArrayList<Integer>();
+	public HashSet<Integer> getUsedIds() {
+		HashSet<Integer> used_ids = new HashSet<Integer>();
 		switch (which_) {
 		case 0:
 			// Call
-			used_ids = (ArrayList<Integer>) tmp_ids_.clone();
+			for (Integer i : tmp_ids_) {
+				used_ids.add(i);
+			}
 			if (sexp_.getUsedId() != -1) used_ids.add(sexp_.getUsedId());
 			break;
 		case 1:

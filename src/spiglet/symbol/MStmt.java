@@ -1,6 +1,6 @@
 package spiglet.symbol;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import spiglet.syntaxtree.*;
 import util.ErrorHandler;
@@ -21,6 +21,8 @@ public class MStmt {
 	private MSimpleExp sexp_ = null;
 	private MProcedure procedure_ = null;
 	private ArrayList<MStmt> formers_ = null;
+	private HashSet<Integer> used_ids_ = null;
+	private HashSet<Integer> defined_ids_ = null;
 	
 	public MStmt(NodeSequence node_seq, MProcedure procedure) {
 		procedure_ = procedure;
@@ -88,13 +90,16 @@ public class MStmt {
 		}
 	}
 
-	public int getDefinedId() {
-		if (which_ == 5 || which_ == 6) return tmp_id_;
-		else return -1;
+	public HashSet<Integer> getDefinedIds() {
+		if (defined_ids_ != null) return defined_ids_;
+		defined_ids_ = new HashSet<Integer>();
+		if (which_ == 5 || which_ == 6) defined_ids_.add(tmp_id_);
+		return defined_ids_;
 	}
 	
-	public ArrayList<Integer> getUsedIds() {
-		ArrayList<Integer> used_ids = new ArrayList<Integer>();
+	public HashSet<Integer> getUsedIds() {
+		if (used_ids_ != null) return used_ids_;
+		used_ids_ = new HashSet<Integer>();
 		switch (which_) {
 		case 0:
 			// NoOpStmt
@@ -104,32 +109,32 @@ public class MStmt {
 			break;
 		case 2:
 			// CJumpStmt
-			used_ids.add(tmp_id_);
+			used_ids_.add(tmp_id_);
 			break;
 		case 3:
 			// JumpStmt
 			break;
 		case 4:
 			// HStoreStmt
-			used_ids.add(tmp_id_);
-			used_ids.add(tmp_id2_);
+			used_ids_.add(tmp_id_);
+			used_ids_.add(tmp_id2_);
 			break;
 		case 5:
 			// HLoadStmt
-			used_ids.add(tmp_id2_);
+			used_ids_.add(tmp_id2_);
 			break;
 		case 6:
 			// MoveStmt
-			used_ids = exp_.getUsedIds();
+			used_ids_ = exp_.getUsedIds();
 			break;
 		case 7:
 			// PrintStmt
-			if (sexp_.getUsedId() != -1) used_ids.add(sexp_.getUsedId());
+			if (sexp_.getUsedId() != -1) used_ids_.add(sexp_.getUsedId());
 			break;
 		default:
 			ErrorHandler.errorPrint("nmdwsm!!!");
 		}
-		return used_ids;
+		return used_ids_;
 	}
 	
 	public String getLabel() {
