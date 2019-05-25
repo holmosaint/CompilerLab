@@ -5,18 +5,36 @@ import java.util.*;
 import spiglet.syntaxtree.*;
 
 public class MProcedure {
+	// a0-a3: 存放向子函数传递的参数
+	// t0-t9: 存放临时运算结果，在发生函数调用时不必保存它们的内容
+	// s0-s7: 存放局部变量，在发生函数调用时一般要保存它们的内容
+	// v0-v1: v0 存放子函数返回结果；v0、v1还可用于表达式求值，从栈中加载
+	private static String registers[] = {"s0", "s1", "s2", "s3", "s4", "s5", 
+										 "s6", "s7", "t0", "t1", "t2", "t3", 
+										 "t4", "t5", "t6", "t7", "t8", "t9", 
+										 "a0", "a1", "a2", "a3", "v0", "v1"};
 	// 标号label是全局的，而非局部的
 	private String label_ = null;
 	private int param_num_;
 	private HashMap<String, MStmt> label2stmt_ = null;
 	private ArrayList<MStmt> stmt_list_ = null;
 	private MSimpleExp return_exp_ = null;
-
+	private HashMap<MStmt, Integer> stmt2index_ = null;
+	private ArrayList<ArrayList<Integer>> successors_ = null;
+	// len(INs) == len(OUTs)
+	// len(INs) = len(stmt_list_) + 1
+	private ArrayList<HashSet<Integer>> INs = null;
+	private ArrayList<HashSet<Integer>> OUTs = null;
+	private HashMap<Integer, Integer> tmp2reg_ = null;
+	private HashMap<Integer, Integer> reg2tmp_ = null;
+	
 	private void formStmtList(NodeListOptional stmts) {
 		MStmt cur_stmt;
 		stmt_list_ = new ArrayList<MStmt>();
+		stmt2index_ = new HashMap<MStmt, Integer>();
 		for (Node node : stmts.nodes) {
 			cur_stmt = new MStmt((NodeSequence)node, this);
+			stmt2index_.put(cur_stmt, stmt_list_.size());
 			stmt_list_.add(cur_stmt);
 			if (cur_stmt.getLabel() != null) {
 				label2stmt_.put(cur_stmt.getLabel(), cur_stmt);
@@ -26,9 +44,11 @@ public class MProcedure {
 	
 	private void constructChain() {
 		int num_stmt = stmt_list_.size();
-		for (int i = 1; i < num_stmt; i++) {
-			if (!stmt_list_.get(i - 1).isJump())
-				stmt_list_.get(i).addFormer(stmt_list_.get(i - 1));
+		successors_ = new ArrayList<ArrayList<Integer>>();
+		for (int i = 0; i < num_stmt; i++) successors_.add(new ArrayList<Integer>());
+		for (int i = 0; i < num_stmt - 1; i++) {
+			if (!stmt_list_.get(i).isJump())
+				successors_.get(i).add(i + 1);
 		}
 		for (MStmt stmt : stmt_list_) {
 			stmt.constructChain();

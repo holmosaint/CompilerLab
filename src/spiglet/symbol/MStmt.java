@@ -20,13 +20,11 @@ public class MStmt {
 	private MExp exp_ = null;
 	private MSimpleExp sexp_ = null;
 	private MProcedure procedure_ = null;
-	private ArrayList<MStmt> formers_ = null;
 	private HashSet<Integer> used_ids_ = null;
 	private HashSet<Integer> defined_ids_ = null;
 	
 	public MStmt(NodeSequence node_seq, MProcedure procedure) {
 		procedure_ = procedure;
-		formers_ = new ArrayList<MStmt>();
 
 		NodeOptional label = (NodeOptional)(node_seq.elementAt(0));
 		if (label.present()) {
@@ -145,14 +143,11 @@ public class MStmt {
 		return which_ == 3;
 	}
 	
-	public void addFormer(MStmt stmt) {
-		formers_.add(stmt);
-	}
-	
-	public void constructChain() {
+	public MStmt constructChain() {
 		if (which_ == 2 || which_ == 3) {
-			procedure_.getStmtByLabel(label_).addFormer(this);
+			return procedure_.getStmtByLabel(label_);
 		}
+		return null;
 	}
 	
 	// For debugging
@@ -164,15 +159,7 @@ public class MStmt {
 		return res;
 	}
 	
-	// For debugging
-	public String getFormer() {
-		String res = "";
-		for (MStmt former : formers_) {
-			res += "\t" + former.getName() + "\n";
-		}
-		return res;
-	}
-	
+	// for debugging
 	public String getInfo() {
 		String res = "";
 		res += getName();
@@ -209,7 +196,6 @@ public class MStmt {
 			break;
 		}
 		res += "\n";
-		res += getFormer();
 		return res;
 	}
 }
