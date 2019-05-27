@@ -91,7 +91,11 @@ public class MStmt {
 	public HashSet<Integer> getDefinedIds() {
 		if (defined_ids_ != null) return defined_ids_;
 		defined_ids_ = new HashSet<Integer>();
-		if (which_ == 5 || which_ == 6) defined_ids_.add(tmp_id_);
+		if (which_ == 5 || which_ == 6) {
+			if (!getUsedIds().contains(tmp_id_)) {
+				defined_ids_.add(tmp_id_);
+			}
+		}
 		return defined_ids_;
 	}
 	
@@ -142,12 +146,10 @@ public class MStmt {
 	public boolean isJump() {
 		return which_ == 3;
 	}
-	
-	public MStmt constructChain() {
-		if (which_ == 2 || which_ == 3) {
-			return procedure_.getStmtByLabel(label_);
-		}
-		return null;
+
+	public String getExtraSuccessor() {
+		if (which_ == 2 || which_ == 3) return label_;
+		else return null;
 	}
 	
 	// For debugging

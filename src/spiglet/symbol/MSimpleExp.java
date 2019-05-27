@@ -10,6 +10,11 @@ public class MSimpleExp {
 	private int which_;
 	private int tmp_id_, integer_;
 	private String label_ = null;
+	
+	public MSimpleExp() {
+		which_ = 1;
+		integer_ = 0;
+	}
 	public MSimpleExp(SimpleExp simple_exp) {
 		which_ = simple_exp.f0.which;
 		switch (which_) {

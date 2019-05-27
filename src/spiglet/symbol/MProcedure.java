@@ -4,6 +4,7 @@ import java.util.*;
 
 import spiglet.syntaxtree.*;
 
+
 public class MProcedure {
 	// a0-a3: 存放向子函数传递的参数
 	// t0-t9: 存放临时运算结果，在发生函数调用时不必保存它们的内容
@@ -21,12 +22,14 @@ public class MProcedure {
 	private MSimpleExp return_exp_ = null;
 	private HashMap<MStmt, Integer> stmt2index_ = null;
 	private ArrayList<ArrayList<Integer>> successors_ = null;
+	private ArrayList<ArrayList<Integer>> predecessors_ = null;
 	// len(INs) == len(OUTs)
 	// len(INs) = len(stmt_list_) + 1
-	private ArrayList<HashSet<Integer>> INs = null;
-	private ArrayList<HashSet<Integer>> OUTs = null;
+	private ArrayList<HashSet<Integer>> INs_ = null;
+	private ArrayList<HashSet<Integer>> OUTs_ = null;
 	private HashMap<Integer, Integer> tmp2reg_ = null;
 	private HashMap<Integer, Integer> reg2tmp_ = null;
+	private HashMap<Integer, HashSet<Integer>> edges_ = null;
 	
 	private void formStmtList(NodeListOptional stmts) {
 		MStmt cur_stmt;
@@ -42,16 +45,142 @@ public class MProcedure {
 		}
 	}
 	
-	private void constructChain() {
+	// Construct the flow map
+	private void constructMap() {
+		// 1.Get the information about the subsequent relationship
 		int num_stmt = stmt_list_.size();
 		successors_ = new ArrayList<ArrayList<Integer>>();
-		for (int i = 0; i < num_stmt; i++) successors_.add(new ArrayList<Integer>());
-		for (int i = 0; i < num_stmt - 1; i++) {
-			if (!stmt_list_.get(i).isJump())
-				successors_.get(i).add(i + 1);
+		predecessors_ = new ArrayList<ArrayList<Integer>>();
+		for (int i = 0; i < num_stmt; i++) {
+			successors_.add(new ArrayList<Integer>());
+			predecessors_.add(new ArrayList<Integer>());
 		}
-		for (MStmt stmt : stmt_list_) {
-			stmt.constructChain();
+		for (int i = 0; i < num_stmt - 1; i++) {
+			if (!stmt_list_.get(i).isJump()) {
+				successors_.get(i).add(i + 1);
+				predecessors_.get(i + 1).add(i);
+			}
+		}
+		for (int i = 0; i < num_stmt; i++) {
+			String label = stmt_list_.get(i).getExtraSuccessor();
+			if (label != null) {
+				successors_.get(i).add(stmt2index_.get(label2stmt_.get(label)));
+				predecessors_.get(stmt2index_.get(label2stmt_.get(label))).add(i);
+			}
+		}
+		// 2.Live variables analysis
+		HashSet<Integer> changed = new HashSet<Integer>();
+		INs_ = new ArrayList<HashSet<Integer>>();
+		OUTs_ = new ArrayList<HashSet<Integer>>();
+		for (int i = 0; i < num_stmt; i++) {
+			INs_.add(new HashSet<Integer>());
+			OUTs_.add(new HashSet<Integer>());
+			changed.add(i);
+		}
+		INs_.add(new HashSet<Integer>());
+		OUTs_.add(new HashSet<Integer>());
+		if (return_exp_.getUsedId() != -1) {
+			INs_.get(num_stmt).add(return_exp_.getUsedId());
+		}
+		while (!changed.isEmpty()) {
+			int cur = 0;
+			for (; cur < num_stmt; cur++) {
+				if (changed.contains(cur))
+					break;
+			}
+			changed.remove(cur);
+			
+			OUTs_.get(cur).clear();
+			for (Integer successor : successors_.get(cur)) {
+				OUTs_.get(cur).addAll(INs_.get(successor));
+			}
+			
+			HashSet<Integer> mirror = (HashSet<Integer>)INs_.get(cur).clone();
+			INs_.get(cur).clear();
+			INs_.get(cur).addAll(OUTs_.get(cur));
+			INs_.get(cur).removeAll(stmt_list_.get(cur).getDefinedIds());
+			INs_.get(cur).addAll(stmt_list_.get(cur).getUsedIds());
+			if (!INs_.get(cur).equals(mirror)) {
+				for (Integer predecessor : predecessors_.get(cur)) {
+					changed.add(predecessor);
+				}
+			}
+		}
+		// 3.Construct the conflict graph
+		edges_ = new HashMap<Integer, HashSet<Integer>>();
+		for (HashSet<Integer> id_set : INs_) {
+			for (Integer id : id_set) {
+				if (!edges_.containsKey(id)) {
+					edges_.put(id, new HashSet<Integer>());
+				}
+				for (Integer conf_id : id_set) {
+					if (conf_id == id) continue;
+					else {
+						edges_.get(id).add(conf_id);
+					}
+				}
+			}
+		}
+		for (HashSet<Integer> id_set : OUTs_) {
+			for (Integer id : id_set) {
+				if (!edges_.containsKey(id)) {
+					edges_.put(id, new HashSet<Integer>());
+				}
+				for (Integer conf_id : id_set) {
+					if (conf_id == id) continue;
+					else {
+						edges_.get(id).add(conf_id);
+					}
+				}
+			}
+		}
+		// 4.Graph coloring
+		int spill_cnt = 0, cur_id = 0;
+		final int reg_num = 15;
+		boolean flag;
+		Stack<Integer> stack = new Stack<Integer>();
+		tmp2reg_ = new HashMap<Integer, Integer>();
+		reg2tmp_ = new HashMap<Integer, Integer>();
+		HashMap<Integer, HashSet<Integer>> edges = 
+				(HashMap<Integer, HashSet<Integer>>) edges_.clone();
+		while (!edges.isEmpty()) {
+			flag = false;
+			for (Integer id : edges.keySet()) {
+				if (edges.get(id).size() < reg_num) {
+					cur_id = id;
+					flag = true;
+					break;
+				}
+			}
+			if (flag) {
+				stack.push(cur_id);
+			} else {
+				tmp2reg_.put(cur_id, --spill_cnt);
+				// reg2tmp_.put(spill_cnt, cur_id);
+			}
+			for (Integer conf_id : edges.get(cur_id)) {
+				edges.get(conf_id).remove(cur_id);
+			}
+			edges.remove(cur_id);
+		}
+		while (!stack.empty()) {
+			cur_id = stack.peek();
+			stack.pop();
+			for (int i = 0; i < reg_num; i++) {
+				flag = true;
+				for (Integer conf_id : edges_.get(cur_id)) {
+					if (tmp2reg_.containsKey(conf_id) &&
+						tmp2reg_.get(conf_id) == i) {
+						flag = false;
+						break;
+					}
+				}
+				if (flag) {
+					tmp2reg_.put(cur_id, i);
+					// reg2tmp_.put(i, cur_id);
+					break;
+				}
+			}
 		}
 	}
 	
@@ -61,7 +190,8 @@ public class MProcedure {
 		param_num_ = 0;
 		label2stmt_ = new HashMap<String, MStmt>();
 		formStmtList(goal.f1.f0);
-		constructChain();
+		return_exp_ = new MSimpleExp();
+		constructMap();
 	}
 	// For common procedure
 	public MProcedure(Procedure procedure) {
@@ -70,20 +200,42 @@ public class MProcedure {
 		label2stmt_ = new HashMap<String, MStmt>();
 		formStmtList(procedure.f4.f1.f0);
 		return_exp_ = new MSimpleExp(procedure.f4.f3);
-		constructChain();
-	}
-	
-	public MStmt getStmtByLabel(String label) {
-		return label2stmt_.get(label);
+		constructMap();
 	}
 
 	// For debugging
 	public String getInfo() {
 		String res = "";
 		res += "Procedure " + label_ + "\n";
-		for (MStmt stmt : stmt_list_) {
-			res += stmt.getInfo();
+		for (int i = 0; i < stmt_list_.size(); i++) {
+			res += i + " " + stmt_list_.get(i).getInfo();
+			res += "\tsuccessors:";
+			for (Integer integer : successors_.get(i)) {
+				res += integer + " ";
+			}
+			res += "\n";
+			res += "\tpredecessors:";
+			for (Integer integer : predecessors_.get(i)) {
+				res += integer + " ";
+			}
+			res += "\n";
+			res += "\tINs:";
+			for (Integer integer : INs_.get(i)) {
+				res += integer + " ";
+			}
+			res += "\n";
+			res += "\tOUTs:";
+			for (Integer integer : OUTs_.get(i)) {
+				res += integer + " ";
+			}
+			res += "\n";
+			res += "\ttmp2reg:{ ";
+			for (Integer tmp_id : tmp2reg_.keySet()) {
+				res += tmp_id + ": " + tmp2reg_.get(tmp_id) + ", ";
+			}
+			res += "}\n";
 		}
+
 		return res;
 	}
 }
