@@ -30,8 +30,17 @@ public class SymbolTable {
 	
 	// For debugging
 	public static void printInfo() {
+		
 		for (String label : label2procedure_.keySet()) {
-			System.out.println(label2procedure_.get(label).getInfo());
+			if (label.equals("MAIN")) {
+				System.out.println(label2procedure_.get(label).getInfo());
+			}
+		}
+		
+		for (String label : label2procedure_.keySet()) {
+			if (!label.equals("MAIN")) {
+				System.out.println(label2procedure_.get(label).getInfo());
+			}
 		}
 	}
 }

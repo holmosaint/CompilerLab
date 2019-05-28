@@ -1,5 +1,7 @@
 package spiglet.symbol;
 
+import java.util.HashMap;
+
 import spiglet.syntaxtree.*;
 import util.ErrorHandler;
 
@@ -45,13 +47,13 @@ public class MSimpleExp {
 		else return -1;
 	}
 
-	public String getInfo() {
+	public String getInfo(HashMap<Integer, Integer> tmp2reg) {
 		String res = "";
 		switch (which_) {
 		case 0:
 			// Temp
 			// "TEMP" tmp_id_
-			res += "TEMP " + tmp_id_;
+			res += "TEMP " + tmp2reg.get(tmp_id_);
 			break;
 		case 1:
 			// IntegerLiteral

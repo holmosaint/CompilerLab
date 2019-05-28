@@ -3,6 +3,7 @@ package spiglet.symbol;
 import java.util.*;
 
 import spiglet.syntaxtree.*;
+import util.ErrorHandler;
 
 
 public class MProcedure {
@@ -94,6 +95,9 @@ public class MProcedure {
 			for (Integer successor : successors_.get(cur)) {
 				OUTs_.get(cur).addAll(INs_.get(successor));
 			}
+			if (cur == num_stmt - 1) {
+				OUTs_.get(cur).addAll(INs_.get(num_stmt));
+			}
 			
 			HashSet<Integer> mirror = (HashSet<Integer>)INs_.get(cur).clone();
 			INs_.get(cur).clear();
@@ -137,7 +141,7 @@ public class MProcedure {
 		// 4.Graph coloring
 		int spill_cnt = 0, cur_id = 0;
 		final int reg_num = 15;
-		boolean flag;
+		boolean flag = false;
 		Stack<Integer> stack = new Stack<Integer>();
 		tmp2reg_ = new HashMap<Integer, Integer>();
 		reg2tmp_ = new HashMap<Integer, Integer>();
@@ -163,6 +167,9 @@ public class MProcedure {
 			}
 			edges.remove(cur_id);
 		}
+		if (spill_cnt != 0) {
+			ErrorHandler.errorPrint("NMDWSM");
+		}
 		while (!stack.empty()) {
 			cur_id = stack.peek();
 			stack.pop();
@@ -182,6 +189,19 @@ public class MProcedure {
 				}
 			}
 		}
+		// 5.Check
+//		for (MStmt stmt : stmt_list_) {
+//			for (Integer id : stmt.getDefinedIds()) {
+//				if (!tmp2reg_.containsKey(id)) {
+//					ErrorHandler.errorPrint("NMDWSM defined " + id);
+//				}
+//			}
+//			for (Integer id : stmt.getUsedIds()) {
+//				if (!tmp2reg_.containsKey(id)) {
+//					ErrorHandler.errorPrint("NMDWSM used " + id);
+//				}
+//			}
+//		}
 	}
 	
 	// For Main procedure
@@ -206,36 +226,66 @@ public class MProcedure {
 	// For debugging
 	public String getInfo() {
 		String res = "";
-		res += "Procedure " + label_ + "\n";
-		for (int i = 0; i < stmt_list_.size(); i++) {
-			res += i + " " + stmt_list_.get(i).getInfo();
-			res += "\tsuccessors:";
-			for (Integer integer : successors_.get(i)) {
-				res += integer + " ";
-			}
-			res += "\n";
-			res += "\tpredecessors:";
-			for (Integer integer : predecessors_.get(i)) {
-				res += integer + " ";
-			}
-			res += "\n";
-			res += "\tINs:";
-			for (Integer integer : INs_.get(i)) {
-				res += integer + " ";
-			}
-			res += "\n";
-			res += "\tOUTs:";
-			for (Integer integer : OUTs_.get(i)) {
-				res += integer + " ";
-			}
-			res += "\n";
-			res += "\ttmp2reg:{ ";
-			for (Integer tmp_id : tmp2reg_.keySet()) {
-				res += tmp_id + ": " + tmp2reg_.get(tmp_id) + ", ";
-			}
-			res += "}\n";
+		if (param_num_ == 0) {
+			res += label_ + "\n";
 		}
-
+		else {
+			res += label_ + " [" + param_num_ + "]\nBEGIN\n";
+			int id = param_num_;
+			for (; id < 1000; id++) {
+				boolean flag = true;
+				for (int i = 0; i < param_num_; i++) {
+					if (tmp2reg_.containsKey(i) && id == tmp2reg_.get(i)) {
+						flag = false;
+						break;
+					}
+				}
+				if (flag) break;
+			}
+			res += "\tMOVE TEMP " + id + " HALLOCATE " + (4 * param_num_) + "\n";
+			for (int i = 0; i < param_num_; i++) {
+				res += "\tHSTORE TEMP " + id + " " + (4 * i) + " TEMP " + i + "\n";
+			}
+			for (int i = 0; i < param_num_; i++) {
+				if (tmp2reg_.containsKey(i))
+					res += "\tHLOAD TEMP " + tmp2reg_.get(i) + " TEMP " + id + " " + (4 * i) + "\n";
+			}
+		}
+		for (int i = 0; i < stmt_list_.size(); i++) {
+			res += stmt_list_.get(i).getInfo(tmp2reg_, OUTs_.get(i));
+			
+//			res += "\tsuccessors:";
+//			for (Integer integer : successors_.get(i)) {
+//				res += integer + " ";
+//			}
+//			res += "\n";
+//			res += "\tpredecessors:";
+//			for (Integer integer : predecessors_.get(i)) {
+//				res += integer + " ";
+//			}
+//			res += "\n";
+//			res += "\tINs:";
+//			for (Integer integer : INs_.get(i)) {
+//				res += integer + " ";
+//			}
+//			res += "\n";
+//			res += "\tOUTs:";
+//			for (Integer integer : OUTs_.get(i)) {
+//				res += integer + " ";
+//			}
+//			res += "\n";
+//			res += "\ttmp2reg:{ ";
+//			for (Integer tmp_id : tmp2reg_.keySet()) {
+//				res += tmp_id + ": " + tmp2reg_.get(tmp_id) + ", ";
+//			}
+//			res += "}\n";
+			
+		}
+		if (param_num_ != 0) {
+			res += "RETURN\n";
+			res += "\t" + return_exp_.getInfo(tmp2reg_) + "\n";
+		}
+		res += "END\n";
 		return res;
 	}
 }

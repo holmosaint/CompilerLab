@@ -24,7 +24,7 @@ public class spiglet2kanga {
 		}
 		// Build syntaxtree for spiglet code
 		SpigletVisitor.accept(file);
-		System.out.println("Compiling " + src_file);
+		// System.out.println("Compiling " + src_file);
 		try {
 			// Code.init(dst_file);
 			SpigletParser.Goal().accept(new ClassTreeBuilder());
@@ -33,6 +33,6 @@ public class spiglet2kanga {
 		} catch (ParseException e) {
 			ErrorHandler.errorPrint(e.getMessage());
 		}
-		System.out.println("Done");
+		// System.out.println("Done");
 	}
 }

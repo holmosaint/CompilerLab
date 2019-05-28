@@ -80,32 +80,32 @@ public class MExp {
 		return used_ids;
 	}
 
-	public String getInfo() {
+	public String getInfo(HashMap<Integer, Integer> tmp2reg) {
 		String res = "";
 		switch (which_) {
 		case 0:
 			// Call
 			// "CALL" sexp_ tmp_ids_
-			res += "CALL " + sexp_.getInfo() + "( ";
+			res += "CALL " + sexp_.getInfo(tmp2reg) + "( ";
 			for (int id : tmp_ids_) {
-				res += "TEMP " + id + " ";
+				res += "TEMP " + tmp2reg.get(id) + " ";
 			}
 			res += ")";
 			break;
 		case 1:
 			// HAlloate
 			// "HALLOCATE" sexp_
-			res += "HALLOCATE " + sexp_.getInfo();
+			res += "HALLOCATE " + sexp_.getInfo(tmp2reg);
 			break;
 		case 2:
 			// BinOp
 			// op_ "TEMP" tmp_id_ sexp_
-			res += op_ + " TEMP " + tmp_id_ + " " + sexp_.getInfo();
+			res += op_ + " TEMP " + tmp2reg.get(tmp_id_) + " " + sexp_.getInfo(tmp2reg);
 			break;
 		case 3:
 			// SimpleExp
 			// sexp_
-			res += sexp_.getInfo();
+			res += sexp_.getInfo(tmp2reg);
 			break;
 		}
 		return res;

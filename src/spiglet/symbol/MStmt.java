@@ -93,7 +93,7 @@ public class MStmt {
 		defined_ids_ = new HashSet<Integer>();
 		if (which_ == 5 || which_ == 6) {
 			if (!getUsedIds().contains(tmp_id_)) {
-				defined_ids_.add(tmp_id_);
+				defined_ids_.add(tmp_id_);				
 			}
 		}
 		return defined_ids_;
@@ -155,46 +155,64 @@ public class MStmt {
 	// For debugging
 	String[] names = {"NOOP", "ERROR", "CJUMP", "JUMP", "HSTORE", "HLOAD", "MOVE", "PRINT"};
 	public String getName() {
-		String res = "";
-		if (pre_label_ != null) res += pre_label_ + " ";
-		res += names[which_];
+		String res = names[which_];
 		return res;
 	}
 	
 	// for debugging
-	public String getInfo() {
+	public String getInfo(HashMap<Integer, Integer> tmp2reg,
+						  HashSet<Integer> OUTs) {
 		String res = "";
-		res += getName();
+		if (pre_label_ != null) res += pre_label_;
+		res += "\t";
 		switch (which_) {
+		case 0:
+			// NoOpStmt
+			res += getName();
+			break;
+		case 1:
+			// ErrorStmt
+			res += getName();
+			break;
 		case 2:
 			// CJumpStmt
 			// "CJUMP" "TEMP" tmp_id_ label_
-			res += " TEMP " + tmp_id_ + " " + label_;
+			res += getName() + " TEMP " + tmp2reg.get(tmp_id_) + " " + label_;
 			break;
 		case 3:
 			// JumpStmt
 			// "JUMP" label_
-			res += " " + label_;
+			res += getName() + " " + label_;
 			break;
 		case 4:
 			// HStoreStmt
 			// "HSTORE" "TEMP" tmp_id_ integer_ "TEMP" tmp_id2_
-			res += " TEMP " + tmp_id_ + " " + integer_ + " TEMP " + tmp_id2_;
+			res += getName() + " TEMP " + tmp2reg.get(tmp_id_) + " " + 
+				   integer_ + " TEMP " + tmp2reg.get(tmp_id2_);
 			break;
 		case 5:
 			// HLoadStmt
 			// "HLOAD" "TEMP" tmp_id_ "TEMP" tmp_id2_ integer_
-			res += " TEMP " + tmp_id_ + " TEMP " + tmp_id2_ + " " + integer_;
+			if (tmp2reg.containsKey(tmp_id_) && tmp2reg.containsKey(tmp_id2_) &&
+				OUTs.contains(tmp_id_))
+				res += getName() + " TEMP " + tmp2reg.get(tmp_id_) + " TEMP " + 
+					   tmp2reg.get(tmp_id2_) + " " + integer_;
+			else
+				res += "NOOP";
 			break;
 		case 6:
 			// MoveStmt
 			// "MOVE" "TEMP" tmp_id_ exp_
-			res += " TEMP " + tmp_id_ + " " + exp_.getInfo();
+			if (tmp2reg.containsKey(tmp_id_) && OUTs.contains(tmp_id_))
+				res += getName() + " TEMP " + tmp2reg.get(tmp_id_) + " " + 
+					   exp_.getInfo(tmp2reg);
+			else
+				res += "NOOP";
 			break;
 		case 7:
 			// PrintStmt
 			// "PRINT" sexp_
-			res += " " + sexp_.getInfo();
+			res += getName() + " " + sexp_.getInfo(tmp2reg);
 			break;
 		}
 		res += "\n";
