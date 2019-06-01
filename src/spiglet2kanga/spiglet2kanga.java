@@ -18,21 +18,42 @@ class SpigletVisitor {
 
 public class spiglet2kanga {
 	public static void compile(String src_file, String dst_file) {
-		File file = new File(src_file);
-		if (!file.isFile()) {
+		File in_file = new File(src_file);
+		File out_file = new File(dst_file);
+		OutputStream kanga_file = null;
+		String kanga_code;
+
+		if (!in_file.isFile()) {
 			ErrorHandler.errorPrint(src_file + "is not a file");
 		}
 		// Build syntaxtree for spiglet code
-		SpigletVisitor.accept(file);
-		// System.out.println("Compiling " + src_file);
+		SpigletVisitor.accept(in_file);
+		System.out.println("Compiling " + src_file);
 		try {
-			// Code.init(dst_file);
 			SpigletParser.Goal().accept(new ClassTreeBuilder());
-			SymbolTable.printInfo();
+			// SymbolTable.printInfo();
 			// Code.finish();
 		} catch (ParseException e) {
 			ErrorHandler.errorPrint(e.getMessage());
 		}
-		// System.out.println("Done");
+		kanga_code = SymbolTable.toKange();
+		if(!out_file.exists()) {
+			try {
+				out_file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			kanga_file = new FileOutputStream(out_file);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		try {
+			kanga_file.write(kanga_code.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Done");
 	}
 }

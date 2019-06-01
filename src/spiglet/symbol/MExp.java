@@ -80,6 +80,85 @@ public class MExp {
 		return used_ids;
 	}
 
+	public int getParamNum() {
+		int res = 0;
+		if (tmp_ids_ != null) res = tmp_ids_.size();
+		return res;
+	}
+
+	public String getCall(HashMap<Integer, Integer> tmp2reg, int stack_num) {
+		String res = "";
+		if (which_ == 0) {
+			for (int i = 0; i < tmp_ids_.size() && i < 4; i++) {
+				if (tmp2reg.get(tmp_ids_.get(i)) < 0) {
+					res += "\tALOAD " + MProcedure.registers_[19 + i] + " SPILLEDARG " + 
+						   (stack_num + tmp2reg.get(tmp_ids_.get(i))) + "\n";
+				}
+				else {
+					res += "\tMOVE " + MProcedure.registers_[19 + i] + " " +
+					       MProcedure.registers_[tmp2reg.get(tmp_ids_.get(i))] + "\n";
+				}
+			}
+			for (int i = 4; i < tmp_ids_.size(); i++) {
+				if (tmp2reg.get(tmp_ids_.get(i)) < 0) {
+					res += "\tALOAD t7 SPILLEDARG " + 
+							   (stack_num + tmp2reg.get(tmp_ids_.get(i))) + "\n";
+					res += "\tPASSARG " + (i - 3) + " t7\n";
+				}
+				else {
+					res += "\tPASSARG " + (i - 3) + " " + 
+						   MProcedure.registers_[tmp2reg.get(tmp_ids_.get(i))] + "\n";
+				}
+			}
+			res += sexp_.prepare(tmp2reg, stack_num);
+			res += "\tCALL " + sexp_.toKanga(tmp2reg) + "\n";
+		}
+		return res;
+	}
+	
+	public String prepare(HashMap<Integer, Integer> tmp2reg, int stack_num) {
+		String res = "";
+		if (sexp_ != null) res += sexp_.prepare(tmp2reg, stack_num);
+		if (which_ == 2 && tmp2reg.get(tmp_id_) < 0) {
+			res += "\tALOAD t8 SPILLEDARG " + (stack_num + tmp2reg.get(tmp_id_)) + "\n";
+		}
+		return res;
+	}
+	
+	public String toKanga(HashMap<Integer, Integer> tmp2reg) {
+		String res = "";
+		switch (which_) {
+		case 0:
+			// Call
+			// "CALL" sexp_ tmp_ids_
+			res += "v0";
+			break;
+		case 1:
+			// HAlloate
+			// "HALLOCATE" sexp_
+			res += "HALLOCATE " + sexp_.toKanga(tmp2reg);
+			break;
+		case 2:
+			// BinOp
+			// op_ "TEMP" tmp_id_ sexp_
+			if (tmp2reg.get(tmp_id_) < 0) {
+				res += op_ + " t8 " + sexp_.toKanga(tmp2reg);
+			} else {
+				res += op_ + " " + MProcedure.registers_[tmp2reg.get(tmp_id_)] + " " +
+					   sexp_.toKanga(tmp2reg);	
+			}
+
+			break;
+		case 3:
+			// SimpleExp
+			// sexp_
+			res += sexp_.toKanga(tmp2reg);
+			break;
+		}
+		return res;
+	}
+	
+	// For debugging
 	public String getInfo(HashMap<Integer, Integer> tmp2reg) {
 		String res = "";
 		switch (which_) {

@@ -159,7 +159,120 @@ public class MStmt {
 		return res;
 	}
 	
-	// for debugging
+	public int getParamNum() {
+		int res = 0;
+		if (exp_ != null) res = exp_.getParamNum();
+		return res;
+	}
+	
+	public String toKanga(HashMap<Integer, Integer> tmp2reg,
+			  			   HashSet<Integer> OUTs, int stack_num) {
+		String res = "", reg_name = "", reg2_name = "";
+		if (pre_label_ != null) res += pre_label_;
+		switch (which_) {
+		case 0:
+			// NoOpStmt
+			res += "\t" + getName();
+			break;
+		case 1:
+			// ErrorStmt
+			res += "\t" + getName();
+			break;
+		case 2:
+			// CJumpStmt
+			// "CJUMP" "TEMP" tmp_id_ label_
+			if (tmp2reg.get(tmp_id_) < 0) {
+				res += "\tALOAD t7 SPILLEDARG " + (stack_num + tmp2reg.get(tmp_id_));
+				reg_name = "t7";
+
+			} else {
+				reg_name = MProcedure.registers_[tmp2reg.get(tmp_id_)];
+			}
+			res += "\t" + getName() + " " + reg_name + " " + label_;
+			break;
+		case 3:
+			// JumpStmt
+			// "JUMP" label_
+			res += "\t" + getName() + " " + label_;
+			break;
+		case 4:
+			// HStoreStmt
+			// "HSTORE" "TEMP" tmp_id_ integer_ "TEMP" tmp_id2_
+			if (tmp2reg.get(tmp_id_) < 0) {
+				res += "\tALOAD t7 SPILLEDARG " + (stack_num + tmp2reg.get(tmp_id_)) + "\n";
+				reg_name = "t7";
+			} else {
+				reg_name = MProcedure.registers_[tmp2reg.get(tmp_id_)];
+			}
+			if (tmp2reg.get(tmp_id2_) < 0) {
+				res += "\tALOAD t8 SPILLEDARG " + (stack_num + tmp2reg.get(tmp_id2_)) + "\n";
+				reg2_name = "t8";
+			} else {
+				reg2_name = MProcedure.registers_[tmp2reg.get(tmp_id2_)];
+			}
+			res += "\t" + getName() + " " + reg_name + " " + integer_ + 
+				   " " + reg2_name;
+			break;
+		case 5:
+			// HLoadStmt
+			// "HLOAD" "TEMP" tmp_id_ "TEMP" tmp_id2_ integer_			
+			if (tmp2reg.containsKey(tmp_id_) && tmp2reg.containsKey(tmp_id2_) &&
+				OUTs.contains(tmp_id_)) {
+				if (tmp2reg.get(tmp_id_) < 0) {
+					reg_name = "t7";
+				} else {
+					reg_name = MProcedure.registers_[tmp2reg.get(tmp_id_)];
+				}
+				if (tmp2reg.get(tmp_id2_) < 0) {
+					res += "\tALOAD t8 SPILLEDARG " + (stack_num + tmp2reg.get(tmp_id2_)) + "\n";
+					reg2_name = "t8";
+				} else {
+					reg2_name = MProcedure.registers_[tmp2reg.get(tmp_id2_)];
+				}
+				
+				res += "\t" + getName() + " " + reg_name +
+					   " " + reg2_name + " " + integer_;
+				if (tmp2reg.get(tmp_id_) < 0) {
+					res += "\n\tASTORE SPILLEDARG " + (stack_num + tmp2reg.get(tmp_id_)) + " t7";
+				}
+			}
+			else {
+				res += "\tNOOP";
+			}
+			break;
+		case 6:
+			// MoveStmt
+			// "MOVE" "TEMP" tmp_id_ exp_
+			if (tmp2reg.containsKey(tmp_id_) && OUTs.contains(tmp_id_)) {
+				if (tmp2reg.get(tmp_id_) < 0) {
+					reg_name = "t7";
+				} else {
+					reg_name = MProcedure.registers_[tmp2reg.get(tmp_id_)];
+				}
+				res += exp_.getCall(tmp2reg, stack_num);
+				res += exp_.prepare(tmp2reg, stack_num);
+				res += "\t" + getName() + " " + reg_name + 
+					   " " + exp_.toKanga(tmp2reg);
+				if (tmp2reg.get(tmp_id_) < 0) {
+					res += "\n\tASTORE SPILLEDARG " + (stack_num + tmp2reg.get(tmp_id_)) + " t7";
+				}
+			}
+			else {
+				res += "\tNOOP";
+			}
+			break;
+		case 7:
+			// PrintStmt
+			// "PRINT" sexp_
+			res += sexp_.prepare(tmp2reg, stack_num);
+			res += "\t" + getName() + " " + sexp_.toKanga(tmp2reg);
+			break;
+		}
+		res += "\n";
+		return res;
+	}
+	
+	// For debugging
 	public String getInfo(HashMap<Integer, Integer> tmp2reg,
 						  HashSet<Integer> OUTs) {
 		String res = "";

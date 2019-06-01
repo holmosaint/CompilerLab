@@ -28,9 +28,23 @@ public class SymbolTable {
 		return label2procedure_.get(label);
 	}
 	
+	public static String toKange() {
+		String res = "";
+		for (String label : label2procedure_.keySet()) {
+			if (label.equals("MAIN")) {
+				res += label2procedure_.get(label).toKanga(false);
+			}
+		}
+		for (String label : label2procedure_.keySet()) {
+			if (!label.equals("MAIN")) {
+				res += label2procedure_.get(label).toKanga(true);
+			}
+		}
+		return res;
+	}
+	
 	// For debugging
 	public static void printInfo() {
-		
 		for (String label : label2procedure_.keySet()) {
 			if (label.equals("MAIN")) {
 				System.out.println(label2procedure_.get(label).getInfo());
