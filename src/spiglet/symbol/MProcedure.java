@@ -280,6 +280,7 @@ public class MProcedure {
 		
 		// 5 Return expression
 		if (return_exp_ != null) {
+			res += return_exp_.prepare(tmp2reg_, stack_num);
 			res += "\tMOVE v0 " + return_exp_.toKanga(tmp2reg_) + "\n";
 		}
 		

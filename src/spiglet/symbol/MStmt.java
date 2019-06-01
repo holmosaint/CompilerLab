@@ -182,7 +182,7 @@ public class MStmt {
 			// CJumpStmt
 			// "CJUMP" "TEMP" tmp_id_ label_
 			if (tmp2reg.get(tmp_id_) < 0) {
-				res += "\tALOAD t7 SPILLEDARG " + (stack_num + tmp2reg.get(tmp_id_));
+				res += "\tALOAD t7 SPILLEDARG " + (stack_num + tmp2reg.get(tmp_id_)) + "\n";
 				reg_name = "t7";
 
 			} else {
