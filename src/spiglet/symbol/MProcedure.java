@@ -7,21 +7,10 @@ import util.ErrorHandler;
 
 
 public class MProcedure {
-<<<<<<< HEAD
 	// a0-a3: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ²ï¿½ï¿½ï¿½
 	// t0-t9: ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ï¿½ï¿½
 	// s0-s7: ï¿½ï¿½Å¾Ö²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ò»ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ï¿½ï¿½
 	// v0-v1: v0 ï¿½ï¿½ï¿½ï¿½Óºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø½ï¿½ï¿½ï¿½ï¿½v0ï¿½ï¿½v1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Õ»ï¿½Ð¼ï¿½ï¿½ï¿½
-	private static String registers[] = {"s0", "s1", "s2", "s3", "s4", "s5", 
-										 "s6", "s7", "t0", "t1", "t2", "t3", 
-										 "t4", "t5", "t6", "t7", "t8", "t9", 
-										 "a0", "a1", "a2", "a3", "v0", "v1"};
-	// ï¿½ï¿½ï¿½labelï¿½ï¿½È«ï¿½ÖµÄ£ï¿½ï¿½ï¿½ï¿½Ç¾Ö²ï¿½ï¿½ï¿½
-=======
-	// a0-a3: ´æ·ÅÏò×Óº¯Êý´«µÝµÄ²ÎÊý
-	// t0-t9: ´æ·ÅÁÙÊ±ÔËËã½á¹û£¬ÔÚ·¢Éúº¯Êýµ÷ÓÃÊ±²»±Ø±£´æËüÃÇµÄÄÚÈÝ
-	// s0-s7: ´æ·Å¾Ö²¿±äÁ¿£¬ÔÚ·¢Éúº¯Êýµ÷ÓÃÊ±Ò»°ãÒª±£´æËüÃÇµÄÄÚÈÝ
-	// v0-v1: v0 ´æ·Å×Óº¯Êý·µ»Ø½á¹û£»v0¡¢v1»¹¿ÉÓÃÓÚ±í´ïÊ½ÇóÖµ£¬´ÓÕ»ÖÐ¼ÓÔØ
 	// registers whose index lies in {16, 17, 18} are used for overflow handling
 	// registers whose index lies in {19, 20, 21, 22} are used for parameters
 	public static String registers_[] = {"s0", "s1", "s2", "s3", "s4", "s5", 
@@ -29,8 +18,7 @@ public class MProcedure {
 										 "t4", "t5", "t6", "t7", "t8", "t9", 
 										 "v1", "a0", "a1", "a2", "a3", "v0"};
 	private final static int save_reg_num_ = 8;
-	// ±êºÅlabelÊÇÈ«¾ÖµÄ£¬¶ø·Ç¾Ö²¿µÄ
->>>>>>> bcf2892276a0507a15d64c5b241ba0ba7c5fd956
+	// ï¿½ï¿½ï¿½labelï¿½ï¿½È«ï¿½ÖµÄ£ï¿½ï¿½ï¿½ï¿½Ç¾Ö²ï¿½ï¿½ï¿½
 	private String label_ = null;
 	private int param_num_;
 	private HashMap<String, MStmt> label2stmt_ = null;
@@ -43,11 +31,8 @@ public class MProcedure {
 	// len(INs) = len(stmt_list_) + 1
 	private ArrayList<HashSet<Integer>> INs_ = null;
 	private ArrayList<HashSet<Integer>> OUTs_ = null;
-<<<<<<< HEAD
-=======
 	private HashMap<Integer, HashSet<Integer>> edges_ = null;
 	private int spill_cnt_;
->>>>>>> bcf2892276a0507a15d64c5b241ba0ba7c5fd956
 	private HashMap<Integer, Integer> tmp2reg_ = null;
 	private int max_param_num_;
 
