@@ -17,7 +17,7 @@ public class MProcedure {
 										 "s6", "s7", "t0", "t1", "t2", "t3", 
 										 "t4", "t5", "t6", "t7", "t8", "t9", 
 										 "v1", "a0", "a1", "a2", "a3", "v0"};
-	private final static int save_reg_num_ = 0;
+	private final static int save_reg_num_ = 8;
 	// 标号label是全局的，而非局部的
 	private String label_ = null;
 	private int param_num_;
