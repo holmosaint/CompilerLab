@@ -2,7 +2,31 @@ import os
 import argparse
 import subprocess
 
-def evaluate(directory, java_file):
+def evaluateSpiglet(directory, spg_file):
+    os.chdir('./src')
+    print('Judging ', spg_file)
+    try:
+        command = 'javac Main.java'
+        print(os.popen(command).read())
+        command = 'java Main ' + '../' + directory + spg_file
+        print(os.popen(command).read())
+        command = 'java -jar ../kgi.jar < ' + '../' + directory + \
+                  spg_file.replace('.spg', '.kg')
+        str1 = os.popen(command).read()
+        # print(str1)
+    except:
+        print('nmdwsm')
+    
+    os.chdir('..')
+    try:
+        command = 'java -jar pgi.jar < ' + directory + spg_file
+        str2 = os.popen(command).read()
+        # print(str2)
+    except:
+        print('nmdwsm')
+    print('Judge ', str1 == str2)
+
+def evaluateMiniJava(directory, java_file):
     print('------------------------------------------')
     cur_path = os.path.dirname(os.path.abspath(__file__))
     cur_path = cur_path.replace('test.py', '')
@@ -41,19 +65,18 @@ def evaluate(directory, java_file):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--sub_dir', type=str, default='samples/')
-    parser.add_argument('--java_file', type=str, default='')
+    parser.add_argument('--test', type=str, default='')
 
     args = parser.parse_args()
     directory = args.sub_dir
     assert os.path.exists(directory)
-    if args.java_file != '':
-        evaluate(directory, args.java_file)
-    else:
-        files = os.listdir(directory)            
-        files = [item for item in files if item.endswith('.java')]
-        for file in files:
-            evaluate(directory, file)
-
+    if 'java' in args.test:
+        print('nmdwsm')
+    if 'spg' in args.test:
+        files = os.listdir(directory)
+        files = [file_name for file_name in files if file_name.endswith('spg')]
+        for file_name in files:
+            evaluateSpiglet(directory, file_name)
 
 if __name__ == '__main__':
     main()
