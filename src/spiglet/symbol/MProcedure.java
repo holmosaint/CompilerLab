@@ -17,7 +17,7 @@ public class MProcedure {
 										 "s6", "s7", "t0", "t1", "t2", "t3", 
 										 "t4", "t5", "t6", "t7", "t8", "t9", 
 										 "v1", "a0", "a1", "a2", "a3", "v0"};
-	private final static int save_reg_num_ = 8;
+	private final static int save_reg_num_ = 0;
 	// 标号label是全局的，而非局部的
 	private String label_ = null;
 	private int param_num_;
@@ -170,10 +170,10 @@ public class MProcedure {
 			}
 			edges.remove(cur_id);
 		}
-		if (spill_cnt_ != 0) {
-			System.out.println("NMDWSM");
-			System.out.println(spill_cnt_);
-		}
+//		if (spill_cnt_ != 0) {
+//			System.out.println("NMDWSM");
+//			System.out.println(spill_cnt_);
+//		}
 		while (!stack.empty()) {
 			cur_id = stack.peek();
 			stack.pop();
@@ -264,7 +264,7 @@ public class MProcedure {
 			if (tmp2reg_.containsKey(i)) {
 				if (tmp2reg_.get(i) < 0) {
 					res += "\tALOAD t7 SPILLEDARG " + (i - 4) + "\n";
-					res += "\tASTORE SPILLEDARG " + (stack_num + tmp2reg_.get(i)) + " t7/n";
+					res += "\tASTORE SPILLEDARG " + (stack_num + tmp2reg_.get(i)) + " t7\n";
 				}
 				else {
 					res += "\tALOAD " + registers_[tmp2reg_.get(i)] + " SPILLEDARG " +
