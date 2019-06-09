@@ -32,7 +32,6 @@ public class kanga2mips {
 		try {
 			KangaParser.Goal().accept(new ClassTreeBuilder());
 			// SymbolTable.printInfo();
-			// Code.finish();
 		} catch (ParseException e) {
 			ErrorHandler.errorPrint(e.getMessage());
 		}
