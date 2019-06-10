@@ -33,6 +33,40 @@ public class MSimpleExp {
 		}
 	}
 
+	// For "move"
+	public String getOperator() {
+		if (which_ == 0) return "move";
+		else if (which_ == 1) return "li";
+		else return "la";
+	}
+	
+	public String prepare() {
+		String res = "";
+		return res;
+	}
+	
+	public String toMIPS() {
+		String res = "";
+		switch (which_) {
+		case 0:
+			// Reg
+			res += MProcedure.registers_[reg_id_];
+			break;
+		case 1:
+			// IntegerLiteral
+			res += integer_;
+			break;
+		case 2:
+			// Label
+			res += label_;
+			break;
+		default:
+			ErrorHandler.errorPrint("nmdwsm");
+		}
+		return res;
+	}
+	
+	// For debugging
 	public String getInfo() {
 		String res = "";
 		switch (which_) {

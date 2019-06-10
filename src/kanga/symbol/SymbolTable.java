@@ -26,18 +26,41 @@ public class SymbolTable {
 		return label2procedure_.get(label);
 	}
 	
-	public static String toMips() {
+	public static String toMIPS() {
 		String res = "";
-//		for (String label : label2procedure_.keySet()) {
-//			if (label.equals("MAIN")) {
-//				res += label2procedure_.get(label).toKanga(false);
-//			}
-//		}
-//		for (String label : label2procedure_.keySet()) {
-//			if (!label.equals("MAIN")) {
-//				res += label2procedure_.get(label).toKanga(true);
-//			}
-//		}
+		for (String label : label2procedure_.keySet()) {
+			if (label.equals("MAIN")) {
+				res += label2procedure_.get(label).toMIPS(true);
+			}
+		}
+		for (String label : label2procedure_.keySet()) {
+			if (!label.equals("MAIN")) {
+				res += label2procedure_.get(label).toMIPS(false);
+			}
+		}
+		res += "\t.text\n" + 
+			   "\t.globl _halloc\n" + 
+			   "_halloc:\n" + 
+			   "\tli $v0, 9\n" + 
+			   "\tsyscall\n" + 
+				"\tj $ra\n" + 
+				"\n" + 
+				"\t.text\n" + 
+				"\t.globl _print\n" + 
+				"_print:\n" + 
+				"\tli $v0, 1\n" + 
+				"\tsyscall\n" + 
+				"\tla $a0, newl\n" + 
+				"\tli $v0, 4\n" + 
+				"\tsyscall\n" + 
+				"\tj $ra\n" + 
+				"\n" + 
+				"\t.data\n" + 
+				"\t.align\t0\n" + 
+				"newl:\t.asciiz \"\\n\" \n" + 
+				"\t.data\n" + 
+				"\t.align\t0\n" + 
+				"str_er:\t.asciiz \" ERROR: abnormal termination\\n\" ";
 		return res;
 	}
 	

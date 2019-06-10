@@ -107,6 +107,86 @@ public class MStmt {
 		return pre_label_;
 	}
 
+	public String toMIPS() {
+		String res = "";
+		if (pre_label_ != null) {
+			res += pre_label_ + ":";
+		}
+		switch (which_) {
+		case 0:
+			// NoOpStmt
+			res += "\t\tnop\n";
+			break;
+		case 1:
+			// ErrorStmt
+			res += "\t\tli $v0, 4\n";
+			res += "\t\tla $a0, str_er\n";
+			res += "\t\tsyscall\n";
+			res += "\t\tli $v0, 10\n";
+			res += "\t\tsyscall\n";
+			break;
+		case 2:
+			// CJumpStmt
+			res += "\t\tbeqz " + MProcedure.registers_[reg_id_] + " " + label_ +
+				   "\n";
+			break;
+		case 3:
+			// JumpStmt
+			res += "\t\tb " + label_ + "\n";
+			break;
+		case 4:
+			// HStoreStmt
+			res += "\t\tsw " + MProcedure.registers_[reg_id2_] + " " + integer_ +
+		       "(" + MProcedure.registers_[reg_id_] + ")\n"; 
+			break;
+		case 5:
+			// HLoadStmt
+			res += "\t\tlw " + MProcedure.registers_[reg_id_] + " " + integer_ +
+			       "(" + MProcedure.registers_[reg_id2_] + ")\n"; 
+			break;
+		case 6:
+			// MoveStmt
+			res += exp_.prepare();
+			res += "\t\t" + exp_.getOperator() + " " + MProcedure.registers_[reg_id_] + 
+				   " " + exp_.toMIPS() + "\n";
+			break;
+		case 7:
+			// PrintStmt
+			res += sexp_.prepare();
+			res += "\t\t" + sexp_.getOperator() + " $a0 " + sexp_.toMIPS() + "\n";
+			res += "\t\tjal _print\n";
+			break;
+		case 8:
+			// ALoadStmt
+			res += "\t\tlw " + MProcedure.registers_[reg_id_] + " ";
+			if (integer_ < procedure_.getUpStackParamCnt()) {
+				res += (4 * integer_) + "($fp)\n";
+			} else {
+				res += (4 * integer_ + 4 * procedure_.getSpillParamCnt()) + "($sp)\n";
+			} 
+			break;
+		case 9:
+			// AStoreStmt
+			res += "\t\tsw " + MProcedure.registers_[reg_id_] + " " + 
+				   (4 * integer_ + 4 * procedure_.getSpillParamCnt()) + "($sp)\n";
+			break;
+		case 10:
+			// PassArgStmt
+			res += "\t\tsw " + MProcedure.registers_[reg_id_] + " " + 
+				   (4 * integer_ - 4) + "($sp)\n";
+			break;
+		case 11:
+			// CallStmt
+			res += sexp_.prepare();
+			res += "\t\tjalr " + sexp_.toMIPS() + "\n";
+			break;
+		default:
+			ErrorHandler.errorPrint("nmdwsm");
+		}
+		return res;
+	}
+	
+	// For debugging
 	public String getInfo() {
 		String res = "";
 		if (pre_label_ != null) {
@@ -115,58 +195,58 @@ public class MStmt {
 		switch (which_) {
 		case 0:
 			// NoOpStmt
-			res += "\tNOOP\n";
+			res += "\t\tNOOP\n";
 			break;
 		case 1:
 			// ErrorStmt
-			res += "\tERROR\n";
+			res += "\t\tERROR\n";
 			break;
 		case 2:
 			// CJumpStmt
-			res += "\tCJUMP " + MProcedure.registers_[reg_id_] + " " + 
+			res += "\t\tCJUMP " + MProcedure.registers_[reg_id_] + " " + 
 				   label_ + "\n";
 			break;
 		case 3:
 			// JumpStmt
-			res += "\tJUMP " + label_ + "\n";
+			res += "\t\tJUMP " + label_ + "\n";
 			break;
 		case 4:
 			// HStoreStmt
-			res += "\tHSTORE " + MProcedure.registers_[reg_id_] + " " + 
+			res += "\t\tHSTORE " + MProcedure.registers_[reg_id_] + " " + 
 				   integer_ + " " + MProcedure.registers_[reg_id2_] + "\n";
 			break;
 		case 5:
 			// HLoadStmt
-			res += "\tHLOAD " + MProcedure.registers_[reg_id_] + " " + 
+			res += "\t\tHLOAD " + MProcedure.registers_[reg_id_] + " " + 
 					MProcedure.registers_[reg_id2_] + " " + integer_ + "\n";
 			break;
 		case 6:
 			// MoveStmt
-			res += "\tMOVE " + MProcedure.registers_[reg_id_] + " " + 
+			res += "\t\tMOVE " + MProcedure.registers_[reg_id_] + " " + 
 					exp_.getInfo() + "\n";
 			break;
 		case 7:
 			// PrintStmt
-			res += "\tPRINT " + sexp_.getInfo() + "\n";
+			res += "\t\tPRINT " + sexp_.getInfo() + "\n";
 			break;
 		case 8:
 			// ALoadStmt
-			res += "\tALOAD " + MProcedure.registers_[reg_id_] + 
+			res += "\t\tALOAD " + MProcedure.registers_[reg_id_] + 
 				   " SPILLEDARG " + integer_ + "\n";
 			break;
 		case 9:
 			// AStoreStmt
-			res += "\tASTORE " + "SPILLEDARG " + integer_ + " " + 
+			res += "\t\tASTORE " + "SPILLEDARG " + integer_ + " " + 
 				   MProcedure.registers_[reg_id_] + "\n";
 			break;
 		case 10:
 			// PassArgStmt
-			res += "\tPASSARG " + integer_ + " " + 
+			res += "\t\tPASSARG " + integer_ + " " + 
 				   MProcedure.registers_[reg_id_] + "\n";
 			break;
 		case 11:
 			// CallStmt
-			res += "\tCALL " + sexp_.getInfo() + "\n";
+			res += "\t\tCALL " + sexp_.getInfo() + "\n";
 			break;
 		default:
 			ErrorHandler.errorPrint("nmdwsm");

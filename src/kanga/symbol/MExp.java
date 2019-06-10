@@ -10,6 +10,7 @@ public class MExp {
 	private int which_, reg_id_;
 	private MSimpleExp sexp_ = null;
 	private String ops_[] = {"LT", "PLUS", "MINUS", "TIMES"};
+	private String mips_ops_[] = {"slt", "add", "sub", "mul"};
 	private int op_;  // 0->LT, 1->PLUS, 2->MINUS, 3->TIMES
 	
 	public MExp(Exp exp) {
@@ -37,6 +38,58 @@ public class MExp {
 		}
 	}
 
+	// For "move"
+	public String getOperator() {
+		if (which_ == 0) return "move";
+		else if (which_ == 1) return mips_ops_[op_];
+		else {
+			return sexp_.getOperator();
+		}
+	}
+	
+	public String prepare() {
+		String res = "";
+		res += sexp_.prepare();
+		switch (which_) {
+		case 0:
+			// HAllocate
+			res += "\t\t" + sexp_.getOperator() + " $a0 " + sexp_.toMIPS() + "\n";
+			res += "\t\tjal _halloc\n";
+			break;
+		case 1:
+			// BinOp
+			break;
+		case 2:
+			// SimpleExp
+			break;
+		default:
+			ErrorHandler.errorPrint("nmdwsm");
+		}
+		return res;
+	}
+	
+	public String toMIPS() {
+		String res = "";
+		switch (which_) {
+		case 0:
+			// HAllocate
+			res += "$v0";
+			break;
+		case 1:
+			// BinOp
+			res += MProcedure.registers_[reg_id_] + " " + sexp_.toMIPS();
+			break;
+		case 2:
+			// SimpleExp
+			res += sexp_.toMIPS();
+			break;
+		default:
+			ErrorHandler.errorPrint("nmdwsm");
+		}
+		return res;
+	}
+	
+	// For debugging
 	public String getInfo() {
 		String res = "";
 		switch (which_) {

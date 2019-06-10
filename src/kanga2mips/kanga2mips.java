@@ -12,7 +12,7 @@ class KangaVisitor {
 			new KangaParser(in_stream);
 		} catch (FileNotFoundException e) {
 			ErrorHandler.errorPrint(e.getMessage());
-		}
+		}              
 	}
 }
 
@@ -35,7 +35,7 @@ public class kanga2mips {
 		} catch (ParseException e) {
 			ErrorHandler.errorPrint(e.getMessage());
 		}
-		kanga_code = SymbolTable.toMips();
+		kanga_code = SymbolTable.toMIPS();
 		if(!out_file.exists()) {
 			try {
 				out_file.createNewFile();

@@ -7,7 +7,7 @@ import kanga2mips.*;
 public class Main {
 	public static void main(String args[]) {
 		try {
-			String file_path = "..\\samples\\QuickSort.kg";
+			String file_path = "..\\samples\\TreeVisitor.kg";
 			if (args.length > 0) {
 				file_path = args[0];
 			}
