@@ -7,10 +7,6 @@ import util.ErrorHandler;
 
 
 public class MProcedure {
-	// a0-a3: ������Ӻ������ݵĲ���
-	// t0-t9: �����ʱ���������ڷ�����������ʱ���ر������ǵ�����
-	// s0-s7: ��žֲ��������ڷ�����������ʱһ��Ҫ�������ǵ�����
-	// v0-v1: v0 ����Ӻ������ؽ����v0��v1�������ڱ���ʽ��ֵ����ջ�м���
 	// registers whose index lies in {16, 17, 18} are used for overflow handling
 	// registers whose index lies in {19, 20, 21, 22} are used for parameters
 	public static String registers_[] = {"s0", "s1", "s2", "s3", "s4", "s5", 
