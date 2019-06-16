@@ -7,6 +7,10 @@ import util.ErrorHandler;
 
 
 public class MProcedure {
+	// a0-a3: Parameters
+	// t0-t9: Temporary registers
+	// s0-s7: Saved registers
+	// v0-v1: v0 is used for return value, v1 is a temporary register
 	// registers whose index lies in {16, 17, 18} are used for overflow handling
 	// registers whose index lies in {19, 20, 21, 22} are used for parameters
 	public static String registers_[] = {"s0", "s1", "s2", "s3", "s4", "s5", 
@@ -14,7 +18,6 @@ public class MProcedure {
 										 "t4", "t5", "t6", "t7", "t8", "t9", 
 										 "v1", "a0", "a1", "a2", "a3", "v0"};
 	private final static int save_reg_num_ = 8;
-	// ���label��ȫ�ֵģ����Ǿֲ���
 	private String label_ = null;
 	private int param_num_;
 	private HashMap<String, MStmt> label2stmt_ = null;

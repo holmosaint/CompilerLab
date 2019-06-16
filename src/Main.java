@@ -2,11 +2,12 @@ import minijava.typecheck.*;
 import minijava2piglet.*;
 import minijava2spiglet.*;
 import spiglet2kanga.*;
+import kanga2mips.*;
 
 public class Main {
 	public static void main(String args[]) {
 		try {
-			String file_path = "..\\samples\\QuickSort.spg";
+			String file_path = "..\\samples\\TreeVisitor.kg";
 			if (args.length > 0) {
 				file_path = args[0];
 			}
@@ -24,6 +25,8 @@ public class Main {
 				minijava2spiglet convert2spiglet = new minijava2spiglet(file_path);
 			} else if (file_path.endsWith(".spg")) {
 				spiglet2kanga.compile(file_path, file_path.replace(".spg", ".kg"));
+			} else if (file_path.endsWith(".kg")) {
+				kanga2mips.compile(file_path, file_path.replace(".kg", ".s"));
 			}
 		} catch (Exception e) {
 			System.out.println("Error: ");
